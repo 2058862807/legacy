@@ -22,7 +22,7 @@ load_dotenv()
 from models import *
 from auth import AuthService, get_current_user, get_current_user_optional
 from services import *
-from enhanced_services import RealAIService, StripePaymentService, UserGuidanceService
+# from enhanced_services import RealAIService, StripePaymentService, UserGuidanceService  # Temporarily disabled due to library conflicts
 from payment_endpoints import payment_router
 from safe_combos_endpoints import safe_combos_router
 

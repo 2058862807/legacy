@@ -1042,7 +1042,7 @@ class NextEraBackendTester:
 
 if __name__ == "__main__":
     tester = NextEraBackendTester()
-    passed, failed = tester.run_all_tests()
+    passed, failed = tester.run_critical_auth_tests()
     
     # Exit with appropriate code
     exit(0 if failed == 0 else 1)

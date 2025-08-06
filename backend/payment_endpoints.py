@@ -11,7 +11,7 @@ from datetime import datetime
 # Import our modules
 from models import get_db, PaymentTransaction, User, GriefSession
 from auth import get_current_user, get_current_user_optional
-from enhanced_services import RealAIService, UserGuidanceService
+# from enhanced_services import RealAIService, UserGuidanceService  # Temporarily disabled due to library conflicts
 from real_stripe_service import RealStripeService
 
 logger = logging.getLogger(__name__)
@@ -28,12 +28,17 @@ def get_services():
     """Get initialized services (lazy loading)"""
     global real_ai_service, stripe_service, guidance_service
     if real_ai_service is None:
+        # Try to import and initialize AI services
         try:
+            from enhanced_services import RealAIService, UserGuidanceService
             real_ai_service = RealAIService()
             logger.info("✅ Real AI service initialized")
+        except ImportError as e:
+            logger.warning(f"⚠️ Enhanced AI services not available: {str(e)}")
+            real_ai_service = None
         except Exception as e:
             logger.error(f"❌ Failed to initialize AI service: {str(e)}")
-            raise
+            real_ai_service = None
         
         try:
             stripe_service = RealStripeService()
@@ -42,12 +47,17 @@ def get_services():
             logger.error(f"❌ Failed to initialize Stripe service: {str(e)}")
             raise
         
-        try:
-            guidance_service = UserGuidanceService(real_ai_service)
-            logger.info("✅ Guidance service initialized")
-        except Exception as e:
-            logger.error(f"❌ Failed to initialize guidance service: {str(e)}")
-            raise
+        # Initialize guidance service only if AI service is available
+        if real_ai_service is not None:
+            try:
+                from enhanced_services import UserGuidanceService
+                guidance_service = UserGuidanceService(real_ai_service)
+                logger.info("✅ Guidance service initialized")
+            except Exception as e:
+                logger.error(f"❌ Failed to initialize guidance service: {str(e)}")
+                guidance_service = None
+        else:
+            guidance_service = None
     
     return real_ai_service, stripe_service, guidance_service
 

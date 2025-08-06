@@ -1112,7 +1112,7 @@ export const LoginPage = ({ onLogin }) => {
         onLogin(userData);
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Invalid email or password');
+        setError(errorData.detail || errorData.message || 'Invalid email or password');
       }
     } catch (err) {
       console.error('Login error:', err);

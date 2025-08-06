@@ -128,10 +128,10 @@ class RealStripeService:
             )
 
             logger.info(f"🔍 Session created, type: {type(session)}")
-            logger.info(f"🔍 Session attributes: {dir(session)}")
+            logger.info(f"🔍 Session attributes: {[attr for attr in dir(session) if not attr.startswith('_')]}")
             
-            session_id = getattr(session, 'id', None)
-            session_url = getattr(session, 'url', None)
+            session_id = session.id if hasattr(session, 'id') else None
+            session_url = session.url if hasattr(session, 'url') else None
             
             logger.info(f"✅ Real Stripe checkout session created: {session_id}")
             logger.info(f"💰 Amount: ${package['amount']} for package: {package['name']}")

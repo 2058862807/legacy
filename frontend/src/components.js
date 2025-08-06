@@ -1322,7 +1322,7 @@ export const RegisterPage = ({ onLogin }) => {
       if (response.ok) {
         const userData = await response.json();
         console.log('Registration successful:', userData);
-        onRegister(userData);
+        onLogin(userData);
       } else {
         const errorData = await response.json();
         setError(errorData.detail || 'Registration failed. Please try again.');

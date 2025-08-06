@@ -114,11 +114,7 @@ class RealStripeService:
                             'currency': 'usd',
                             'product_data': {
                                 'name': package["name"],
-                                'description': package["description"],
-                                'metadata': {
-                                    'package_id': package_id,
-                                    'features': ', '.join(package["features"])
-                                }
+                                'description': package["description"]
                             },
                             'unit_amount': int(package["amount"] * 100),  # Convert to cents
                         },
@@ -128,16 +124,7 @@ class RealStripeService:
                 mode='payment',
                 success_url=success_url,
                 cancel_url=cancel_url,
-                metadata=checkout_metadata,
-                expires_at=int(datetime.utcnow().timestamp()) + (30 * 60),  # 30 minutes
-                allow_promotion_codes=True,
-                billing_address_collection='required',
-                shipping_address_collection=None,
-                customer_email=None,  # Will be collected during checkout
-                payment_intent_data={
-                    'metadata': checkout_metadata,
-                    'description': f"NextEra Estate - {package['name']}"
-                }
+                metadata=checkout_metadata
             )
 
             logger.info(f"✅ Real Stripe checkout session created: {session.id}")

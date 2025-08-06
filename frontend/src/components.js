@@ -1397,6 +1397,14 @@ export const Dashboard = ({ user }) => {
             </div>
           </div>
         </div>
+
+        {/* Payment Modal */}
+        <PaymentModal 
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          packageId={Object.keys(premiumPackages).find(key => premiumPackages[key] === selectedPackage) || 'basic_will'}
+          packageInfo={selectedPackage}
+        />
       </div>
     </div>
   );

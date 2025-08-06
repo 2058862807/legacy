@@ -25,6 +25,11 @@ import {
   LiabilityAgreementPage
 } from './legal-pages';
 
+import {
+  PaymentSuccessPage,
+  PaymentCancelPage
+} from './payment-pages';
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);

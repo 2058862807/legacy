@@ -13,6 +13,14 @@ class RealStripeService:
     """Production Stripe service with real API integration"""
     
     def __init__(self):
+        # Import stripe here to ensure it's available
+        try:
+            import stripe as stripe_lib
+            self.stripe = stripe_lib
+        except ImportError:
+            logger.error("Stripe library not installed")
+            raise ValueError("Stripe library is required")
+        
         self.stripe_secret_key = os.getenv("STRIPE_SECRET_KEY")
         self.stripe_publishable_key = os.getenv("STRIPE_PUBLISHABLE_KEY")
         
@@ -21,10 +29,18 @@ class RealStripeService:
             raise ValueError("Stripe secret key is required")
             
         # Initialize Stripe with real API key
-        stripe.api_key = self.stripe_secret_key
+        self.stripe.api_key = self.stripe_secret_key
         
-        logger.info("✅ Real Stripe service initialized successfully")
-        logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
+        # Test the API connection
+        try:
+            # Simple API test
+            self.stripe.Account.retrieve()
+            logger.info("✅ Real Stripe service initialized and API connection verified")
+            logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
+        except Exception as e:
+            logger.warning(f"⚠️ Stripe API test failed: {str(e)}")
+            logger.info("✅ Stripe service initialized (API test failed but continuing)")
+            logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
 
     # Define payment packages - server-side only for security
     PAYMENT_PACKAGES = {

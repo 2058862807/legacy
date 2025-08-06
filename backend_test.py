@@ -64,43 +64,102 @@ class NextEraBackendTester:
             self.log_test("Health Check", False, f"Connection error: {str(e)}")
             return False
 
-    def test_user_registration_and_login(self):
-        """Test user registration and authentication"""
+    def test_user_registration(self):
+        """Test user registration with form data (CRITICAL AUTH TEST)"""
         try:
-            # Test user registration
-            test_email = f"test_{int(time.time())}@nexteraestate.com"
+            # Use exact test data as specified in review request
             registration_data = {
-                "email": test_email,
-                "password": "SecurePassword123!",
-                "first_name": "John",
-                "last_name": "Doe",
+                "email": "authtest@example.com",
+                "password": "password123",
+                "first_name": "Auth Test",
+                "last_name": "User",
                 "jurisdiction": "California, USA",
                 "phone": "+1-555-0123"
             }
             
             response = self.session.post(
                 f"{self.api_url}/auth/register",
-                data=registration_data,
+                data=registration_data,  # Using form data, NOT JSON
                 timeout=10
             )
             
             if response.status_code == 200:
                 data = response.json()
-                self.auth_token = data.get("access_token")
-                self.session.headers.update({"Authorization": f"Bearer {self.auth_token}"})
+                access_token = data.get("access_token")
+                user_data = data.get("user", {})
+                
+                # Verify response format includes access_token and user data
+                has_token = access_token is not None
+                has_user_data = "id" in user_data and "email" in user_data and "name" in user_data
+                
+                success = has_token and has_user_data
+                
+                # Store credentials for login test
+                self.test_email = registration_data["email"]
+                self.test_password = registration_data["password"]
                 
                 self.log_test(
-                    "User Registration & Authentication",
-                    True,
-                    f"User created: {data['user']['name']}, Jurisdiction: {data['user']['jurisdiction']}"
+                    "User Registration (CRITICAL AUTH)",
+                    success,
+                    f"✅ Registration successful! Token: {access_token[:20] if access_token else 'None'}..., User: {user_data.get('name', 'N/A')}, Email: {user_data.get('email', 'N/A')}"
                 )
-                return True
+                return success
             else:
-                self.log_test("User Registration & Authentication", False, f"HTTP {response.status_code}", response.text)
+                self.log_test("User Registration (CRITICAL AUTH)", False, f"❌ HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
-            self.log_test("User Registration & Authentication", False, f"Error: {str(e)}")
+            self.log_test("User Registration (CRITICAL AUTH)", False, f"❌ Error: {str(e)}")
+            return False
+
+    def test_user_login(self):
+        """Test user login with form data (CRITICAL AUTH TEST)"""
+        if not hasattr(self, 'test_email'):
+            self.log_test("User Login (CRITICAL AUTH)", False, "❌ No test credentials from registration")
+            return False
+            
+        try:
+            # Test login with form data (NOT JSON) as specified
+            login_data = {
+                "email": self.test_email,
+                "password": self.test_password
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/auth/login",
+                data=login_data,  # Using form data, NOT JSON
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                access_token = data.get("access_token")
+                user_data = data.get("user", {})
+                
+                # Verify login returns access_token and user data
+                has_token = access_token is not None
+                has_user_data = "id" in user_data and "email" in user_data and "name" in user_data
+                token_type = data.get("token_type") == "bearer"
+                
+                success = has_token and has_user_data and token_type
+                
+                # Store token for dashboard tests
+                if success:
+                    self.auth_token = access_token
+                    self.session.headers.update({"Authorization": f"Bearer {self.auth_token}"})
+                
+                self.log_test(
+                    "User Login (CRITICAL AUTH)",
+                    success,
+                    f"✅ Login successful! Token: {access_token[:20] if access_token else 'None'}..., User: {user_data.get('name', 'N/A')}, No network errors: {success}"
+                )
+                return success
+            else:
+                self.log_test("User Login (CRITICAL AUTH)", False, f"❌ HTTP {response.status_code} - Network/Auth Error", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("User Login (CRITICAL AUTH)", False, f"❌ Network/Connection Error: {str(e)}")
             return False
 
     def test_payment_packages(self):

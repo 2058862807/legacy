@@ -1015,6 +1015,31 @@ export const Dashboard = ({ user }) => {
   });
   const [notifications, setNotifications] = useState([]);
   const [complianceStatus, setComplianceStatus] = useState('checking');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
+  const premiumPackages = {
+    basic_will: {
+      name: "Basic Will Generation",
+      amount: 29.99,
+      description: "Generate a basic will with AI assistance"
+    },
+    premium_will: {
+      name: "Premium Will with Blockchain",
+      amount: 49.99,
+      description: "AI-powered will with blockchain notarization"
+    },
+    full_estate_plan: {
+      name: "Complete Estate Planning",
+      amount: 99.99,
+      description: "Complete estate planning with all premium features"
+    }
+  };
+
+  const handleUpgrade = (packageId) => {
+    setSelectedPackage(premiumPackages[packageId]);
+    setShowPaymentModal(true);
+  };
 
   useEffect(() => {
     // Simulate loading dashboard data

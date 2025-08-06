@@ -777,7 +777,7 @@ async def get_notifications(
         notifications = []
         
         # Check if user has incomplete will
-        will = db.query(Will).filter(Will.user_id == current_user.id).first()
+        will = db.query(Will).filter(Will.owner_id == current_user.id).first()
         if will and will.completion_percentage < 100:
             notifications.append({
                 "id": 1,
@@ -788,7 +788,7 @@ async def get_notifications(
             })
         
         # Check if user has no heirs configured
-        heirs_count = db.query(Heir).filter(Heir.user_id == current_user.id).count()
+        heirs_count = db.query(Heir).filter(Heir.owner_id == current_user.id).count()
         if heirs_count == 0:
             notifications.append({
                 "id": 2,

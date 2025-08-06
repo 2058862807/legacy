@@ -132,7 +132,8 @@ class DirectStripeService:
     async def check_payment_status(self, session_id: str) -> Dict:
         """Check payment status for session"""
         try:
-            session = stripe.checkout.Session.retrieve(session_id)
+            import stripe as stripe_module
+            session = stripe_module.checkout.Session.retrieve(session_id)
 
             return {
                 "success": True,

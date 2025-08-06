@@ -1572,42 +1572,65 @@ export const Dashboard = ({ user }) => {
   };
 
   useEffect(() => {
-    // Simulate loading dashboard data
-    setTimeout(() => {
-      setStats({
-        documentsStored: 23,
-        willCompletion: 75,
-        heirsConfigured: 3,
-        lastBackup: new Date().toISOString().split('T')[0]
-      });
+    // Load real user dashboard data from backend
+    const loadDashboardData = async () => {
+      if (!user) return;
       
-      setNotifications([
-        {
-          id: 1,
-          type: 'warning',
-          title: 'Will Update Required',
-          message: 'California estate laws have changed. Review your will.',
-          timestamp: '2 hours ago'
-        },
-        {
-          id: 2,
-          type: 'success',
-          title: 'Backup Complete',
-          message: 'All documents successfully backed up to secure cloud.',
-          timestamp: '1 day ago'
-        },
-        {
-          id: 3,
-          type: 'info',
-          title: 'New Feature Available',
-          message: 'AI Grief Companion is now available for your heirs.',
-          timestamp: '3 days ago'
+      try {
+        // Fetch real user statistics
+        const statsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/dashboard-stats`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (statsResponse.ok) {
+          const userStats = await statsResponse.json();
+          setStats(userStats);
+        } else {
+          // Set default empty stats for new users
+          setStats({
+            documentsStored: 0,
+            willCompletion: 0,
+            heirsConfigured: 0,
+            lastBackup: null
+          });
         }
-      ]);
 
-      setComplianceStatus('compliant');
-    }, 1000);
-  }, []);
+        // Fetch real user notifications
+        const notificationsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/notifications`, {
+          headers: {
+            'Authorization': `Bearer ${user.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (notificationsResponse.ok) {
+          const userNotifications = await notificationsResponse.json();
+          setNotifications(userNotifications);
+        } else {
+          // Set empty notifications for new users
+          setNotifications([]);
+        }
+
+        setComplianceStatus('checking');
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        // Set default values for new/offline users
+        setStats({
+          documentsStored: 0,
+          willCompletion: 0,
+          heirsConfigured: 0,
+          lastBackup: null
+        });
+        setNotifications([]);
+        setComplianceStatus('unknown');
+      }
+    };
+
+    loadDashboardData();
+  }, [user]);
 
   const navigate = useNavigate();
 

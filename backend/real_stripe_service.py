@@ -188,7 +188,7 @@ class RealStripeService:
                 }
             }
 
-        except stripe.error.StripeError as e:
+        except self.stripe.error.StripeError as e:
             logger.error(f"❌ Stripe API error checking payment: {str(e)}")
             return {
                 "success": False,

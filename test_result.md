@@ -629,6 +629,8 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Stripe Payment Integration with Real API Key"
+    - "Payment Modal End-to-End Testing"
     - "Payment Flow Integration Testing"
   stuck_tasks:
     - "Payment Modal Component"

@@ -19,10 +19,20 @@ class DirectStripeService:
             logger.error("Stripe secret key not found in environment variables")
             raise ValueError("Stripe secret key is required")
             
-        # Initialize Stripe
-        stripe.api_key = self.stripe_secret_key
-        
-        logger.info("✅ Direct Stripe service initialized successfully")
+        # Initialize Stripe with debug information
+        try:
+            import stripe as stripe_module
+            stripe_module.api_key = self.stripe_secret_key
+            
+            # Test the API connection
+            stripe_module.Account.retrieve()
+            
+            logger.info("✅ Direct Stripe service initialized successfully")
+            logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
+            
+        except Exception as e:
+            logger.error(f"❌ Stripe initialization failed: {str(e)}")
+            raise ValueError(f"Stripe initialization failed: {str(e)}")
 
     # Define payment packages - server-side only for security
     PAYMENT_PACKAGES = {

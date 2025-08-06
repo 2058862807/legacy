@@ -3,6 +3,125 @@ import { Link, useNavigate } from 'react-router-dom';
 import { blockchainService, formatAddress, formatBalance } from './blockchain';
 import { stateComplianceService, US_STATES_COMPLIANCE } from './stateCompliance';
 
+// Payment and Premium Features Component
+export const PaymentModal = ({ isOpen, onClose, packageId, packageInfo }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    
+    try {
+      const response = await fetch('/api/payments/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: new URLSearchParams({
+          package_id: packageId
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Redirect to Stripe Checkout
+        window.location.href = data.checkout_url;
+      } else {
+        setPaymentStatus('error');
+        setIsProcessing(false);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      setPaymentStatus('error');
+      setIsProcessing(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">💎</span>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Upgrade to Premium</h3>
+          <p className="text-gray-600">
+            {packageInfo?.name || 'Premium Feature'}
+          </p>
+        </div>
+
+        <div className="border border-gray-200 rounded-lg p-4 mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-gray-600">Price:</span>
+            <span className="text-xl font-bold text-gray-900">
+              ${packageInfo?.amount || '29.99'}
+            </span>
+          </div>
+          <p className="text-sm text-gray-500 mb-4">
+            {packageInfo?.description || 'Premium features and capabilities'}
+          </p>
+          
+          <div className="space-y-2">
+            <div className="flex items-center text-sm text-green-600">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              AI-powered assistance
+            </div>
+            <div className="flex items-center text-sm text-green-600">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Blockchain notarization
+            </div>
+            <div className="flex items-center text-sm text-green-600">
+              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Priority support
+            </div>
+          </div>
+        </div>
+
+        {paymentStatus === 'error' && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p className="text-red-600 text-sm">
+              Payment processing failed. Please try again.
+            </p>
+          </div>
+        )}
+
+        <div className="flex space-x-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            disabled={isProcessing}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handlePayment}
+            disabled={isProcessing}
+            className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isProcessing ? (
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Processing...
+              </div>
+            ) : (
+              'Upgrade Now'
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Onboarding and Help Components
 export const OnboardingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -2842,59 +2842,97 @@ export const GriefCompanion = () => {
   );
 };
 
-// Footer Component
-export const Footer = () => (
-  <footer className="bg-gray-900 text-white py-12">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="mb-8 md:mb-0">
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">NE</span>
+// Footer Component with Legal Documents
+export const Footer = () => {
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showLiability, setShowLiability] = useState(false);
+
+  return (
+    <>
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="mb-8 md:mb-0">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold">NE</span>
+                </div>
+                <span className="text-xl font-bold">NextEra Estate</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Securing digital legacies with AI-powered estate planning and military-grade encryption.
+              </p>
+              <div className="mt-4">
+                <p className="text-xs text-gray-500">
+                  Production-Ready | Customer-Secure | Legally Compliant
+                </p>
+              </div>
             </div>
-            <span className="text-xl font-bold">NextEra Estate</span>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Platform</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link to="/will-builder" className="hover:text-white">AI Will Builder</Link></li>
+                <li><Link to="/vault" className="hover:text-white">Document Vault</Link></li>
+                <li><Link to="/heirs" className="hover:text-white">Heir Management</Link></li>
+                <li><Link to="/grief-companion" className="hover:text-white">AI Grief Companion</Link></li>
+                <li><Link to="/blockchain" className="hover:text-white">Blockchain Features</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Security & Compliance</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link to="/compliance" className="hover:text-white">50-State Compliance</Link></li>
+                <li><span className="hover:text-white cursor-default">AES-256 Encryption</span></li>
+                <li><span className="hover:text-white cursor-default">WebAuthn Security</span></li>
+                <li><span className="hover:text-white cursor-default">SOC 2 Compliant</span></li>
+                <li><button onClick={() => setShowPrivacy(true)} className="hover:text-white text-left">Privacy Policy</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Legal & Support</h3>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><button onClick={() => setShowTerms(true)} className="hover:text-white text-left">Terms of Service</button></li>
+                <li><button onClick={() => setShowLiability(true)} className="hover:text-white text-left">Liability Agreement</button></li>
+                <li><a href="mailto:legal@nexteraestate.com" className="hover:text-white">Legal Contact</a></li>
+                <li><a href="mailto:support@nexteraestate.com" className="hover:text-white">Customer Support</a></li>
+                <li><a href="tel:1-800-378-2831" className="hover:text-white">1-800-ESTATE1</a></li>
+              </ul>
+            </div>
           </div>
-          <p className="text-gray-400 text-sm">
-            Securing digital legacies with AI-powered estate planning and military-grade encryption.
-          </p>
-        </div>
 
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Platform</h3>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-white">Will Builder</a></li>
-            <li><a href="#" className="hover:text-white">Document Vault</a></li>
-            <li><a href="#" className="hover:text-white">Heir Management</a></li>
-            <li><a href="#" className="hover:text-white">AI Companion</a></li>
-          </ul>
+          <div className="border-t border-gray-800 pt-8 mt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="text-sm text-gray-400 mb-4 md:mb-0">
+                <p>© 2025 NextEra Estate. All rights reserved.</p>
+                <p className="mt-1">
+                  <span className="text-yellow-400">⚠️ Not Legal Advice</span> - Professional consultation recommended
+                </p>
+              </div>
+              <div className="flex space-x-6 text-sm text-gray-400">
+                <button onClick={() => setShowTerms(true)} className="hover:text-white">Terms</button>
+                <button onClick={() => setShowPrivacy(true)} className="hover:text-white">Privacy</button>
+                <button onClick={() => setShowLiability(true)} className="hover:text-white">Liability</button>
+                <a href="mailto:privacy@nexteraestate.com" className="hover:text-white">Privacy Officer</a>
+              </div>
+            </div>
+          </div>
         </div>
+      </footer>
 
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Security</h3>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-white">Encryption</a></li>
-            <li><a href="#" className="hover:text-white">Biometric Auth</a></li>
-            <li><a href="#" className="hover:text-white">Compliance</a></li>
-            <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Support</h3>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li><a href="#" className="hover:text-white">Help Center</a></li>
-            <li><a href="#" className="hover:text-white">Contact Us</a></li>
-            <li><a href="#" className="hover:text-white">Legal Resources</a></li>
-            <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-        <p className="text-gray-400 text-sm">
-          © 2025 NextEra Estate. All rights reserved. | Jurisdictional compliance powered by AI
-        </p>
-      </div>
-    </div>
-  </footer>
-);
+      {/* Legal Document Modals */}
+      {showTerms && (
+        <TermsOfService isModal={true} onClose={() => setShowTerms(false)} />
+      )}
+      {showPrivacy && (
+        <PrivacyPolicy isModal={true} onClose={() => setShowPrivacy(false)} />
+      )}
+      {showLiability && (
+        <LiabilityAgreement isModal={true} onClose={() => setShowLiability(false)} />
+      )}
+    </>
+  );
+};

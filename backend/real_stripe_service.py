@@ -162,7 +162,7 @@ class RealStripeService:
         """Check real payment status for session"""
         try:
             # Retrieve real session from Stripe
-            session = CheckoutSession.retrieve(session_id)
+            session = stripe.checkout.Session.retrieve(session_id)
 
             # Also get payment intent for more details
             payment_intent = None

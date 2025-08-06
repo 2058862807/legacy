@@ -52,6 +52,27 @@ class User(Base):
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
+# Personal Safe Combos Model
+class PersonalSafe(Base):
+    __tablename__ = "personal_safes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    safe_name = Column(String, nullable=False)  # e.g., "Home Safe", "Bank Safety Deposit Box"
+    safe_type = Column(String, nullable=False)  # "combination", "digital", "key", "biometric"
+    location = Column(String, nullable=True)  # "Bedroom closet", "Bank of America Branch"
+    combination_data = Column(JSON, nullable=True)  # Encrypted combination/code data
+    access_instructions = Column(Text, nullable=True)  # How to access the safe
+    contents_description = Column(Text, nullable=True)  # What's stored in the safe
+    emergency_contact = Column(String, nullable=True)  # Who should access in emergency
+    last_accessed = Column(DateTime, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationship
+    user = relationship("User", back_populates="personal_safes")
+
 # Will Model
 class Will(Base):
     __tablename__ = "wills"

@@ -258,7 +258,7 @@ class PaymentTransaction(Base):
     currency = Column(String, default="usd")
     payment_status = Column(String, nullable=False)  # pending, paid, failed, expired
     status = Column(String, nullable=False)  # initiated, pending, complete, failed
-    metadata = Column(JSON, nullable=True)  # Additional payment metadata
+    payment_metadata = Column(JSON, nullable=True)  # Additional payment metadata
     package_type = Column(String, nullable=True)  # e.g., "premium_will", "notarization"
     description = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

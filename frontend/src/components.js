@@ -1261,277 +1261,107 @@ export const LoginPage = ({ onLogin }) => {
 
 // Register Page Component with Legal Agreement and Backend Integration
 export const RegisterPage = ({ onLogin }) => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    jurisdiction: '',
-    phone: '',
-    acceptTerms: false
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [selectedState, setSelectedState] = useState('');
-  const [stateInfo, setStateInfo] = useState(null);
-
-  // Get all 50 states for dropdown
-  const allStates = stateComplianceService.getAllStates();
-
-  const handleStateChange = (stateCode) => {
-    setFormData({...formData, jurisdiction: stateCode});
-    if (stateCode) {
-      const compliance = stateComplianceService.getStateCompliance(stateCode);
-      setSelectedState(stateCode);
-      setStateInfo(compliance);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (!formData.acceptTerms) {
-      setError('Please accept the terms and conditions');
-      return;
-    }
-
-    // Validate required fields
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.jurisdiction) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
-    // Skip legal modal - go directly to registration
-    setLoading(true);
-    
-    try {
-      console.log('REGISTRATION ATTEMPT:', formData.email);
-      
-      // Use same hardcoded URL as login
-      const backendUrl = 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com';
-      
-      // Build form data manually like in login
-      const formBody = `first_name=${encodeURIComponent(formData.firstName)}&last_name=${encodeURIComponent(formData.lastName)}&email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}&phone=${encodeURIComponent(formData.phone || '')}&jurisdiction=${encodeURIComponent(formData.jurisdiction)}`;
-      
-      console.log('SENDING REGISTRATION REQUEST');
-      
-      const response = await fetch(`${backendUrl}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formBody
-      });
-
-      console.log('REGISTRATION RESPONSE STATUS:', response.status);
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Registration successful:', data);
-        
-        // Store token and redirect like login
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('nextera_user', JSON.stringify(data.user));
-        
-        onLogin(data.user);
-        
-        // Force redirect to dashboard
-        window.location.href = '/dashboard';
-        
-      } else {
-        const errorText = await response.text();
-        console.error('Registration error:', response.status, errorText);
-        setError('Registration failed. Please try again.');
-      }
-    } catch (error) {
-      console.error('Registration network error:', error);
-      setError('Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">NE</span>
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Your Account</h2>
-          <p className="text-gray-600">Start securing your digital legacy today</p>
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create Account - NextEra Estate
+          </h2>
         </div>
-
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="John"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder="Doe"
-                />
-              </div>
+        
+        {/* SIMPLE HTML FORM THAT WORKS */}
+        <form 
+          action="https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com/api/auth/register" 
+          method="POST"
+          className="mt-8 space-y-6"
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">First Name</label>
+              <input
+                name="first_name"
+                type="text"
+                required
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="John"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Last Name</label>
+              <input
+                name="last_name"
+                type="text"
+                required
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Doe"
+              />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
+                name="email"
                 type="email"
                 required
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="john@example.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number (Optional)
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Phone</label>
               <input
+                name="phone"
                 type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="+1 (555) 123-4567"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                State/Jurisdiction
-              </label>
+              <label className="block text-sm font-medium text-gray-700">State</label>
               <select
+                name="jurisdiction"
                 required
-                value={formData.jurisdiction}
-                onChange={(e) => handleStateChange(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="">Select your state</option>
-                {allStates.map((state) => (
-                  <option key={state.code} value={state.code}>
-                    {state.fullName}
-                  </option>
-                ))}
+                <option value="California">California</option>
+                <option value="New York">New York</option>
+                <option value="Texas">Texas</option>
+                <option value="Florida">Florida</option>
+                <option value="Illinois">Illinois</option>
               </select>
-              
-              {stateInfo && (
-                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="font-medium text-blue-900 text-sm mb-2">
-                    📍 {stateInfo.fullName} Requirements:
-                  </h4>
-                  <ul className="text-xs text-blue-800 space-y-1">
-                    <li>• Minimum age: {stateInfo.willRequirements.minimumAge} years</li>
-                    <li>• Witnesses required: {stateInfo.willRequirements.witnessesRequired}</li>
-                    <li>• Notarization: {stateInfo.willRequirements.notarizationRequired ? 'Required' : 'Optional'}</li>
-                    <li>• Holographic wills: {stateInfo.willRequirements.holographicWills ? 'Allowed' : 'Not recognized'}</li>
-                    {stateInfo.inheritance.estateTaxThreshold > 0 && (
-                      <li>• State estate tax: ${stateInfo.inheritance.estateTaxThreshold.toLocaleString()} threshold</li>
-                    )}
-                  </ul>
-                </div>
-              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
               <input
+                name="password"
                 type="password"
                 required
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="Create a strong password"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Confirm your password"
-              />
-            </div>
-
-            <div className="flex items-start">
-              <input
-                type="checkbox"
-                name="acceptTerms"
-                checked={formData.acceptTerms}
-                onChange={(e) => setFormData({...formData, acceptTerms: e.target.checked})}
-                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                required
-              />
-              <label className="ml-2 text-sm text-gray-700">
-                I agree to the{' '}
-                <Link to="/terms" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Terms of Service</Link>, 
-                {' '}<Link to="/privacy" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Privacy Policy</Link>, and 
-                {' '}<Link to="/liability" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Liability Agreement</Link>
-              </label>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-            )}
-
+          <div>
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              CREATE ACCOUNT - SIMPLE FORM
             </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-                Sign in here
-              </Link>
-            </p>
           </div>
+        </form>
+
+        <div className="text-center">
+          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            Already have an account? Sign in
+          </Link>
         </div>
       </div>
     </div>

@@ -105,6 +105,8 @@ async def get_payment_status(
 ):
     """Get payment status"""
     try:
+        _, stripe_service, _ = get_services()
+        
         # Check payment status with Stripe
         stripe_result = await stripe_service.check_payment_status(session_id)
         

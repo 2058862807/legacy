@@ -740,11 +740,11 @@ async def get_dashboard_stats(
         documents_count = db.query(Document).filter(Document.owner_id == current_user.id).count()
         
         # Get will completion percentage
-        will = db.query(Will).filter(Will.user_id == current_user.id).first()
+        will = db.query(Will).filter(Will.owner_id == current_user.id).first()
         will_completion = will.completion_percentage if will else 0.0
         
         # Count configured heirs
-        heirs_count = db.query(Heir).filter(Heir.user_id == current_user.id).count()
+        heirs_count = db.query(Heir).filter(Heir.owner_id == current_user.id).count()
         
         # Get last backup date (most recent document upload)
         last_document = db.query(Document).filter(Document.owner_id == current_user.id)\

@@ -1081,20 +1081,35 @@ export const LoginPage = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
-    // Simulate authentication
-    setTimeout(() => {
-      const userData = {
-        id: 1,
-        name: 'John Doe',
-        email: formData.email,
-        token: 'mock-jwt-token-' + Date.now(),
-        jurisdiction: 'California, USA',
-        biometricEnabled: true
-      };
-      onLogin(userData);
+    try {
+      // Make real API call to backend for authentication
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('Login successful:', userData);
+        onLogin(userData);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Invalid email or password');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Network error. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleBiometricLogin = async () => {

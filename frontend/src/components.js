@@ -1300,15 +1300,15 @@ export const Dashboard = ({ user }) => {
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
                     <span>Documents Notarized:</span>
-                    <span className="text-green-600 font-medium">3</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Smart Contracts:</span>
-                    <span className="text-blue-600 font-medium">1 Active</span>
+                    <span className="text-purple-600 font-medium">5</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Network:</span>
-                    <span className="text-purple-600 font-medium">Ethereum</span>
+                    <span className="text-blue-600 font-medium">Ethereum</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className="text-green-600 font-medium">Active</span>
                   </div>
                 </div>
                 <button
@@ -1317,6 +1317,40 @@ export const Dashboard = ({ user }) => {
                 >
                   Manage Blockchain
                 </button>
+              </div>
+            </div>
+
+            {/* Premium Features Upgrade */}
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl shadow-sm p-6 border border-yellow-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">💎 Premium Features</h3>
+              <div className="text-center">
+                <div className="text-4xl mb-3">🚀</div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Unlock advanced estate planning tools and AI assistance
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => handleUpgrade('basic_will')}
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Basic Will - $29.99
+                  </button>
+                  <button
+                    onClick={() => handleUpgrade('premium_will')}
+                    className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg text-sm hover:bg-indigo-700 transition-colors"
+                  >
+                    Premium Will - $49.99
+                  </button>
+                  <button
+                    onClick={() => handleUpgrade('full_estate_plan')}
+                    className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-lg text-sm hover:from-purple-700 hover:to-indigo-700 transition-colors"
+                  >
+                    Full Estate Plan - $99.99
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">
+                  Secure payment powered by Stripe
+                </p>
               </div>
             </div>
 

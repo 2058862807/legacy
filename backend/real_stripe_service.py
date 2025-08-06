@@ -145,18 +145,21 @@ class RealStripeService:
                 "package_info": package
             }
 
-        except self.stripe.error.StripeError as e:
-            logger.error(f"❌ Stripe API error: {str(e)}")
-            return {
-                "success": False,
-                "error": f"Payment processing error: {str(e)}"
-            }
-        except Exception as e:
-            logger.error(f"❌ Stripe checkout session creation failed: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        except Exception as stripe_error:
+            # Handle Stripe-specific errors
+            error_message = str(stripe_error)
+            if "StripeError" in str(type(stripe_error)):
+                logger.error(f"❌ Stripe API error: {error_message}")
+                return {
+                    "success": False,
+                    "error": f"Payment processing error: {error_message}"
+                }
+            else:
+                logger.error(f"❌ Stripe checkout session creation failed: {error_message}")
+                return {
+                    "success": False,
+                    "error": str(stripe_error)
+                }
 
     async def check_payment_status(self, session_id: str) -> Dict:
         """Check real payment status for session"""

@@ -1195,6 +1195,12 @@ export const LoginPage = ({ onLogin }) => {
               </a>
             </div>
 
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}

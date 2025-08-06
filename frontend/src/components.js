@@ -1084,39 +1084,47 @@ export const LoginPage = ({ onLogin }) => {
     setError('');
 
     try {
-      // Make real API call to backend for authentication
+      console.log('Attempting login with:', formData.email);
+      
+      const formBody = new URLSearchParams();
+      formBody.append('email', formData.email);
+      formBody.append('password', formData.password);
+      
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({
-          email: formData.email,
-          password: formData.password
-        })
+        body: formBody
       });
+
+      console.log('Response status:', response.status);
 
       if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
         
-        // Extract user data from backend response format
-        const userData = data.user || data;
-        
         // Store token and user data
         if (data.access_token) {
           localStorage.setItem('token', data.access_token);
-          localStorage.setItem('nextera_user', JSON.stringify(userData));
+          localStorage.setItem('nextera_user', JSON.stringify(data.user || data));
         }
         
-        onLogin(userData);
+        // Call onLogin with user data
+        onLogin(data.user || data);
       } else {
-        const errorData = await response.json();
-        setError(errorData.detail || errorData.message || 'Invalid email or password');
+        const errorText = await response.text();
+        console.error('Login error response:', errorText);
+        try {
+          const errorData = JSON.parse(errorText);
+          setError(errorData.detail || errorData.message || 'Login failed');
+        } catch {
+          setError('Login failed. Please try again.');
+        }
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Network error. Please try again.');
+      console.error('Login network error:', err);
+      setError('Unable to connect to server. Please check your internet connection and try again.');
     } finally {
       setLoading(false);
     }

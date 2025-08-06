@@ -731,7 +731,7 @@ export const LiabilityAgreement = ({ isModal = false, onClose = null }) => {
 
 // Legal Agreement Modal with Required Acceptance
 export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
-  const [currentTab, setCurrentTab] = useState('terms');
+  const [currentTab, setCurrentTab] = useState('collapsed');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
   const [acceptedLiability, setAcceptedLiability] = useState(false);

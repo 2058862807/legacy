@@ -1325,7 +1325,9 @@ export const RegisterPage = ({ onLogin }) => {
         legal_acceptance_timestamp: new Date().toISOString()
       };
 
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
+      const backendUrl = 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com';
+      
+      const response = await fetch(`${backendUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

@@ -2476,380 +2476,288 @@ export const ProfileSettings = ({ user }) => {
   );
 };
 
-// Enhanced AI Grief Companion with Sophisticated Responses
-export const GriefCompanion = ({ user }) => {
-  const [messages, setMessages] = useState([
-    { 
-      id: 1, 
-      type: 'ai', 
-      content: 'Hello, I\'m here to provide support during this difficult time. I understand that grief is a deeply personal journey, and I\'m here to listen without judgment. How are you feeling today?', 
-      timestamp: new Date() 
-    }
-  ]);
+// AI Grief Companion with Real Backend Integration
+export const GriefCompanion = () => {
+  const [sessionId, setSessionId] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [conversationContext, setConversationContext] = useState({
-    emotionalState: 'initial',
-    mentionedTopics: [],
-    sessionLength: 0,
-    supportLevel: 'gentle'
-  });
-  const messagesEndRef = useRef(null);
-
-  // Sophisticated AI response system
-  const generateAIResponse = (userMessage) => {
-    const message = userMessage.toLowerCase();
-    const context = conversationContext;
-    
-    // Emotional keyword detection
-    const sadWords = ['sad', 'crying', 'tears', 'miss', 'lonely', 'empty', 'lost', 'hurt', 'pain'];
-    const angryWords = ['angry', 'mad', 'furious', 'rage', 'unfair', 'hate', 'frustrated'];
-    const anxiousWords = ['worried', 'scared', 'anxious', 'nervous', 'afraid', 'overwhelmed'];
-    const hopeWords = ['better', 'healing', 'hope', 'forward', 'strength', 'grateful', 'thankful'];
-    const memoryWords = ['remember', 'memory', 'memories', 'used to', 'always', 'never forget'];
-    const familyWords = ['family', 'children', 'spouse', 'husband', 'wife', 'kids', 'relatives'];
-    
-    let response = '';
-    let emotionalState = context.emotionalState;
-    
-    // Detect emotional state and respond appropriately
-    if (sadWords.some(word => message.includes(word))) {
-      emotionalState = 'sad';
-      const sadResponses = [
-        "I can hear the sadness in your words, and that's completely understandable. Grief often feels like an ocean of sadness that we're swimming in. It's okay to feel this way - your emotions are valid and natural.",
-        "Sadness is one of grief's most persistent companions. The tears you're shedding are a testament to the love you shared. It's okay to sit with this sadness for a while. Would you like to tell me about what's making you feel particularly sad right now?",
-        "The depth of your sadness reflects the depth of your love. There's no timeline for grief, and no 'right' way to feel. Your sadness is honored here. Sometimes it helps to let the tears flow - they carry some of the pain away with them.",
-        "I'm sitting here with you in this sadness. You don't have to carry it alone. Grief can feel like drowning sometimes, but remember that even in the deepest ocean, there are moments when we surface to breathe. What has been your biggest source of sadness today?"
-      ];
-      response = sadResponses[Math.floor(Math.random() * sadResponses.length)];
-    }
-    
-    else if (angryWords.some(word => message.includes(word))) {
-      emotionalState = 'angry';
-      const angryResponses = [
-        "Anger is a natural part of grief, though it often surprises people. You might be angry at the situation, at yourself, at others, or even at your loved one for leaving. All of these feelings are normal and valid. What's stirring up this anger for you?",
-        "I hear your anger, and it's completely understandable. Grief isn't just sadness - it can be rage at the unfairness of loss. Your anger deserves to be acknowledged and processed safely. Would you like to talk about what's making you feel this way?",
-        "Anger in grief is like a fire that needs to be expressed safely rather than suppressed. Sometimes we're angry because we feel helpless, or because the world seems to keep moving when ours has stopped. Your anger is valid - how can we help you process it?",
-        "Many people are surprised by how angry grief can make them feel. It's often easier to be angry than to face the underlying hurt and vulnerability. Your anger is telling us something important about your pain. What's underneath this anger?"
-      ];
-      response = angryResponses[Math.floor(Math.random() * angryResponses.length)];
-    }
-    
-    else if (anxiousWords.some(word => message.includes(word))) {
-      emotionalState = 'anxious';
-      const anxiousResponses = [
-        "Anxiety and worry are very common in grief. You might be anxious about the future, about how you'll cope, or about forgetting your loved one. These worries are understandable given the magnitude of your loss. What's been worrying you most?",
-        "The anxiety you're feeling makes perfect sense. Grief can make the world feel uncertain and unsafe. Your nervous system is trying to protect you, but it can leave you feeling overwhelmed. Let's take this one moment at a time. What feels most overwhelming right now?",
-        "Anxiety often comes with grief because everything feels different and uncertain. Your mind might be racing with 'what if' questions. This is your heart trying to regain some sense of control. Would it help to talk through some of these worries together?",
-        "I understand you're feeling anxious or overwhelmed. Grief can make us feel like we're walking on unstable ground. Sometimes focusing on just the next breath, the next moment, can help. What would help you feel a little more grounded right now?"
-      ];
-      response = anxiousResponses[Math.floor(Math.random() * anxiousResponses.length)];
-    }
-    
-    else if (hopeWords.some(word => message.includes(word))) {
-      emotionalState = 'hopeful';
-      const hopeResponses = [
-        "I'm glad to hear some hope in your words. Healing doesn't mean forgetting - it means learning to carry your love in a new way. These moments of hope are important milestones in your journey. What's helping you feel more hopeful today?",
-        "It takes courage to speak of hope and healing while grieving. You're not betraying your loved one by having moments of light - you're honoring them by continuing to live and grow. How does it feel to notice this shift in yourself?",
-        "Hope can feel complicated in grief - like you're being disloyal to your loved one by feeling better. But hope is actually a gift they would want for you. Your healing honors their memory. What's been your source of strength or hope recently?",
-        "I hear the resilience in your words. Grief and hope can coexist - it's not one or the other. Your ability to find light even in darkness shows incredible strength. Your loved one would be proud of your courage to keep going."
-      ];
-      response = hopeResponses[Math.floor(Math.random() * hopeResponses.length)];
-    }
-    
-    else if (memoryWords.some(word => message.includes(word))) {
-      emotionalState = 'reflective';
-      const memoryResponses = [
-        "Memories are precious gifts that no one can take away from you. Each memory is a thread in the tapestry of your relationship that continues even after death. Would you like to share a favorite memory? Sometimes speaking them aloud helps keep them vivid.",
-        "Thank you for sharing this memory. These stories keep your loved one's spirit alive and present. Memories can be both comforting and painful - they remind us of what we had and what we've lost. How does it feel to remember this particular moment?",
-        "What a beautiful way to honor your loved one - through memory. Every time you remember them, you're keeping a part of them alive in the world. These memories are treasures that grow more precious with time. Tell me more about what you remember most.",
-        "Memories are how love continues after death. Your ability to remember, to tell their story, to keep their essence alive in your heart - this is one of the most beautiful aspects of human love. What memory has been visiting you most often lately?"
-      ];
-      response = memoryResponses[Math.floor(Math.random() * memoryResponses.length)];
-    }
-    
-    else if (familyWords.some(word => message.includes(word))) {
-      emotionalState = 'family-focused';
-      const familyResponses = [
-        "Family relationships can become more complex during grief. Everyone grieves differently, and sometimes family members struggle to understand each other's processes. It's challenging when you need support but others are struggling too. How is your family coping together?",
-        "Grief affects entire family systems, and everyone's timeline and expression of grief is different. Sometimes this creates tension or misunderstandings. You might feel like you need to be strong for others, or frustrated that others aren't grieving 'the right way.' What's your experience been with family during this time?",
-        "Supporting family while grieving yourself is one of the hardest aspects of loss. You might feel torn between your own needs and caring for others who are also hurting. Remember that you can't pour from an empty cup. How are you balancing your own grief with family needs?",
-        "Family can be both a source of comfort and additional stress during grief. Different coping styles, disagreements about memorial services, or old family dynamics can all surface during loss. What has been most helpful or challenging about family support during this time?"
-      ];
-      response = familyResponses[Math.floor(Math.random() * familyResponses.length)];
-    }
-    
-    // Handle specific grief stages or general support
-    else if (message.includes('help') || message.includes('support')) {
-      const helpResponses = [
-        "I'm here to help however I can. Grief support can take many forms - sometimes it's just having someone listen, other times it's practical guidance or coping strategies. What kind of support feels most needed right now?",
-        "Asking for help is a sign of strength, not weakness. Grief is not meant to be carried alone. Whether you need emotional support, practical help, or just someone to sit with you in the pain, you deserve care and support. What would be most helpful?",
-        "Support during grief might look different than you expect. Sometimes it's someone bringing dinner, sometimes it's a friend who lets you cry without trying to fix anything. What has been most helpful so far, and what do you find yourself needing most?",
-        "I'm honored that you're reaching out for support. That takes courage. Everyone's support needs are different - some people need to talk, others need quiet presence, others need help with practical matters. How can I best support you right now?"
-      ];
-      response = helpResponses[Math.floor(Math.random() * helpResponses.length)];
-    }
-    
-    else if (message.includes('alone') || message.includes('isolated')) {
-      const lonelinessResponses = [
-        "Loneliness in grief can feel overwhelming. Even when surrounded by people, you might feel profoundly alone because the one person you want to talk to isn't there. This loneliness is part of the grief journey, but you don't have to navigate it entirely by yourself.",
-        "The loneliness of grief is unique - it's not just being physically alone, but feeling like no one truly understands what you're going through. Your feelings of isolation are valid, and I want you to know that you're not as alone as you feel right now.",
-        "Grief can be incredibly isolating. People around you might not know what to say or do, leaving you feeling alone with your pain. Please know that feeling lonely doesn't mean you are alone - there are people who care, even if it doesn't always feel that way.",
-        "I hear how alone you're feeling, and I want you to know that this loneliness, while painful, is shared by many people walking the grief journey. You're part of a larger human experience, even when it feels like you're the only one in the world experiencing this pain."
-      ];
-      response = lonelinessResponses[Math.floor(Math.random() * lonelinessResponses.length)];
-    }
-    
-    // Default empathetic responses
-    else {
-      const generalResponses = [
-        "Thank you for sharing that with me. I'm listening and I'm here with you in whatever you're experiencing. Grief is deeply personal, and there's no right or wrong way to feel. What's been on your heart lately?",
-        "I appreciate you opening up about your experience. Grief can be so isolating, but you're not alone in this journey. Every feeling you have is valid and deserves to be acknowledged. How has today been for you?",
-        "Your words matter, and your experience matters. Grief teaches us that love doesn't end with death - it transforms. I'm here to listen to whatever you need to express, whether it's pain, confusion, memories, or anything else.",
-        "I'm grateful you feel comfortable sharing with me. Grief is one of the most profound human experiences, and it takes courage to be vulnerable about what you're going through. Tell me more about what's in your heart right now.",
-        "There's something powerful about putting our grief into words, even when words feel inadequate for the depth of our loss. I'm here to hold space for whatever you're experiencing. What would it help to talk about?"
-      ];
-      response = generalResponses[Math.floor(Math.random() * generalResponses.length)];
-    }
-
-    // Update conversation context
-    setConversationContext(prev => ({
-      ...prev,
-      emotionalState,
-      sessionLength: prev.sessionLength + 1,
-      mentionedTopics: [...new Set([...prev.mentionedTopics, emotionalState])]
-    }));
-
-    return response;
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const [emotionalState, setEmotionalState] = useState('neutral');
+  const [isLoading, setIsLoading] = useState(false);
+  const [crisisDetected, setCrisisDetected] = useState(false);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    initializeSession();
+  }, []);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const initializeSession = async () => {
+    try {
+      const response = await fetch('/api/grief/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSessionId(data.session_id);
+        setMessages(data.messages || []);
+        setEmotionalState(data.emotional_state || 'neutral');
+        
+        // Add welcome message if no existing messages
+        if (!data.messages || data.messages.length === 0) {
+          const welcomeMessage = {
+            id: 1,
+            type: 'ai',
+            content: 'Hello, I\'m here to provide you with compassionate support during this difficult time. I understand that dealing with grief and loss can be overwhelming. Please know that this is a safe space where you can share your feelings without judgment. How are you feeling today?',
+            timestamp: new Date().toISOString(),
+            provider: 'ai'
+          };
+          setMessages([welcomeMessage]);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to initialize grief session:', error);
+      // Fallback welcome message
+      setMessages([{
+        id: 1,
+        type: 'ai',
+        content: 'Hello, I\'m here to support you through this difficult time. How are you feeling today?',
+        timestamp: new Date().toISOString(),
+        provider: 'fallback'
+      }]);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!inputMessage.trim() || !sessionId || isLoading) return;
 
     const userMessage = {
       id: messages.length + 1,
       type: 'user',
       content: inputMessage,
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Simulate realistic AI thinking time
-    const thinkingTime = Math.random() * 2000 + 1500; // 1.5-3.5 seconds
-    
-    setTimeout(() => {
-      const aiResponse = {
+    try {
+      const response = await fetch('/api/grief/message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: new URLSearchParams({
+          session_id: sessionId,
+          message: inputMessage
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        const aiMessage = {
+          id: messages.length + 2,
+          type: 'ai',
+          content: data.response,
+          timestamp: new Date().toISOString(),
+          provider: data.provider_used || 'ai'
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+        setEmotionalState(data.emotional_state || 'neutral');
+        setCrisisDetected(data.crisis_detected || false);
+      } else {
+        // Fallback response
+        const fallbackMessage = {
+          id: messages.length + 2,
+          type: 'ai',
+          content: 'I hear you, and I want you to know that your feelings are completely valid. Sometimes it helps to talk about what\'s on your mind. I\'m here to listen and support you through this.',
+          timestamp: new Date().toISOString(),
+          provider: 'fallback'
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+      }
+    } catch (error) {
+      console.error('Failed to send grief message:', error);
+      // Fallback response
+      const errorMessage = {
         id: messages.length + 2,
         type: 'ai',
-        content: generateAIResponse(inputMessage),
-        timestamp: new Date()
+        content: 'I\'m here for you. Please know that it\'s okay to take your time processing these feelings. Would you like to tell me more about what you\'re experiencing?',
+        timestamp: new Date().toISOString(),
+        provider: 'fallback'
       };
-      setMessages(prev => [...prev, aiResponse]);
-      setIsTyping(false);
-    }, thinkingTime);
+      setMessages(prev => [...prev, errorMessage]);
+    }
+
+    setIsLoading(false);
+  };
+
+  const getEmotionalStateColor = () => {
+    switch (emotionalState) {
+      case 'sad': return 'text-blue-600';
+      case 'angry': return 'text-red-600';
+      case 'anxious': return 'text-yellow-600';
+      case 'hopeful': return 'text-green-600';
+      case 'reflective': return 'text-purple-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getEmotionalStateIcon = () => {
+    switch (emotionalState) {
+      case 'sad': return '😢';
+      case 'angry': return '😠';
+      case 'anxious': return '😰';
+      case 'hopeful': return '🌟';
+      case 'reflective': return '🤔';
+      default: return '💙';
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">AI Grief Companion</h1>
-          <p className="text-gray-600">Compassionate support with memory playback and guidance</p>
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl text-white">🤝</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Grief Companion</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            A compassionate AI companion to support you through difficult times. Share your feelings in a safe, judgment-free space.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Chat Area */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm h-96 flex flex-col">
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white">💜</div>
-                  <div>
-                    <h3 className="font-medium">Compassionate AI</h3>
-                    <p className="text-sm text-gray-500">Here to listen and support you</p>
-                  </div>
-                </div>
-              </div>
+        {/* Emotional State Indicator */}
+        <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-center space-x-3">
+            <span className="text-2xl">{getEmotionalStateIcon()}</span>
+            <div>
+              <p className="text-sm text-gray-500">Current emotional state:</p>
+              <p className={`font-medium capitalize ${getEmotionalStateColor()}`}>
+                {emotionalState.replace('_', ' ')}
+              </p>
+            </div>
+          </div>
+        </div>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-xs px-4 py-2 rounded-lg ${
-                      message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
-                    }`}>
-                      <p className="text-sm">{message.content}</p>
-                      <p className={`text-xs mt-1 ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 px-4 py-2 rounded-lg">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="p-4 border-t border-gray-200">
-                <div className="flex space-x-3">
-                  <input
-                    type="text"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Share your thoughts or feelings..."
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={!inputMessage.trim() || isTyping}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    Send
-                  </button>
+        {/* Crisis Alert */}
+        {crisisDetected && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">🆘</span>
+              <div>
+                <h3 className="font-bold text-red-800">Crisis Support Available</h3>
+                <p className="text-red-600 text-sm">
+                  If you're having thoughts of self-harm, please reach out for immediate help:
+                </p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-red-600 text-sm font-medium">• National Suicide Prevention Lifeline: 988</p>
+                  <p className="text-red-600 text-sm font-medium">• Crisis Text Line: Text HOME to 741741</p>
+                  <p className="text-red-600 text-sm font-medium">• Emergency Services: 911</p>
                 </div>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Support Resources */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">💝 Support Resources</h3>
-              <div className="space-y-3">
-                <button 
-                  onClick={() => {
-                    const memoryPrompt = "Would you like to share a favorite memory of your loved one? Sometimes talking about the good times can bring comfort.";
-                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: memoryPrompt, timestamp: new Date() }]);
-                  }}
-                  className="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+        {/* Chat Interface */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+          {/* Messages */}
+          <div className="h-96 overflow-y-auto p-6 space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white rounded-br-none'
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                  }`}
                 >
-                  <div className="font-medium text-purple-900">💭 Memory Sharing</div>
-                  <div className="text-sm text-purple-700">Share precious memories together</div>
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    const breathingPrompt = "Let's take a moment to breathe together. Close your eyes if you feel comfortable, and let's focus on slow, deep breaths. Breathe in for 4 counts... hold for 4... breathe out for 6. You're safe here.";
-                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: breathingPrompt, timestamp: new Date() }]);
-                  }}
-                  className="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                >
-                  <div className="font-medium text-blue-900">🌬️ Breathing Exercise</div>
-                  <div className="text-sm text-blue-700">Calming breathing techniques</div>
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    const journalPrompt = "Writing can be healing. Would you like me to guide you through some journaling prompts? We could explore your feelings, memories, or thoughts about your grief journey.";
-                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: journalPrompt, timestamp: new Date() }]);
-                  }}
-                  className="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-                >
-                  <div className="font-medium text-green-900">📝 Grief Journaling</div>
-                  <div className="text-sm text-green-700">Express feelings through writing</div>
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    const supportPrompt = "Grief can feel overwhelming. Remember: it's okay to not be okay. Healing isn't linear. You're stronger than you know, even when you feel broken. Your loved one's memory lives on through you. What's one small thing you can do for yourself today?";
-                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: supportPrompt, timestamp: new Date() }]);
-                  }}
-                  className="w-full text-left p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
-                >
-                  <div className="font-medium text-orange-900">💪 Daily Affirmations</div>
-                  <div className="text-sm text-orange-700">Gentle reminders of strength</div>
-                </button>
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className={`text-xs ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                      {new Date(message.timestamp).toLocaleTimeString()}
+                    </p>
+                    {message.provider && message.type === 'ai' && (
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        message.provider === 'openai' ? 'bg-green-100 text-green-600' :
+                        message.provider === 'deepseek' ? 'bg-purple-100 text-purple-600' :
+                        'bg-gray-200 text-gray-600'
+                      }`}>
+                        {message.provider === 'openai' ? '🤖 OpenAI' : 
+                         message.provider === 'deepseek' ? '🧠 DeepSeek' : '💭 AI'}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+            
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 px-4 py-3 rounded-lg rounded-bl-none">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
-            {/* Crisis Support */}
-            <div className="bg-red-50 border border-red-200 rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-red-900 mb-4">🆘 Crisis Support</h3>
-              <p className="text-sm text-red-800 mb-4">
-                If you're in crisis or need immediate support, please reach out:
+          {/* Input */}
+          <div className="border-t border-gray-200 p-4">
+            <div className="flex space-x-3">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Share your feelings or ask for support..."
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                disabled={isLoading || !sessionId}
+              />
+              <button
+                onClick={sendMessage}
+                disabled={isLoading || !inputMessage.trim() || !sessionId}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  'Send'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Support Resources */}
+        <div className="mt-8 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <h3 className="font-bold text-gray-900 mb-4">Additional Support Resources</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-medium text-blue-900 mb-2">Professional Support</h4>
+              <p className="text-blue-700 text-sm">
+                Consider speaking with a licensed therapist or counselor who specializes in grief and loss.
               </p>
-              <div className="space-y-2 text-sm">
-                <div className="font-medium text-red-900">Crisis Text Line</div>
-                <div className="text-red-700">Text HOME to 741741</div>
-                <div className="font-medium text-red-900 mt-3">988 Suicide & Crisis Lifeline</div>
-                <div className="text-red-700">Call or Text 988</div>
-                <div className="font-medium text-red-900 mt-3">Grief Support Helpline</div>
-                <div className="text-red-700">1-800-395-5755</div>
-              </div>
             </div>
-
-            {/* Session Info */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">💬 Session Info</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Session Length</span>
-                  <span className="font-medium">{conversationContext.sessionLength} messages</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Emotional State</span>
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    conversationContext.emotionalState === 'sad' ? 'bg-blue-100 text-blue-800' :
-                    conversationContext.emotionalState === 'angry' ? 'bg-red-100 text-red-800' :
-                    conversationContext.emotionalState === 'anxious' ? 'bg-yellow-100 text-yellow-800' :
-                    conversationContext.emotionalState === 'hopeful' ? 'bg-green-100 text-green-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {conversationContext.emotionalState}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-700">Support Level</span>
-                  <span className="text-purple-600 font-medium">{conversationContext.supportLevel}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Capabilities */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Capabilities</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-gray-700">Emotional state recognition</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-gray-700">Personalized responses</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-gray-700">Memory-based conversations</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-gray-700">Crisis detection</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-gray-700">Grief stage awareness</span>
-                </div>
-              </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-medium text-green-900 mb-2">Support Groups</h4>
+              <p className="text-green-700 text-sm">
+                Connect with others who understand your experience through local or online support groups.
+              </p>
             </div>
           </div>
         </div>

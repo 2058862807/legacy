@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from typing import Optional, Dict, Any
 import json
 import logging
+import os
 from datetime import datetime
 
 # Import our modules

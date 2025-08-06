@@ -343,11 +343,13 @@ async def get_will_ai_assistance(
 @payment_router.get("/api/guidance/welcome")
 async def get_welcome_tutorial():
     """Get welcome tutorial and onboarding guide"""
+    _, _, guidance_service = get_services()
     return guidance_service.get_welcome_tutorial()
 
 @payment_router.get("/api/guidance/feature-tour/{feature}")
 async def get_feature_tour(feature: str):
     """Get detailed tour for specific feature"""
+    _, _, guidance_service = get_services()
     return guidance_service.get_feature_tour(feature)
 
 @payment_router.post("/api/guidance/help")
@@ -358,6 +360,8 @@ async def get_contextual_help(
 ):
     """Get contextual help for specific pages"""
     try:
+        _, _, guidance_service = get_services()
+        
         session_id = f"help_{current_user.id if current_user else 'anonymous'}"
         help_response = await guidance_service.get_contextual_help(page, query, session_id)
         

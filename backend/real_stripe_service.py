@@ -289,7 +289,7 @@ class RealStripeService:
                 "success": False,
                 "error": "Invalid webhook signature"
             }
-        except self.stripe.error.StripeError as e:
+        except stripe.error.StripeError as e:
             logger.error(f"❌ Stripe webhook error: {str(e)}")
             return {
                 "success": False,

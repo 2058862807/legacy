@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 # Import Stripe at module level
 try:
     import stripe
+    from stripe.checkout import Session as CheckoutSession
     STRIPE_AVAILABLE = True
     logger.info("✅ Stripe library imported successfully")
 except ImportError as e:

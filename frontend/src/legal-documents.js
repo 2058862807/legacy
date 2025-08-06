@@ -942,8 +942,6 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
             </>
           )}
         </div>
-
-        </div>
       </div>
     </div>
   );

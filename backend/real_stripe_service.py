@@ -326,7 +326,7 @@ class RealStripeService:
                 "status": refund.status
             }
         
-        except stripe.error.StripeError as e:
+        except self.stripe.error.StripeError as e:
             logger.error(f"❌ Refund creation failed: {str(e)}")
             return {
                 "success": False,

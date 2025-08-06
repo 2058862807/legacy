@@ -154,6 +154,12 @@ function App() {
               isAuthenticated ? <StateComplianceDashboard user={currentUser} /> : <Navigate to="/login" />
             } 
           />
+          <Route 
+            path="/safes" 
+            element={
+              isAuthenticated ? <PersonalSafes user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
             
           {/* Legal Document Routes */}
           <Route path="/terms" element={<TermsOfServicePage />} />

@@ -634,7 +634,15 @@ async def send_grief_message(
             raise HTTPException(status_code=404, detail="Session not found")
         
         # Initialize real AI service
-        ai_service = RealAIService()
+        try:
+            from enhanced_services import RealAIService
+            ai_service = RealAIService()
+        except ImportError as e:
+            logger.warning(f"⚠️ Enhanced AI services not available: {str(e)}")
+            raise HTTPException(status_code=503, detail="AI services temporarily unavailable")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize AI service: {str(e)}")
+            raise HTTPException(status_code=503, detail="AI services temporarily unavailable")
         
         # Generate AI response
         ai_response = await ai_service.generate_grief_response(

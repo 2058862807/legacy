@@ -345,6 +345,10 @@ async def get_will_ai_assistance(
     try:
         real_ai_service, _, _ = get_services()
         
+        # Check if AI service is available
+        if real_ai_service is None:
+            raise HTTPException(status_code=503, detail="AI services temporarily unavailable")
+        
         # Parse user context
         user_context = json.loads(context)
         user_context.update({

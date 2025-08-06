@@ -158,6 +158,10 @@ function App() {
           <Route path="/terms" element={<TermsOfServicePage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/liability" element={<LiabilityAgreementPage />} />
+          
+          {/* Payment Flow Routes */}
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/payment-cancel" element={<PaymentCancelPage />} />
         </Routes>
 
         {!isAuthenticated && <Footer />}

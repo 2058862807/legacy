@@ -189,18 +189,20 @@ class RealStripeService:
                 }
             }
 
-        except self.stripe.error.StripeError as e:
-            logger.error(f"❌ Stripe API error checking payment: {str(e)}")
-            return {
-                "success": False,
-                "error": f"Payment status check error: {str(e)}"
-            }
-        except Exception as e:
-            logger.error(f"❌ Payment status check failed: {str(e)}")
-            return {
-                "success": False,
-                "error": str(e)
-            }
+        except Exception as stripe_error:
+            error_message = str(stripe_error)
+            if "StripeError" in str(type(stripe_error)):
+                logger.error(f"❌ Stripe API error checking payment: {error_message}")
+                return {
+                    "success": False,
+                    "error": f"Payment status check error: {error_message}"
+                }
+            else:
+                logger.error(f"❌ Payment status check failed: {error_message}")
+                return {
+                    "success": False,
+                    "error": str(stripe_error)
+                }
 
     async def handle_webhook(self, request_body: bytes, stripe_signature: str, webhook_secret: str) -> Dict:
         """Handle real Stripe webhooks"""

@@ -1980,6 +1980,8 @@ export const SmartWillBuilder = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [blockchainEnabled, setBlockchainEnabled] = useState(false);
   const [notarized, setNotarized] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
   const [willData, setWillData] = useState({
     personalInfo: { 
       fullName: user?.name || '', 
@@ -1993,6 +1995,24 @@ export const SmartWillBuilder = ({ user }) => {
   });
   const [complianceStatus, setComplianceStatus] = useState(null);
   const [stateRequirements, setStateRequirements] = useState(null);
+
+  const premiumPackages = {
+    basic_will: {
+      name: "Basic Will Generation",
+      amount: 29.99,
+      description: "Generate a basic will with AI assistance"
+    },
+    premium_will: {
+      name: "Premium Will with Blockchain",
+      amount: 49.99,
+      description: "AI-powered will with blockchain notarization"
+    }
+  };
+
+  const handleUpgrade = (packageId) => {
+    setSelectedPackage(premiumPackages[packageId]);
+    setShowPaymentModal(true);
+  };
 
   // Real-time compliance checking
   useEffect(() => {

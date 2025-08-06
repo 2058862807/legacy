@@ -451,7 +451,7 @@ async def get_heirs(
         "full_name": heir.full_name,
         "email": heir.email,
         "phone": heir.phone,
-        "relationship": heir.relationship,
+        "heir_relationship": heir.heir_relationship,
         "role": heir.role,
         "percentage": heir.percentage,
         "is_verified": heir.is_verified,

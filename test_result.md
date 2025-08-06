@@ -635,7 +635,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Payment Modal End-to-End Testing"
+    - "Complete Payment Flow Frontend Testing"
+    - "Payment Modal Integration Verification"
+    - "End-to-End Stripe Integration Testing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

@@ -14,7 +14,7 @@ from typing import Dict, Any, Optional
 class NextEraBackendTester:
     def __init__(self):
         # Get backend URL from environment
-        self.base_url = os.getenv('REACT_APP_BACKEND_URL', 'https://baabb0e7-cd49-4809-8e4d-41184fdac2f2.preview.emergentagent.com')
+        self.base_url = os.getenv('REACT_APP_BACKEND_URL', 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com')
         self.api_url = f"{self.base_url}/api"
         self.session = requests.Session()
         self.auth_token = None

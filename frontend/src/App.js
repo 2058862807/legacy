@@ -145,6 +145,9 @@ function App() {
         </Routes>
 
         {!isAuthenticated && <Footer />}
+        
+        {/* Global Onboarding Chatbot - Available on all pages */}
+        <OnboardingChatbot />
       </div>
     </Router>
   );

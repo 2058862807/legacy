@@ -497,6 +497,144 @@ class NextEraBackendTester:
             self.log_test("CORS and Endpoint Accessibility", False, f"Error: {str(e)}")
             return False
 
+    def test_auth_security(self):
+        """Test authentication security and protected endpoints"""
+        try:
+            # Test accessing protected endpoint without auth
+            temp_session = requests.Session()
+            response = temp_session.get(f"{self.api_url}/user/profile", timeout=10)
+            
+            # Should return 401 or 403 for unauthorized access
+            unauthorized_blocked = response.status_code in [401, 403]
+            
+            # Test with invalid token
+            temp_session.headers.update({"Authorization": "Bearer invalid_token_12345"})
+            response2 = temp_session.get(f"{self.api_url}/user/profile", timeout=10)
+            invalid_token_blocked = response2.status_code in [401, 403]
+            
+            success = unauthorized_blocked and invalid_token_blocked
+            
+            self.log_test(
+                "Authentication Security",
+                success,
+                f"Unauthorized blocked: {unauthorized_blocked}, Invalid token blocked: {invalid_token_blocked}"
+            )
+            return success
+            
+        except Exception as e:
+            self.log_test("Authentication Security", False, f"Error: {str(e)}")
+            return False
+
+    def test_error_handling(self):
+        """Test error handling for invalid requests"""
+        try:
+            # Test invalid package ID for checkout
+            invalid_checkout = self.session.post(
+                f"{self.api_url}/payments/checkout",
+                data={"package_id": "invalid_package"},
+                timeout=10
+            )
+            
+            # Test invalid session ID for grief companion
+            invalid_grief = self.session.post(
+                f"{self.api_url}/grief/message",
+                data={"session_id": "invalid_session", "message": "test"},
+                timeout=10
+            )
+            
+            # Both should return appropriate error codes
+            checkout_error_handled = invalid_checkout.status_code in [400, 404, 422]
+            grief_error_handled = invalid_grief.status_code in [400, 404, 422]
+            
+            success = checkout_error_handled and grief_error_handled
+            
+            self.log_test(
+                "Error Handling",
+                success,
+                f"Checkout error handled: {checkout_error_handled} ({invalid_checkout.status_code}), Grief error handled: {grief_error_handled} ({invalid_grief.status_code})"
+            )
+            return success
+            
+        except Exception as e:
+            self.log_test("Error Handling", False, f"Error: {str(e)}")
+            return False
+
+    def test_webhook_endpoint(self):
+        """Test webhook endpoint exists and handles requests"""
+        try:
+            # Test webhook endpoint with mock data
+            mock_webhook_data = {
+                "id": "evt_test_webhook",
+                "object": "event",
+                "type": "checkout.session.completed",
+                "data": {
+                    "object": {
+                        "id": "cs_test_session",
+                        "payment_status": "paid"
+                    }
+                }
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/webhook/stripe",
+                json=mock_webhook_data,
+                headers={"stripe-signature": "test_signature"},
+                timeout=10
+            )
+            
+            # Webhook should exist and handle the request (even if signature fails)
+            webhook_exists = response.status_code in [200, 400, 401, 403]
+            
+            self.log_test(
+                "Webhook Endpoint",
+                webhook_exists,
+                f"Webhook endpoint accessible: {webhook_exists} (status: {response.status_code})"
+            )
+            return webhook_exists
+            
+        except Exception as e:
+            self.log_test("Webhook Endpoint", False, f"Error: {str(e)}")
+            return False
+
+    def test_data_persistence(self):
+        """Test data persistence across requests"""
+        try:
+            # Get user profile
+            profile_response = self.session.get(f"{self.api_url}/user/profile", timeout=10)
+            
+            if profile_response.status_code == 200:
+                profile_data = profile_response.json()
+                user_email = profile_data.get("email")
+                
+                # Update profile
+                update_response = self.session.put(
+                    f"{self.api_url}/user/profile",
+                    data={"first_name": "UpdatedJohn"},
+                    timeout=10
+                )
+                
+                if update_response.status_code == 200:
+                    # Get profile again to verify persistence
+                    verify_response = self.session.get(f"{self.api_url}/user/profile", timeout=10)
+                    
+                    if verify_response.status_code == 200:
+                        updated_profile = verify_response.json()
+                        persistence_works = updated_profile.get("first_name") == "UpdatedJohn"
+                        
+                        self.log_test(
+                            "Data Persistence",
+                            persistence_works,
+                            f"Profile update persisted: {persistence_works}, Name: {updated_profile.get('first_name')}"
+                        )
+                        return persistence_works
+            
+            self.log_test("Data Persistence", False, "Failed to test data persistence")
+            return False
+            
+        except Exception as e:
+            self.log_test("Data Persistence", False, f"Error: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🧪 Running Comprehensive Backend Tests\n")

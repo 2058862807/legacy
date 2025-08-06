@@ -146,6 +146,8 @@ async def get_payment_status(
 async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     """Handle Stripe webhooks"""
     try:
+        _, stripe_service, _ = get_services()
+        
         # Get request body and signature
         body = await request.body()
         stripe_signature = request.headers.get("stripe-signature")

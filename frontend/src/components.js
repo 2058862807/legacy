@@ -1383,7 +1383,6 @@ export const RegisterPage = ({ onLogin }) => {
   };
 
   const handleLegalDecline = () => {
-    setShowLegalModal(false);
     setError('You must accept the legal agreements to use NextEra Estate.');
   };
 

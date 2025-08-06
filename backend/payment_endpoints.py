@@ -28,9 +28,27 @@ def get_services():
     """Get initialized services (lazy loading)"""
     global real_ai_service, stripe_service, guidance_service
     if real_ai_service is None:
-        real_ai_service = RealAIService()
-        stripe_service = RealStripeService()
-        guidance_service = UserGuidanceService(real_ai_service)
+        try:
+            real_ai_service = RealAIService()
+            logger.info("✅ Real AI service initialized")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize AI service: {str(e)}")
+            raise
+        
+        try:
+            stripe_service = RealStripeService()
+            logger.info("✅ Stripe service initialized")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize Stripe service: {str(e)}")
+            raise
+        
+        try:
+            guidance_service = UserGuidanceService(real_ai_service)
+            logger.info("✅ Guidance service initialized")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize guidance service: {str(e)}")
+            raise
+    
     return real_ai_service, stripe_service, guidance_service
 
 # Payment Endpoints

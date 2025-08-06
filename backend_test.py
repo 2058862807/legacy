@@ -481,51 +481,48 @@ class NextEraBackendTester:
             self.log_test("Contextual Help with AI", False, f"Error: {str(e)}")
             return False
 
-    def test_database_models(self):
-        """Test database models by checking user profile and dashboard stats"""
-        try:
-            # Test user profile endpoint (requires authentication)
-            profile_response = self.session.get(f"{self.api_url}/user/profile", timeout=10)
+    def test_dashboard_data_access(self):
+        """Test dashboard data access with Bearer token (CRITICAL AUTH TEST)"""
+        if not self.auth_token:
+            self.log_test("Dashboard Data Access (CRITICAL AUTH)", False, "❌ No auth token available")
+            return False
             
-            if profile_response.status_code == 200:
-                profile_data = profile_response.json()
+        try:
+            # Test GET /api/user/dashboard-stats with Bearer token
+            stats_response = self.session.get(f"{self.api_url}/user/dashboard-stats", timeout=10)
+            
+            # Test GET /api/user/notifications with Bearer token  
+            notifications_response = self.session.get(f"{self.api_url}/user/notifications", timeout=10)
+            
+            stats_success = stats_response.status_code == 200
+            notifications_success = notifications_response.status_code == 200
+            
+            if stats_success and notifications_success:
+                stats_data = stats_response.json()
+                notifications_data = notifications_response.json()
                 
-                # Test dashboard stats endpoint
-                stats_response = self.session.get(f"{self.api_url}/dashboard/stats", timeout=10)
+                # Verify authenticated endpoints return user-specific data
+                has_stats = isinstance(stats_data, dict) and len(stats_data) > 0
+                has_notifications = isinstance(notifications_data, list)
                 
-                if stats_response.status_code == 200:
-                    stats_data = stats_response.json()
-                    
-                    # Check if PaymentTransaction model is working by checking enhanced stats
-                    enhanced_response = self.session.get(f"{self.api_url}/dashboard/enhanced-stats", timeout=10)
-                    
-                    if enhanced_response.status_code == 200:
-                        enhanced_data = enhanced_response.json()
-                        
-                        success = (
-                            "email" in profile_data and
-                            "documents_stored" in stats_data and
-                            "premium_features" in enhanced_data
-                        )
-                        
-                        self.log_test(
-                            "Database Models (User, PaymentTransaction)",
-                            success,
-                            f"Profile: {profile_data.get('email', 'N/A')}, Stats keys: {list(stats_data.keys())}, Enhanced keys: {list(enhanced_data.keys())}"
-                        )
-                        return success
-                    else:
-                        self.log_test("Database Models", False, f"Enhanced stats HTTP {enhanced_response.status_code}", enhanced_response.text)
-                        return False
-                else:
-                    self.log_test("Database Models", False, f"Stats HTTP {stats_response.status_code}", stats_response.text)
-                    return False
+                success = has_stats and has_notifications
+                
+                self.log_test(
+                    "Dashboard Data Access (CRITICAL AUTH)",
+                    success,
+                    f"✅ Authenticated endpoints working! Stats keys: {list(stats_data.keys()) if has_stats else 'None'}, Notifications: {len(notifications_data) if has_notifications else 0} items"
+                )
+                return success
             else:
-                self.log_test("Database Models", False, f"Profile HTTP {profile_response.status_code}", profile_response.text)
+                self.log_test(
+                    "Dashboard Data Access (CRITICAL AUTH)", 
+                    False, 
+                    f"❌ Auth endpoints failed - Stats: {stats_response.status_code}, Notifications: {notifications_response.status_code}"
+                )
                 return False
                 
         except Exception as e:
-            self.log_test("Database Models", False, f"Error: {str(e)}")
+            self.log_test("Dashboard Data Access (CRITICAL AUTH)", False, f"❌ Error: {str(e)}")
             return False
 
     def test_cors_and_endpoints(self):

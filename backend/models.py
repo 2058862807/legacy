@@ -109,7 +109,7 @@ class Heir(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
     phone = Column(String, nullable=True)
-    relationship = Column(String, nullable=False)  # spouse, child, parent, etc.
+    heir_relationship = Column(String, nullable=False)  # spouse, child, parent, etc.
     role = Column(String, nullable=False)  # primary, secondary, charity, etc.
     percentage = Column(Float, nullable=False)
     address = Column(Text, nullable=True)

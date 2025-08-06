@@ -16,7 +16,8 @@ import {
   StateComplianceDashboard,
   Header,
   Footer,
-  OnboardingChatbot
+  OnboardingChatbot,
+  PersonalSafes
 } from './components';
 
 import {

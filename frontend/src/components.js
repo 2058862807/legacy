@@ -714,8 +714,9 @@ export const LoginPage = ({ onLogin }) => {
   );
 };
 
-// Register Page Component with 50-State Integration
+// Register Page Component with Legal Agreement and Backend Integration
 export const RegisterPage = ({ onLogin }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -723,11 +724,14 @@ export const RegisterPage = ({ onLogin }) => {
     password: '',
     confirmPassword: '',
     jurisdiction: '',
+    phone: '',
     acceptTerms: false
   });
   const [loading, setLoading] = useState(false);
   const [selectedState, setSelectedState] = useState(null);
   const [stateInfo, setStateInfo] = useState(null);
+  const [showLegalModal, setShowLegalModal] = useState(false);
+  const [error, setError] = useState('');
 
   // Get all 50 states for dropdown
   const allStates = stateComplianceService.getAllStates();
@@ -743,32 +747,80 @@ export const RegisterPage = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
 
     if (!formData.acceptTerms) {
-      alert('Please accept the terms and conditions');
+      setError('Please accept the terms and conditions');
       return;
     }
 
-    setLoading(true);
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.jurisdiction) {
+      setError('Please fill in all required fields');
+      return;
+    }
 
-    // Simulate registration
-    setTimeout(() => {
-      const userData = {
-        id: 1,
-        name: `${formData.firstName} ${formData.lastName}`,
+    // Show legal agreement modal
+    setShowLegalModal(true);
+  };
+
+  const handleLegalAcceptance = async () => {
+    setShowLegalModal(false);
+    setLoading(true);
+    setError('');
+
+    try {
+      // Convert to backend-compatible format
+      const registrationData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         email: formData.email,
-        token: 'new-user-token-' + Date.now(),
-        jurisdiction: formData.jurisdiction,
-        biometricEnabled: false
+        password: formData.password,
+        phone: formData.phone || '',
+        jurisdiction: `${stateInfo?.fullName || formData.jurisdiction}, USA`,
+        legal_agreements_accepted: true,
+        legal_acceptance_timestamp: new Date().toISOString()
       };
-      onLogin(userData);
+
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(registrationData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('nextera_user', JSON.stringify(data.user));
+        
+        // Call onLogin if provided, otherwise navigate
+        if (onLogin) {
+          onLogin(data.user);
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        const errorData = await response.text();
+        setError(errorData || 'Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('Network error. Please check your connection and try again.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
+  };
+
+  const handleLegalDecline = () => {
+    setShowLegalModal(false);
+    setError('You must accept the legal agreements to use NextEra Estate.');
   };
 
   return (

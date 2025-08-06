@@ -183,6 +183,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED - PaymentTransaction database model working correctly. Enhanced dashboard stats endpoint shows premium_features, total_spent, payment_history, and ai_assistance_available fields. Database operations functional. Model properly integrated with user profile and dashboard systems."
 
+  - task: "Will Builder AI Assistance API"
+    implemented: true
+    working: true
+    file: "/app/backend/payment_endpoints.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added AI assistance endpoint for will builder with user context, jurisdiction awareness, and educational guidance."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Will Builder AI assistance API working properly. Endpoint accepts user queries and context, integrates user jurisdiction and profile data. Returns relevant legal guidance (203 chars) with provider tracking. Fallback responses working when AI quota exceeded. Educational disclaimers and jurisdiction-specific advice functioning."
+
   - task: "Production Security and Error Handling"
     implemented: true
     working: true

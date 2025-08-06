@@ -139,11 +139,14 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
         if not stripe_signature:
             raise HTTPException(status_code=400, detail="Missing Stripe signature")
 
-        # Get origin URL
-        origin_url = str(request.base_url).rstrip('/')
+        # Get webhook secret from environment
+        webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+        if not webhook_secret:
+            logger.error("STRIPE_WEBHOOK_SECRET not configured")
+            raise HTTPException(status_code=500, detail="Webhook secret not configured")
         
         # Handle webhook
-        webhook_result = await stripe_service.handle_webhook(body, stripe_signature, origin_url)
+        webhook_result = await stripe_service.handle_webhook(body, stripe_signature, webhook_secret)
         
         if not webhook_result["success"]:
             logger.error(f"Webhook processing failed: {webhook_result['error']}")

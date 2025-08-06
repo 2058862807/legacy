@@ -744,16 +744,44 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
     }
   };
 
+  const handleDecline = () => {
+    // Reset acceptance states when declining
+    setAcceptedTerms(false);
+    setAcceptedPrivacy(false);
+    setAcceptedLiability(false);
+    setCurrentTab('terms');
+    onDecline();
+  };
+
+  const handleBackgroundClick = (e) => {
+    // Allow closing by clicking outside the modal
+    if (e.target === e.currentTarget) {
+      handleDecline();
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={handleBackgroundClick}
+    >
       <div className="bg-white rounded-xl max-w-5xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="bg-gray-50 border-b border-gray-200 p-6">
+        {/* Header with Close Button */}
+        <div className="bg-gray-50 border-b border-gray-200 p-6 relative">
+          <button
+            onClick={handleDecline}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close modal"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Legal Agreements Required</h2>
           <p className="text-gray-600">
-            Please review and accept all legal agreements to continue using NextEra Estate.
+            Please review and accept all legal agreements to continue using NextEra Estate, or click "Decline & Exit" to cancel registration.
           </p>
         </div>
 

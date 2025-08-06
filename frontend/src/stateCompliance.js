@@ -1442,7 +1442,6 @@ export class StateComplianceService {
       }
     };
   }
-}
 
   // Helper function to convert full state name to state code
   getStateCodeFromFullName(fullStateName) {

@@ -1522,13 +1522,17 @@ export const RegisterPage = ({ onLogin }) => {
             <div className="flex items-start">
               <input
                 type="checkbox"
-                required
+                name="acceptTerms"
                 checked={formData.acceptTerms}
                 onChange={(e) => setFormData({...formData, acceptTerms: e.target.checked})}
-                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                required
               />
               <label className="ml-2 text-sm text-gray-700">
-                I acknowledge that I will review and accept the comprehensive legal agreements before account creation
+                I agree to the{' '}
+                <Link to="/terms" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Terms of Service</Link>, 
+                {' '}<Link to="/privacy" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Privacy Policy</Link>, and 
+                {' '}<Link to="/liability" className="text-blue-600 hover:text-blue-500 underline" target="_blank">Liability Agreement</Link>
               </label>
             </div>
 

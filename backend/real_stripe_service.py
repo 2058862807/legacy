@@ -362,7 +362,7 @@ class RealStripeService:
                 "total_payments": len(customer_sessions)
             }
             
-        except stripe.error.StripeError as e:
+        except self.stripe.error.StripeError as e:
             logger.error(f"❌ Customer payments lookup failed: {str(e)}")
             return {
                 "success": False,

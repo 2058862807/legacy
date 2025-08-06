@@ -872,6 +872,7 @@ export const Header = ({ user, onLogout }) => {
             {isMenuOpen && (
               <div className="absolute right-4 top-16 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                 <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">Profile & Settings</Link>
+                <Link to="/safes" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">🔐 Personal Safes</Link>
                 <Link to="/death-trigger" className="block px-4 py-2 text-gray-700 hover:bg-gray-50">Death Trigger</Link>
                 <hr className="my-2" />
                 <button

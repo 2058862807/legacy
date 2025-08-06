@@ -1026,14 +1026,12 @@ const STATE_NAME_TO_CODE = {
 const getUserStateCode = (userJurisdiction) => {
   if (!userJurisdiction) return 'CA'; // Default to California
   
-  // If already a state code, return it
-  if (userJurisdiction.length === 2 && US_STATES_COMPLIANCE[userJurisdiction]) {
-    return userJurisdiction;
+  try {
+    return stateComplianceService.getStateCodeFromFullName(userJurisdiction);
+  } catch (error) {
+    console.warn('Could not find state code for:', userJurisdiction, error);
+    return 'CA'; // Default to California if not found
   }
-  
-  // Extract state name from formats like "California, USA" or "California"
-  const stateName = userJurisdiction.split(',')[0].trim();
-  return STATE_NAME_TO_CODE[stateName] || 'CA';
 };
 // 50-State Compliance Dashboard Component
 export const StateComplianceDashboard = ({ user }) => {

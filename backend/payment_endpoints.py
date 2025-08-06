@@ -83,8 +83,8 @@ async def create_payment_checkout(
     try:
         _, stripe_service, _ = get_services()
         
-        # Get origin URL from request
-        origin_url = str(request.base_url).rstrip('/')
+        # Get origin URL from environment (frontend URL)
+        origin_url = os.environ.get('FRONTEND_URL', 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com')
         
         # Create checkout session
         result = await stripe_service.create_checkout_session(

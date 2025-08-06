@@ -1084,47 +1084,44 @@ export const LoginPage = ({ onLogin }) => {
     setError('');
 
     try {
-      console.log('Attempting login with:', formData.email);
+      // Use hardcoded backend URL to avoid env variable issues
+      const backendUrl = 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com';
       
-      const formBody = new URLSearchParams();
-      formBody.append('email', formData.email);
-      formBody.append('password', formData.password);
+      console.log('LOGIN ATTEMPT:', formData.email);
       
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
+      const response = await fetch(`${backendUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: formBody
+        body: `email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}`
       });
 
-      console.log('Response status:', response.status);
+      console.log('RESPONSE STATUS:', response.status);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful:', data);
+        console.log('LOGIN SUCCESS:', data);
         
-        // Store token and user data
-        if (data.access_token) {
-          localStorage.setItem('token', data.access_token);
-          localStorage.setItem('nextera_user', JSON.stringify(data.user || data));
-        }
+        // Store data in localStorage
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('nextera_user', JSON.stringify(data.user));
         
         // Call onLogin with user data
-        onLogin(data.user || data);
+        onLogin(data.user);
+        
+        // Force redirect to dashboard
+        window.location.href = '/dashboard';
+        
       } else {
         const errorText = await response.text();
-        console.error('Login error response:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          setError(errorData.detail || errorData.message || 'Login failed');
-        } catch {
-          setError('Login failed. Please try again.');
-        }
+        console.error('LOGIN ERROR:', response.status, errorText);
+        setError('Invalid email or password');
       }
-    } catch (err) {
-      console.error('Login network error:', err);
-      setError('Unable to connect to server. Please check your internet connection and try again.');
+      
+    } catch (error) {
+      console.error('NETWORK ERROR:', error);
+      setError('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

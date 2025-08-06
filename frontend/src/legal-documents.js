@@ -943,14 +943,8 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
           )}
         </div>
 
+        </div>
       </div>
-    );
-  } else {
-    // Set initial state to collapsed
-    if (currentTab === 'terms') {
-      setCurrentTab('collapsed');
-    }
-  }
-
-  return (
+    </div>
+  );
 };

@@ -44,6 +44,9 @@ app.add_middleware(
 # Create database tables
 create_tables()
 
+# Include payment and enhanced AI router
+app.include_router(payment_router)
+
 # Create upload directories
 os.makedirs("uploads/documents", exist_ok=True)
 os.makedirs("uploads/generated", exist_ok=True)

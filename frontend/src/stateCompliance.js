@@ -1470,6 +1470,33 @@ export class StateComplianceService {
     const state = this.getStateCompliance(stateCode);
     return `${state.fullName}, USA`;
   }
+
+  // Helper function to convert full state name to state code
+  getStateCodeFromFullName(fullStateName) {
+    // Handle formats like "California, USA", "California", or "CA"
+    const cleanName = fullStateName.replace(', USA', '').trim();
+    
+    // If already a code, return as-is
+    if (cleanName.length === 2 && US_STATES_COMPLIANCE[cleanName.toUpperCase()]) {
+      return cleanName.toUpperCase();
+    }
+    
+    // Search for matching state name
+    for (const [code, data] of Object.entries(US_STATES_COMPLIANCE)) {
+      if (data.name.toLowerCase() === cleanName.toLowerCase() || 
+          data.fullName.toLowerCase() === cleanName.toLowerCase()) {
+        return code;
+      }
+    }
+    
+    throw new Error(`State not found: ${fullStateName}`);
+  }
+
+  // Helper function to get full state name with country
+  getFullStateNameWithCountry(stateCode) {
+    const state = this.getStateCompliance(stateCode);
+    return `${state.fullName}, USA`;
+  }
 }
 
 // Export singleton instance

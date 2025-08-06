@@ -847,25 +847,22 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
             </label>
           </div>
 
-          {/* Action Buttons - More prominent */}
+          {/* Simple Action Buttons */}
           <div className="flex justify-between items-center mt-6 pt-4 border-t">
             <button
               onClick={handleDecline}
               className="px-4 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Cancel Registration
+              Cancel
             </button>
-            <button
-              onClick={handleAccept}
-              disabled={!allAccepted}
-              className={`px-8 py-3 rounded-lg font-semibold text-sm ${
-                allAccepted
-                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              } transition-all`}
-            >
-              {allAccepted ? '✓ Accept All & Create Account' : 'Please Accept All Agreements'}
-            </button>
+            <div className="space-x-3">
+              <button
+                onClick={handleAccept}
+                className="px-8 py-3 rounded-lg font-bold text-white bg-green-600 hover:bg-green-700 shadow-lg transition-all"
+              >
+                OK - I AGREE & CREATE ACCOUNT
+              </button>
+            </div>
           </div>
         </div>
 

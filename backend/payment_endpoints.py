@@ -12,7 +12,7 @@ from datetime import datetime
 from models import get_db, PaymentTransaction, User, GriefSession
 from auth import get_current_user, get_current_user_optional
 from enhanced_services import RealAIService, UserGuidanceService
-from stripe_service_fixed import DirectStripeService
+from real_stripe_service import RealStripeService
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ payment_router = APIRouter()
 
 # Initialize services
 real_ai_service = RealAIService()
-stripe_service = DirectStripeService()
+stripe_service = RealStripeService()
 guidance_service = UserGuidanceService(real_ai_service)
 
 # Payment Endpoints

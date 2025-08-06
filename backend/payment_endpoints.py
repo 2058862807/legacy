@@ -53,6 +53,8 @@ async def create_payment_checkout(
 ):
     """Create Stripe checkout session"""
     try:
+        _, stripe_service, _ = get_services()
+        
         # Get origin URL from request
         origin_url = str(request.base_url).rstrip('/')
         

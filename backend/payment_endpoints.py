@@ -65,7 +65,7 @@ async def create_payment_checkout(
             status="initiated",
             package_type=package_id,
             description=result["package_info"]["description"],
-            metadata={
+            payment_metadata={
                 "package_info": result["package_info"],
                 "session_uuid": result["session_uuid"]
             }

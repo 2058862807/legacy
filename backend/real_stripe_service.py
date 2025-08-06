@@ -106,7 +106,7 @@ class RealStripeService:
             }
 
             # Create real Stripe checkout session
-            session = stripe.checkout.Session.create(
+            session = CheckoutSession.create(
                 payment_method_types=['card'],
                 line_items=[
                     {

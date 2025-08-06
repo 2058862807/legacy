@@ -311,6 +311,8 @@ async def get_will_ai_assistance(
 ):
     """Get AI assistance for will building"""
     try:
+        real_ai_service, _, _ = get_services()
+        
         # Parse user context
         user_context = json.loads(context)
         user_context.update({

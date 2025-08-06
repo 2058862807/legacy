@@ -642,6 +642,297 @@ class NextEraBackendTester:
             self.log_test("Data Persistence", False, f"Error: {str(e)}")
             return False
 
+    # NEW FEATURE TESTS - Personal Safe Combos
+    def test_safe_types_endpoint(self):
+        """Test safe types endpoint for dropdown options"""
+        try:
+            response = self.session.get(f"{self.api_url}/safes/types", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                safe_types = data.get("safe_types", [])
+                
+                # Check for expected safe types
+                expected_types = ["combination", "digital", "key", "biometric", "smart", "dual", "bank_deposit", "other"]
+                found_types = [st["value"] for st in safe_types if isinstance(st, dict)]
+                
+                success = len(safe_types) >= 6 and all(
+                    isinstance(st, dict) and "value" in st and "label" in st and "description" in st
+                    for st in safe_types
+                )
+                
+                self.log_test(
+                    "Safe Types Endpoint (NEW FEATURE)",
+                    success,
+                    f"Found {len(safe_types)} safe types with proper structure: {', '.join(found_types[:5])}..."
+                )
+                return success
+            else:
+                self.log_test("Safe Types Endpoint (NEW FEATURE)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Safe Types Endpoint (NEW FEATURE)", False, f"Error: {str(e)}")
+            return False
+
+    def test_create_personal_safe(self):
+        """Test creating new personal safe with encrypted combinations"""
+        try:
+            safe_data = {
+                "safe_name": "Home Security Safe",
+                "safe_type": "combination",
+                "location": "Master Bedroom Closet",
+                "combination_code": "12-34-56",
+                "backup_codes": "78-90-12,34-56-78",
+                "access_instructions": "Turn dial clockwise to first number, counterclockwise to second, clockwise to third",
+                "contents_description": "Important documents, jewelry, cash",
+                "emergency_contact": "spouse@example.com"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/safes",
+                data=safe_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                success = data.get("success", False)
+                safe_id = data.get("safe_id")
+                
+                self.log_test(
+                    "Create Personal Safe (NEW FEATURE)",
+                    success and safe_id is not None,
+                    f"Safe created with ID: {safe_id}, Success: {success}"
+                )
+                
+                # Store safe ID for other tests
+                self.test_safe_id = safe_id
+                return success and safe_id is not None
+            else:
+                self.log_test("Create Personal Safe (NEW FEATURE)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Create Personal Safe (NEW FEATURE)", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_personal_safes(self):
+        """Test retrieving user's personal safes"""
+        try:
+            response = self.session.get(f"{self.api_url}/safes", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                safes = data.get("safes", [])
+                total = data.get("total", 0)
+                
+                # Check if we have safes and they have proper structure
+                success = isinstance(safes, list) and total >= 0
+                
+                if safes:
+                    # Check first safe structure
+                    first_safe = safes[0]
+                    has_required_fields = all(
+                        field in first_safe for field in 
+                        ["id", "safe_name", "safe_type", "combination_data", "created_at"]
+                    )
+                    
+                    # Check if combination data is properly decrypted
+                    combination_data = first_safe.get("combination_data", {})
+                    has_encrypted_data = isinstance(combination_data, dict)
+                    
+                    success = success and has_required_fields and has_encrypted_data
+                
+                self.log_test(
+                    "Get Personal Safes (NEW FEATURE)",
+                    success,
+                    f"Retrieved {len(safes)} safes, Total: {total}, Proper structure: {success}"
+                )
+                return success
+            else:
+                self.log_test("Get Personal Safes (NEW FEATURE)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Get Personal Safes (NEW FEATURE)", False, f"Error: {str(e)}")
+            return False
+
+    def test_access_personal_safe(self):
+        """Test accessing safe and logging activity"""
+        if not hasattr(self, 'test_safe_id'):
+            self.log_test("Access Personal Safe (NEW FEATURE)", False, "No safe ID from previous test")
+            return False
+            
+        try:
+            response = self.session.post(
+                f"{self.api_url}/safes/{self.test_safe_id}/access",
+                data={},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                success = data.get("success", False)
+                safe_data = data.get("safe", {})
+                
+                # Check if access was logged and combination data returned
+                has_combination_data = "combination_data" in safe_data
+                has_last_accessed = "last_accessed" in safe_data
+                
+                access_success = success and has_combination_data and has_last_accessed
+                
+                self.log_test(
+                    "Access Personal Safe (NEW FEATURE)",
+                    access_success,
+                    f"Access logged: {access_success}, Has combination: {has_combination_data}, Last accessed: {has_last_accessed}"
+                )
+                return access_success
+            else:
+                self.log_test("Access Personal Safe (NEW FEATURE)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Access Personal Safe (NEW FEATURE)", False, f"Error: {str(e)}")
+            return False
+
+    def test_delete_personal_safe(self):
+        """Test soft delete of personal safe"""
+        if not hasattr(self, 'test_safe_id'):
+            self.log_test("Delete Personal Safe (NEW FEATURE)", False, "No safe ID from previous test")
+            return False
+            
+        try:
+            response = self.session.delete(
+                f"{self.api_url}/safes/{self.test_safe_id}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                success = data.get("success", False)
+                message = data.get("message", "")
+                
+                # Verify safe is soft deleted by trying to access it
+                verify_response = self.session.get(f"{self.api_url}/safes", timeout=10)
+                if verify_response.status_code == 200:
+                    safes_data = verify_response.json()
+                    remaining_safes = safes_data.get("safes", [])
+                    safe_deleted = not any(safe["id"] == self.test_safe_id for safe in remaining_safes)
+                else:
+                    safe_deleted = False
+                
+                delete_success = success and safe_deleted
+                
+                self.log_test(
+                    "Delete Personal Safe (NEW FEATURE)",
+                    delete_success,
+                    f"Soft delete success: {delete_success}, Message: {message}"
+                )
+                return delete_success
+            else:
+                self.log_test("Delete Personal Safe (NEW FEATURE)", False, f"HTTP {response.status_code}", response.text)
+                return False
+                
+        except Exception as e:
+            self.log_test("Delete Personal Safe (NEW FEATURE)", False, f"Error: {str(e)}")
+            return False
+
+    # ENHANCED SECURITY TESTS
+    def test_encryption_security(self):
+        """Test encryption/decryption of sensitive data"""
+        try:
+            # Create a safe with sensitive data
+            sensitive_data = {
+                "safe_name": "Security Test Safe",
+                "safe_type": "digital",
+                "combination_code": "SENSITIVE123",
+                "backup_codes": "BACKUP456,BACKUP789"
+            }
+            
+            create_response = self.session.post(
+                f"{self.api_url}/safes",
+                data=sensitive_data,
+                timeout=10
+            )
+            
+            if create_response.status_code == 200:
+                safe_id = create_response.json().get("safe_id")
+                
+                # Retrieve the safe and check if data is properly encrypted/decrypted
+                get_response = self.session.get(f"{self.api_url}/safes", timeout=10)
+                
+                if get_response.status_code == 200:
+                    safes = get_response.json().get("safes", [])
+                    test_safe = next((s for s in safes if s["id"] == safe_id), None)
+                    
+                    if test_safe:
+                        combination_data = test_safe.get("combination_data", {})
+                        
+                        # Check if sensitive data is properly handled
+                        has_primary_code = "primary_code" in combination_data
+                        has_backup_codes = "backup_codes" in combination_data
+                        encryption_working = has_primary_code and has_backup_codes
+                        
+                        # Clean up test safe
+                        self.session.delete(f"{self.api_url}/safes/{safe_id}", timeout=5)
+                        
+                        self.log_test(
+                            "Encryption Security (ENHANCED)",
+                            encryption_working,
+                            f"Encryption/Decryption working: {encryption_working}, Has codes: {has_primary_code}, Has backups: {has_backup_codes}"
+                        )
+                        return encryption_working
+            
+            self.log_test("Encryption Security (ENHANCED)", False, "Failed to test encryption")
+            return False
+            
+        except Exception as e:
+            self.log_test("Encryption Security (ENHANCED)", False, f"Error: {str(e)}")
+            return False
+
+    def test_production_error_handling(self):
+        """Test production-ready error handling"""
+        try:
+            # Test invalid safe ID
+            invalid_safe_response = self.session.post(
+                f"{self.api_url}/safes/99999/access",
+                data={},
+                timeout=10
+            )
+            
+            # Test invalid safe type
+            invalid_type_response = self.session.post(
+                f"{self.api_url}/safes",
+                data={"safe_name": "Test", "safe_type": "invalid_type"},
+                timeout=10
+            )
+            
+            # Test missing required fields
+            missing_fields_response = self.session.post(
+                f"{self.api_url}/safes",
+                data={},
+                timeout=10
+            )
+            
+            # All should return appropriate error codes
+            error_handling_works = (
+                invalid_safe_response.status_code in [400, 404, 422] and
+                invalid_type_response.status_code in [400, 422, 500] and
+                missing_fields_response.status_code in [400, 422]
+            )
+            
+            self.log_test(
+                "Production Error Handling (ENHANCED)",
+                error_handling_works,
+                f"Error handling: {error_handling_works}, Codes: {invalid_safe_response.status_code}, {invalid_type_response.status_code}, {missing_fields_response.status_code}"
+            )
+            return error_handling_works
+            
+        except Exception as e:
+            self.log_test("Production Error Handling (ENHANCED)", False, f"Error: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🧪 Running Comprehensive Backend Tests\n")

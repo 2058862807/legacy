@@ -37,6 +37,7 @@ def get_services():
 @payment_router.get("/api/payments/packages")
 async def get_payment_packages():
     """Get available payment packages"""
+    _, stripe_service, _ = get_services()
     return {
         "packages": stripe_service.PAYMENT_PACKAGES,
         "currency": "USD",

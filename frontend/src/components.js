@@ -4,6 +4,512 @@ import { blockchainService, formatAddress, formatBalance } from './blockchain';
 import { stateComplianceService, US_STATES_COMPLIANCE } from './stateCompliance';
 import { TermsOfService, PrivacyPolicy, LiabilityAgreement, LegalAgreementModal } from './legal-documents';
 
+// Personal Safe Combos Management Component
+export const PersonalSafes = ({ user }) => {
+  const [safes, setSafes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedSafe, setSelectedSafe] = useState(null);
+  const [safeTypes, setSafeTypes] = useState([]);
+  const [newSafe, setNewSafe] = useState({
+    safe_name: '',
+    safe_type: '',
+    location: '',
+    combination_code: '',
+    backup_codes: '',
+    access_instructions: '',
+    contents_description: '',
+    emergency_contact: ''
+  });
+
+  useEffect(() => {
+    loadSafes();
+    loadSafeTypes();
+  }, []);
+
+  const loadSafes = async () => {
+    try {
+      const response = await fetch('/api/safes', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSafes(data.safes);
+      }
+    } catch (error) {
+      console.error('Failed to load safes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadSafeTypes = async () => {
+    try {
+      const response = await fetch('/api/safes/types');
+      if (response.ok) {
+        const data = await response.json();
+        setSafeTypes(data.safe_types);
+      }
+    } catch (error) {
+      console.error('Failed to load safe types:', error);
+    }
+  };
+
+  const handleAddSafe = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      Object.keys(newSafe).forEach(key => {
+        if (newSafe[key]) {
+          formData.append(key, newSafe[key]);
+        }
+      });
+
+      const response = await fetch('/api/safes', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        setShowAddModal(false);
+        setNewSafe({
+          safe_name: '',
+          safe_type: '',
+          location: '',
+          combination_code: '',
+          backup_codes: '',
+          access_instructions: '',
+          contents_description: '',
+          emergency_contact: ''
+        });
+        loadSafes();
+      }
+    } catch (error) {
+      console.error('Failed to add safe:', error);
+    }
+  };
+
+  const handleDeleteSafe = async (safeId) => {
+    if (confirm('Are you sure you want to delete this safe? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`/api/safes/${safeId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          loadSafes();
+        }
+      } catch (error) {
+        console.error('Failed to delete safe:', error);
+      }
+    }
+  };
+
+  const handleAccessSafe = async (safeId) => {
+    try {
+      const response = await fetch(`/api/safes/${safeId}/access`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedSafe(data.safe);
+        setShowViewModal(true);
+        loadSafes(); // Refresh to update last accessed time
+      }
+    } catch (error) {
+      console.error('Failed to access safe:', error);
+    }
+  };
+
+  const getSafeTypeIcon = (type) => {
+    const icons = {
+      combination: '🔐',
+      digital: '📱',
+      key: '🗝️',
+      biometric: '👆',
+      smart: '🏠',
+      dual: '🔒',
+      bank_deposit: '🏦',
+      other: '📦'
+    };
+    return icons[type] || '🔒';
+  };
+
+  const getSafeTypeLabel = (type) => {
+    const safe = safeTypes.find(st => st.value === type);
+    return safe ? safe.label : type;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Personal Safe Combos</h1>
+          <p className="text-gray-600">
+            Securely store and manage your personal safe combinations, security codes, and access information.
+          </p>
+        </div>
+
+        {/* Security Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-blue-900">🔐 Military-Grade Encryption</h3>
+              <p className="text-blue-700 text-sm">
+                All safe combinations and access codes are encrypted using AES-256 encryption before storage. 
+                Only you can decrypt and access this sensitive information.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Add New Safe Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
+          >
+            + Add New Safe
+          </button>
+        </div>
+
+        {/* Safes Grid */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="mt-2 text-gray-600">Loading your safes...</p>
+          </div>
+        ) : safes.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">🔐</div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Safes Added</h3>
+            <p className="text-gray-600 mb-6">Start by adding your first personal safe or security storage.</p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add Your First Safe
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {safes.map((safe) => (
+              <div key={safe.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">{getSafeTypeIcon(safe.safe_type)}</span>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{safe.safe_name}</h3>
+                      <p className="text-sm text-gray-500">{getSafeTypeLabel(safe.safe_type)}</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleAccessSafe(safe.id)}
+                      className="text-blue-600 hover:text-blue-800 text-sm"
+                      title="View Details"
+                    >
+                      👁️
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSafe(safe.id)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                      title="Delete Safe"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  {safe.location && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-500">📍</span>
+                      <span className="text-gray-700">{safe.location}</span>
+                    </div>
+                  )}
+                  
+                  {safe.contents_description && (
+                    <div className="flex items-start space-x-2">
+                      <span className="text-gray-500">📦</span>
+                      <span className="text-gray-700 flex-1">{safe.contents_description.substring(0, 50)}...</span>
+                    </div>
+                  )}
+                  
+                  {safe.last_accessed && (
+                    <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <span>🕒</span>
+                      <span>Last accessed: {new Date(safe.last_accessed).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <button
+                    onClick={() => handleAccessSafe(safe.id)}
+                    className="w-full bg-blue-50 text-blue-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
+                  >
+                    Access Combination
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add Safe Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-gray-900">Add New Safe</h2>
+                  <button onClick={() => setShowAddModal(false)} className="text-gray-500 hover:text-gray-700">
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleAddSafe} className="p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Safe Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newSafe.safe_name}
+                      onChange={(e) => setNewSafe({...newSafe, safe_name: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="e.g., Home Safe, Office Safe"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Safe Type *</label>
+                    <select
+                      required
+                      value={newSafe.safe_type}
+                      onChange={(e) => setNewSafe({...newSafe, safe_type: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">Select type...</option>
+                      {safeTypes.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                  <input
+                    type="text"
+                    value={newSafe.location}
+                    onChange={(e) => setNewSafe({...newSafe, location: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="e.g., Bedroom closet, Bank of America Branch"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Primary Combination</label>
+                    <input
+                      type="text"
+                      value={newSafe.combination_code}
+                      onChange={(e) => setNewSafe({...newSafe, combination_code: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="e.g., 12-34-56 or 123456"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Backup Codes</label>
+                    <input
+                      type="text"
+                      value={newSafe.backup_codes}
+                      onChange={(e) => setNewSafe({...newSafe, backup_codes: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Separate multiple codes with commas"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Access Instructions</label>
+                  <textarea
+                    value={newSafe.access_instructions}
+                    onChange={(e) => setNewSafe({...newSafe, access_instructions: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    rows="3"
+                    placeholder="Step-by-step instructions for accessing the safe..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Contents Description</label>
+                  <textarea
+                    value={newSafe.contents_description}
+                    onChange={(e) => setNewSafe({...newSafe, contents_description: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    rows="3"
+                    placeholder="Describe what's stored in this safe..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Emergency Contact</label>
+                  <input
+                    type="text"
+                    value={newSafe.emergency_contact}
+                    onChange={(e) => setNewSafe({...newSafe, emergency_contact: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Who can access this in an emergency?"
+                  />
+                </div>
+
+                <div className="flex space-x-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    Add Safe
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* View Safe Modal */}
+        {showViewModal && selectedSafe && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-gray-900">
+                    {getSafeTypeIcon(selectedSafe.safe_type)} {selectedSafe.safe_name}
+                  </h2>
+                  <button onClick={() => setShowViewModal(false)} className="text-gray-500 hover:text-gray-700">
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Safe Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-500 mb-1">Safe Type</label>
+                    <p className="text-gray-900">{getSafeTypeLabel(selectedSafe.safe_type)}</p>
+                  </div>
+                  {selectedSafe.location && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-500 mb-1">Location</label>
+                      <p className="text-gray-900">{selectedSafe.location}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Combination Data */}
+                {selectedSafe.combination_data && !selectedSafe.combination_data.error && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-yellow-900 mb-3">🔑 Access Codes</h3>
+                    <div className="space-y-3">
+                      {selectedSafe.combination_data.primary_code && (
+                        <div>
+                          <label className="block text-sm font-medium text-yellow-700 mb-1">Primary Combination</label>
+                          <p className="bg-white px-3 py-2 rounded border font-mono text-lg">
+                            {selectedSafe.combination_data.primary_code}
+                          </p>
+                        </div>
+                      )}
+                      {selectedSafe.combination_data.backup_codes && (
+                        <div>
+                          <label className="block text-sm font-medium text-yellow-700 mb-1">Backup Codes</label>
+                          <div className="space-y-1">
+                            {selectedSafe.combination_data.backup_codes.map((code, index) => (
+                              <p key={index} className="bg-white px-3 py-2 rounded border font-mono">
+                                {code}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Access Instructions */}
+                {selectedSafe.access_instructions && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">📋 Access Instructions</h3>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <p className="text-gray-700 whitespace-pre-wrap">{selectedSafe.access_instructions}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Contents Description */}
+                {selectedSafe.contents_description && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">📦 Contents</h3>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                      <p className="text-gray-700 whitespace-pre-wrap">{selectedSafe.contents_description}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Emergency Contact */}
+                {selectedSafe.emergency_contact && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">🆘 Emergency Contact</h3>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-gray-700">{selectedSafe.emergency_contact}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Last Accessed */}
+                <div className="text-center text-sm text-gray-500">
+                  Last accessed: {new Date(selectedSafe.last_accessed).toLocaleString()}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Payment and Premium Features Component
 export const PaymentModal = ({ isOpen, onClose, packageId, packageInfo }) => {
   const [isProcessing, setIsProcessing] = useState(false);

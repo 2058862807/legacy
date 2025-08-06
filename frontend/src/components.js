@@ -1097,8 +1097,18 @@ export const LoginPage = ({ onLogin }) => {
       });
 
       if (response.ok) {
-        const userData = await response.json();
-        console.log('Login successful:', userData);
+        const data = await response.json();
+        console.log('Login successful:', data);
+        
+        // Extract user data from backend response format
+        const userData = data.user || data;
+        
+        // Store token and user data
+        if (data.access_token) {
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('nextera_user', JSON.stringify(userData));
+        }
+        
         onLogin(userData);
       } else {
         const errorData = await response.json();

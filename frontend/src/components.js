@@ -3,7 +3,206 @@ import { Link, useNavigate } from 'react-router-dom';
 import { blockchainService, formatAddress, formatBalance } from './blockchain';
 import { stateComplianceService, US_STATES_COMPLIANCE } from './stateCompliance';
 
-// Header Component
+// Onboarding and Help Components
+export const OnboardingChatbot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      type: 'ai',
+      content: '👋 Welcome to NextEra Estate! I\'m here to help you get started with creating your digital will and managing your estate. What would you like to know?',
+      timestamp: new Date().toISOString()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const userMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      content: inputMessage,
+      timestamp: new Date().toISOString()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/guidance/help', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: new URLSearchParams({
+          page: 'onboarding',
+          query: inputMessage
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const aiMessage = {
+          id: messages.length + 2,
+          type: 'ai',
+          content: data.help_content,
+          timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        // Fallback response
+        const fallbackMessage = {
+          id: messages.length + 2,
+          type: 'ai',
+          content: 'I\'d be happy to help! NextEra Estate offers comprehensive estate planning tools including AI-powered will creation, secure document storage, blockchain notarization, and 50-state legal compliance. What specific feature would you like to learn about?',
+          timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+      }
+    } catch (error) {
+      console.error('Onboarding chat error:', error);
+      const errorMessage = {
+        id: messages.length + 2,
+        type: 'ai',
+        content: 'I\'m here to help you navigate NextEra Estate! You can start by creating your will, uploading documents, or exploring our 50-state compliance features. What interests you most?',
+        timestamp: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+
+    setIsLoading(false);
+  };
+
+  const quickActions = [
+    { label: 'Create My First Will', action: 'How do I create my first will?' },
+    { label: 'Upload Documents', action: 'How do I securely upload my documents?' },
+    { label: 'Understand Compliance', action: 'What does 50-state compliance mean?' },
+    { label: 'Blockchain Features', action: 'How does blockchain notarization work?' }
+  ];
+
+  return (
+    <>
+      {/* Chatbot Toggle Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full p-4 shadow-lg transition-all duration-200 flex items-center space-x-2"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          <span className="text-sm font-medium">Help</span>
+        </button>
+      </div>
+
+      {/* Chatbot Window */}
+      {isOpen && (
+        <div className="fixed bottom-20 right-6 w-96 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-bold">🤖</span>
+                </div>
+                <div>
+                  <h3 className="font-medium">Estate Planning Guide</h3>
+                  <p className="text-xs opacity-90">Here to help you get started</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white/80 hover:text-white"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-3">
+            {messages.map(message => (
+              <div
+                key={message.id}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs p-3 rounded-lg ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white rounded-br-none'
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                  }`}
+                >
+                  <p className="text-sm">{message.content}</p>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 p-3 rounded-lg rounded-bl-none">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          {messages.length === 1 && (
+            <div className="px-4 pb-2">
+              <p className="text-xs text-gray-500 mb-2">Quick actions:</p>
+              <div className="flex flex-wrap gap-1">
+                {quickActions.map((action, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setInputMessage(action.action);
+                      sendMessage();
+                    }}
+                    className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Input */}
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Ask me anything about estate planning..."
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                disabled={isLoading}
+              />
+              <button
+                onClick={sendMessage}
+                disabled={isLoading || !inputMessage.trim()}
+                className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 export const Header = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

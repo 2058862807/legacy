@@ -104,7 +104,7 @@ class NextEraBackendTester:
             return False
 
     def test_payment_packages(self):
-        """Test payment packages endpoint"""
+        """Test enhanced payment packages endpoint with features"""
         try:
             response = self.session.get(f"{self.api_url}/payments/packages", timeout=10)
             
@@ -115,20 +115,26 @@ class NextEraBackendTester:
                 expected_packages = ["basic_will", "premium_will", "document_notarization", "full_estate_plan", "grief_support_premium"]
                 found_packages = list(packages.keys())
                 
-                success = all(pkg in found_packages for pkg in expected_packages)
+                # Check for enhanced package information with features
+                enhanced_features = all(
+                    "features" in packages[pkg] and isinstance(packages[pkg]["features"], list)
+                    for pkg in found_packages
+                )
+                
+                success = all(pkg in found_packages for pkg in expected_packages) and enhanced_features
                 
                 self.log_test(
-                    "Payment Packages API",
+                    "Enhanced Payment Packages API",
                     success,
-                    f"Found {len(found_packages)} packages: {', '.join(found_packages)}"
+                    f"Found {len(found_packages)} packages with features: {', '.join(found_packages)}, Enhanced info: {enhanced_features}"
                 )
                 return success
             else:
-                self.log_test("Payment Packages API", False, f"HTTP {response.status_code}", response.text)
+                self.log_test("Enhanced Payment Packages API", False, f"HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
-            self.log_test("Payment Packages API", False, f"Error: {str(e)}")
+            self.log_test("Enhanced Payment Packages API", False, f"Error: {str(e)}")
             return False
 
     def test_stripe_checkout_creation(self):

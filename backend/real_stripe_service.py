@@ -311,7 +311,7 @@ class RealStripeService:
     async def create_refund(self, payment_intent_id: str, amount: int = None, reason: str = None) -> Dict:
         """Create refund for a payment"""
         try:
-            refund = stripe.Refund.create(
+            refund = self.stripe.Refund.create(
                 payment_intent=payment_intent_id,
                 amount=amount,  # If None, refunds full amount
                 reason=reason or 'requested_by_customer'

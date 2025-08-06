@@ -739,9 +739,11 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
   const allAccepted = acceptedTerms && acceptedPrivacy && acceptedLiability;
 
   const handleAccept = () => {
-    if (allAccepted) {
-      onAccept();
-    }
+    // Set all agreements as accepted when user clicks OK
+    setAcceptedTerms(true);
+    setAcceptedPrivacy(true);
+    setAcceptedLiability(true);
+    onAccept();
   };
 
   const handleDecline = () => {

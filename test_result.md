@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Please thoroughly test the newly integrated 50-State Compliance system in the NextEra Estate application at http://localhost:3000. Test comprehensive features including registration with state selection, 50-State Compliance Dashboard with all 4 tabs, enhanced Will Builder with state selection, Dashboard integration with state compliance widgets, and comprehensive functionality across different states (CA, NY, TX, FL, etc.) with real-time compliance checking and validation."
+user_problem_statement: "Integrate Stripe for payment processing and connect OpenAI, Claude, and DeepSeek APIs into the backend, removing all placeholder links. Make every link work, the chatbot dynamic, and every sign-in fresh. Need this fully ready to deploy within 24 hours with all bugs fixed, triple-checked, and customer-ready. Also want an introduction video or chatbot to explain how to use the platform and answer questions. Skip Claude integration as requested."
 
 frontend:
   - task: "Homepage load and design verification"

@@ -92,11 +92,8 @@ async def get_payment_status(
 ):
     """Get payment status"""
     try:
-        # Get origin URL from request
-        origin_url = str(request.base_url).rstrip('/')
-        
         # Check payment status with Stripe
-        stripe_result = await stripe_service.check_payment_status(session_id, origin_url)
+        stripe_result = await stripe_service.check_payment_status(session_id)
         
         if not stripe_result["success"]:
             raise HTTPException(status_code=400, detail=stripe_result["error"])

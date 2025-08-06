@@ -15,7 +15,8 @@ import {
   BlockchainWallet,
   StateComplianceDashboard,
   Header,
-  Footer
+  Footer,
+  OnboardingChatbot
 } from './components';
 
 function App() {

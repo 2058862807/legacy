@@ -7,15 +7,20 @@ from typing import Dict, List, Optional, Any
 
 logger = logging.getLogger(__name__)
 
+# Import Stripe at module level
+try:
+    import stripe
+    STRIPE_AVAILABLE = True
+    logger.info("✅ Stripe library imported successfully")
+except ImportError as e:
+    logger.error(f"❌ Stripe library not available: {str(e)}")
+    STRIPE_AVAILABLE = False
+
 class RealStripeService:
     """Production Stripe service with real API integration"""
     
     def __init__(self):
-        # Import stripe here to ensure it's available
-        try:
-            import stripe as stripe_lib
-            self.stripe = stripe_lib
-        except ImportError:
+        if not STRIPE_AVAILABLE:
             logger.error("Stripe library not installed")
             raise ValueError("Stripe library is required")
         
@@ -27,14 +32,15 @@ class RealStripeService:
             raise ValueError("Stripe secret key is required")
             
         # Initialize Stripe with real API key
-        self.stripe.api_key = self.stripe_secret_key
+        stripe.api_key = self.stripe_secret_key
         
         # Test the API connection
         try:
             # Simple API test
-            self.stripe.Account.retrieve()
+            account = stripe.Account.retrieve()
             logger.info("✅ Real Stripe service initialized and API connection verified")
             logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
+            logger.info(f"📧 Connected to Stripe account: {account.get('email', 'N/A')}")
         except Exception as e:
             logger.warning(f"⚠️ Stripe API test failed: {str(e)}")
             logger.info("✅ Stripe service initialized (API test failed but continuing)")

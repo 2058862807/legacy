@@ -934,27 +934,43 @@ class NextEraBackendTester:
             return False
 
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🧪 Running Comprehensive Backend Tests\n")
+        """Run all backend tests including new production-ready features"""
+        print("🧪 Running Comprehensive Backend Tests for Production-Ready Features\n")
         
         # Core functionality tests
         tests = [
             self.test_health_check,
             self.test_user_registration_and_login,
+            
+            # CRITICAL STRIPE INTEGRATION TESTS
             self.test_payment_packages,
             self.test_stripe_checkout_creation,
             self.test_payment_status_check,
+            self.test_webhook_endpoint,
+            
+            # NEW PERSONAL SAFE COMBOS FEATURE TESTS
+            self.test_safe_types_endpoint,
+            self.test_create_personal_safe,
+            self.test_get_personal_safes,
+            self.test_access_personal_safe,
+            self.test_delete_personal_safe,
+            
+            # ENHANCED SECURITY TESTS
+            self.test_encryption_security,
+            self.test_production_error_handling,
+            
+            # AI INTEGRATION TESTS
             self.test_grief_companion_session,
             self.test_grief_companion_ai_response,
             self.test_will_ai_assistance,
             self.test_user_guidance_welcome,
             self.test_feature_tour,
             self.test_contextual_help,
+            
+            # DATABASE AND INTEGRATION TESTS
             self.test_database_models,
             self.test_cors_and_endpoints,
             self.test_auth_security,
-            self.test_error_handling,
-            self.test_webhook_endpoint,
             self.test_data_persistence
         ]
         
@@ -973,11 +989,20 @@ class NextEraBackendTester:
         
         # Print summary
         print("=" * 80)
-        print("📊 TEST SUMMARY")
+        print("📊 PRODUCTION-READY FEATURES TEST SUMMARY")
         print("=" * 80)
         print(f"✅ Passed: {passed}")
         print(f"❌ Failed: {failed}")
         print(f"📈 Success Rate: {(passed/(passed+failed)*100):.1f}%")
+        
+        # Categorize results
+        critical_tests = ["REAL Stripe Checkout Creation (CRITICAL)", "Enhanced Payment Packages API"]
+        new_feature_tests = [r["test"] for r in self.test_results if "NEW FEATURE" in r["test"]]
+        enhanced_tests = [r["test"] for r in self.test_results if "ENHANCED" in r["test"]]
+        
+        print(f"\n🔥 CRITICAL STRIPE TESTS: {len([r for r in self.test_results if any(ct in r['test'] for ct in critical_tests) and r['success']])}/{len([r for r in self.test_results if any(ct in r['test'] for ct in critical_tests)])}")
+        print(f"🆕 NEW SAFE COMBOS TESTS: {len([r for r in self.test_results if r['test'] in new_feature_tests and r['success']])}/{len(new_feature_tests)}")
+        print(f"🛡️ ENHANCED SECURITY TESTS: {len([r for r in self.test_results if r['test'] in enhanced_tests and r['success']])}/{len(enhanced_tests)}")
         
         # Print detailed results
         print("\n📋 DETAILED RESULTS:")

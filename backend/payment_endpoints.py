@@ -280,6 +280,10 @@ async def send_enhanced_grief_message(
     try:
         real_ai_service, _, _ = get_services()
         
+        # Check if AI service is available
+        if real_ai_service is None:
+            raise HTTPException(status_code=503, detail="AI services temporarily unavailable")
+        
         session = db.query(GriefSession).filter(GriefSession.session_id == session_id).first()
         
         if not session:

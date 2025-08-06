@@ -155,7 +155,8 @@ class DirectStripeService:
         """Handle Stripe webhook"""
         try:
             # Verify webhook signature
-            event = stripe.Webhook.construct_event(
+            import stripe as stripe_module
+            event = stripe_module.Webhook.construct_event(
                 request_body,
                 stripe_signature,
                 webhook_secret

@@ -246,6 +246,24 @@ class GriefSession(Base):
     started_at = Column(DateTime, default=datetime.utcnow)
     last_activity = Column(DateTime, default=datetime.utcnow)
 
+# Payment Transaction Model (for Stripe integration)
+class PaymentTransaction(Base):
+    __tablename__ = "payment_transactions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Optional for guest payments
+    session_id = Column(String, nullable=False, unique=True)  # Stripe session ID
+    payment_id = Column(String, nullable=True)  # Stripe payment intent ID
+    amount = Column(Float, nullable=False)
+    currency = Column(String, default="usd")
+    payment_status = Column(String, nullable=False)  # pending, paid, failed, expired
+    status = Column(String, nullable=False)  # initiated, pending, complete, failed
+    metadata = Column(JSON, nullable=True)  # Additional payment metadata
+    package_type = Column(String, nullable=True)  # e.g., "premium_will", "notarization"
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 # Database setup
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./nextera_estate.db")
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {})

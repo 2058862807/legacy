@@ -1313,39 +1313,47 @@ export const RegisterPage = ({ onLogin }) => {
     setLoading(true);
     
     try {
-      // Convert to backend-compatible format
-      const registrationData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone || '',
-        jurisdiction: `${stateInfo?.fullName || formData.jurisdiction}, USA`,
-        legal_agreements_accepted: true,
-        legal_acceptance_timestamp: new Date().toISOString()
-      };
-
+      console.log('REGISTRATION ATTEMPT:', formData.email);
+      
+      // Use same hardcoded URL as login
       const backendUrl = 'https://f5464be6-54bf-47de-a83b-762319fd8a8d.preview.emergentagent.com';
+      
+      // Build form data manually like in login
+      const formBody = `first_name=${encodeURIComponent(formData.firstName)}&last_name=${encodeURIComponent(formData.lastName)}&email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}&phone=${encodeURIComponent(formData.phone || '')}&jurisdiction=${encodeURIComponent(formData.jurisdiction)}`;
+      
+      console.log('SENDING REGISTRATION REQUEST');
       
       const response = await fetch(`${backendUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams(registrationData)
+        body: formBody
       });
 
+      console.log('REGISTRATION RESPONSE STATUS:', response.status);
+
       if (response.ok) {
-        const userData = await response.json();
-        console.log('Registration successful:', userData);
-        onLogin(userData);
+        const data = await response.json();
+        console.log('Registration successful:', data);
+        
+        // Store token and redirect like login
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('nextera_user', JSON.stringify(data.user));
+        
+        onLogin(data.user);
+        
+        // Force redirect to dashboard
+        window.location.href = '/dashboard';
+        
       } else {
-        const errorData = await response.json();
-        setError(errorData.detail || 'Registration failed. Please try again.');
+        const errorText = await response.text();
+        console.error('Registration error:', response.status, errorText);
+        setError('Registration failed. Please try again.');
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      setError('Network error. Please check your connection and try again.');
+      console.error('Registration network error:', error);
+      setError('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

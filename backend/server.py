@@ -584,14 +584,14 @@ async def validate_compliance(
     will_data_dict = json.loads(will_data)
     return compliance_service.validate_will_requirements(will_data_dict, state_code)
 
-# Grief Companion Endpoints
+# Grief Companion Endpoints - Enhanced with Real AI
 @app.post("/api/grief/session")
 async def create_grief_session(
     session_id: Optional[str] = None,
     current_user: Optional[User] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
-    """Create or get grief support session"""
+    """Create or get grief support session with enhanced AI"""
     if not session_id:
         session_id = str(uuid.uuid4())
     
@@ -610,7 +610,8 @@ async def create_grief_session(
     return {
         "session_id": session.session_id,
         "messages": session.messages,
-        "emotional_state": session.emotional_state
+        "emotional_state": session.emotional_state,
+        "enhanced_ai": True  # Indicates real AI is being used
     }
 
 @app.post("/api/grief/message")
@@ -619,46 +620,89 @@ async def send_grief_message(
     message: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    """Send message to grief companion"""
-    session = db.query(GriefSession).filter(GriefSession.session_id == session_id).first()
-    
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    
-    # Use AI service to generate response
-    ai_service = AIService()
-    response = ai_service.generate_grief_response(message, session.emotional_state)
-    
-    # Update session
-    messages = session.messages or []
-    messages.extend([
-        {
-            "id": len(messages) + 1,
-            "type": "user",
-            "content": message,
-            "timestamp": datetime.utcnow().isoformat()
-        },
-        {
-            "id": len(messages) + 2,
-            "type": "ai",
-            "content": response["content"],
-            "timestamp": datetime.utcnow().isoformat()
+    """Send message to enhanced AI grief companion"""
+    try:
+        session = db.query(GriefSession).filter(GriefSession.session_id == session_id).first()
+        
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Initialize real AI service
+        ai_service = RealAIService()
+        
+        # Generate AI response
+        ai_response = await ai_service.generate_grief_response(
+            user_message=message,
+            session_id=session_id,
+            emotional_state=session.emotional_state
+        )
+        
+        # Update session
+        messages = session.messages or []
+        messages.extend([
+            {
+                "id": len(messages) + 1,
+                "type": "user",
+                "content": message,
+                "timestamp": datetime.utcnow().isoformat()
+            },
+            {
+                "id": len(messages) + 2,
+                "type": "ai",
+                "content": ai_response["content"],
+                "timestamp": ai_response["timestamp"],
+                "provider": ai_response.get("provider_used", "ai")
+            }
+        ])
+        
+        session.messages = messages
+        session.emotional_state = ai_response["emotional_state"]
+        session.session_length = len(messages)
+        session.last_activity = datetime.utcnow()
+        session.crisis_detected = ai_response.get("crisis_detected", False)
+        
+        db.commit()
+        
+        return {
+            "response": ai_response["content"],
+            "emotional_state": ai_response["emotional_state"],
+            "crisis_detected": ai_response.get("crisis_detected", False),
+            "ai_enhanced": True
         }
-    ])
-    
-    session.messages = messages
-    session.emotional_state = response["emotional_state"]
-    session.session_length = len(messages)
-    session.last_activity = datetime.utcnow()
-    session.crisis_detected = response.get("crisis_detected", False)
-    
-    db.commit()
-    
-    return {
-        "response": response["content"],
-        "emotional_state": response["emotional_state"],
-        "crisis_detected": response.get("crisis_detected", False)
-    }
+        
+    except Exception as e:
+        logger.error(f"Enhanced grief message failed: {str(e)}")
+        # Fallback to basic response
+        fallback_response = "I'm here to support you through this difficult time. Your feelings are completely valid, and it's important to process them at your own pace. Would you like to tell me more about what you're experiencing?"
+        
+        messages = session.messages or []
+        messages.extend([
+            {
+                "id": len(messages) + 1,
+                "type": "user", 
+                "content": message,
+                "timestamp": datetime.utcnow().isoformat()
+            },
+            {
+                "id": len(messages) + 2,
+                "type": "ai",
+                "content": fallback_response,
+                "timestamp": datetime.utcnow().isoformat(),
+                "provider": "fallback"
+            }
+        ])
+        
+        session.messages = messages
+        session.session_length = len(messages)
+        session.last_activity = datetime.utcnow()
+        db.commit()
+        
+        return {
+            "response": fallback_response,
+            "emotional_state": "supportive",
+            "crisis_detected": False,
+            "ai_enhanced": False
+        }
 
 # Health Check
 @app.get("/api/health")

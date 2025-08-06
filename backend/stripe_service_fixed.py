@@ -88,7 +88,8 @@ class DirectStripeService:
             }
 
             # Create checkout session with direct Stripe
-            session = stripe.checkout.Session.create(
+            import stripe as stripe_module
+            session = stripe_module.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=[
                     {

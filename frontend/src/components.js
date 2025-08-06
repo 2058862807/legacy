@@ -1258,10 +1258,9 @@ export const RegisterPage = ({ onLogin }) => {
     acceptTerms: false
   });
   const [loading, setLoading] = useState(false);
-  const [selectedState, setSelectedState] = useState(null);
-  const [stateInfo, setStateInfo] = useState(null);
-  const [showLegalModal, setShowLegalModal] = useState(false);
   const [error, setError] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [stateInfo, setStateInfo] = useState(null);
 
   // Get all 50 states for dropdown
   const allStates = stateComplianceService.getAllStates();

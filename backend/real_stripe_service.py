@@ -147,7 +147,7 @@ class RealStripeService:
                 "package_info": package
             }
 
-        except stripe.error.StripeError as e:
+        except self.stripe.error.StripeError as e:
             logger.error(f"❌ Stripe API error: {str(e)}")
             return {
                 "success": False,

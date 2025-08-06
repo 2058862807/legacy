@@ -205,7 +205,7 @@ class RealStripeService:
         """Handle real Stripe webhooks"""
         try:
             # Verify webhook signature with real Stripe
-            event = stripe.Webhook.construct_event(
+            event = self.stripe.Webhook.construct_event(
                 request_body,
                 stripe_signature,
                 webhook_secret

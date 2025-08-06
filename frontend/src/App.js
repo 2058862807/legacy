@@ -148,6 +148,11 @@ function App() {
               isAuthenticated ? <StateComplianceDashboard user={currentUser} /> : <Navigate to="/login" />
             } 
           />
+            
+          {/* Legal Document Routes */}
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/liability" element={<LiabilityAgreementPage />} />
         </Routes>
 
         {!isAuthenticated && <Footer />}

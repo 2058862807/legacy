@@ -965,19 +965,22 @@ export const RegisterPage = ({ onLogin }) => {
                 className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
               />
               <label className="ml-2 text-sm text-gray-700">
-                I accept the{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a>
-                {' '}and{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                I acknowledge that I will review and accept the comprehensive legal agreements before account creation
               </label>
             </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
 
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
+              {loading ? 'Creating Account...' : 'Review Legal Agreements & Create Account'}
             </button>
           </form>
 
@@ -991,6 +994,13 @@ export const RegisterPage = ({ onLogin }) => {
           </div>
         </div>
       </div>
+
+      {/* Legal Agreement Modal */}
+      <LegalAgreementModal 
+        isOpen={showLegalModal}
+        onAccept={handleLegalAcceptance}
+        onDecline={handleLegalDecline}
+      />
     </div>
   );
 };

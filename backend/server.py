@@ -728,6 +728,92 @@ async def health_check():
         "version": "1.0.0"
     }
 
+# Dashboard Data Endpoints
+@app.get("/api/user/dashboard-stats")
+async def get_dashboard_stats(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get user's dashboard statistics"""
+    try:
+        # Count user's documents
+        documents_count = db.query(Document).filter(Document.owner_id == current_user.id).count()
+        
+        # Get will completion percentage
+        will = db.query(Will).filter(Will.user_id == current_user.id).first()
+        will_completion = will.completion_percentage if will else 0.0
+        
+        # Count configured heirs
+        heirs_count = db.query(Heir).filter(Heir.user_id == current_user.id).count()
+        
+        # Get last backup date (most recent document upload)
+        last_document = db.query(Document).filter(Document.owner_id == current_user.id)\
+                                        .order_by(desc(Document.created_at)).first()
+        last_backup = last_document.created_at.strftime('%Y-%m-%d') if last_document else None
+        
+        return {
+            "documentsStored": documents_count,
+            "willCompletion": int(will_completion),
+            "heirsConfigured": heirs_count,
+            "lastBackup": last_backup
+        }
+    except Exception as e:
+        logger.error(f"Dashboard stats error: {str(e)}")
+        # Return default empty stats for new users
+        return {
+            "documentsStored": 0,
+            "willCompletion": 0,
+            "heirsConfigured": 0,
+            "lastBackup": None
+        }
+
+@app.get("/api/user/notifications")
+async def get_notifications(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get user's notifications"""
+    try:
+        notifications = []
+        
+        # Check if user has incomplete will
+        will = db.query(Will).filter(Will.user_id == current_user.id).first()
+        if will and will.completion_percentage < 100:
+            notifications.append({
+                "id": 1,
+                "type": "warning",
+                "title": "Complete Your Will",
+                "message": f"Your will is {int(will.completion_percentage)}% complete. Finish it now to secure your estate.",
+                "timestamp": "Now"
+            })
+        
+        # Check if user has no heirs configured
+        heirs_count = db.query(Heir).filter(Heir.user_id == current_user.id).count()
+        if heirs_count == 0:
+            notifications.append({
+                "id": 2,
+                "type": "info", 
+                "title": "Add Your Heirs",
+                "message": "Configure your heirs and beneficiaries to complete your estate plan.",
+                "timestamp": "Now"
+            })
+        
+        # Welcome message for new users with no documents
+        documents_count = db.query(Document).filter(Document.owner_id == current_user.id).count()
+        if documents_count == 0:
+            notifications.append({
+                "id": 3,
+                "type": "success",
+                "title": "Welcome to NextEra Estate!",
+                "message": "Start by creating your will or uploading important documents to your secure vault.",
+                "timestamp": "Now"
+            })
+            
+        return notifications
+    except Exception as e:
+        logger.error(f"Notifications error: {str(e)}")
+        return []
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

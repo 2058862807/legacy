@@ -132,7 +132,7 @@ class NextEraBackendTester:
             return False
 
     def test_stripe_checkout_creation(self):
-        """Test Stripe checkout session creation"""
+        """Test REAL Stripe checkout session creation (CRITICAL TEST)"""
         try:
             checkout_data = {
                 "package_id": "basic_will"
@@ -149,23 +149,24 @@ class NextEraBackendTester:
                 checkout_url = data.get("checkout_url")
                 session_id = data.get("session_id")
                 
-                success = checkout_url and session_id and "stripe.com" in checkout_url
+                # Verify this is REAL Stripe integration (not mock)
+                real_stripe = checkout_url and session_id and "checkout.stripe.com" in checkout_url
                 
                 self.log_test(
-                    "Stripe Checkout Creation",
-                    success,
-                    f"Session ID: {session_id[:20]}..., URL contains stripe.com: {success}"
+                    "REAL Stripe Checkout Creation (CRITICAL)",
+                    real_stripe,
+                    f"Session ID: {session_id[:20] if session_id else 'None'}..., Real Stripe URL: {real_stripe}, URL: {checkout_url[:50] if checkout_url else 'None'}..."
                 )
                 
                 # Store session ID for status check
                 self.test_session_id = session_id
-                return success
+                return real_stripe
             else:
-                self.log_test("Stripe Checkout Creation", False, f"HTTP {response.status_code}", response.text)
+                self.log_test("REAL Stripe Checkout Creation (CRITICAL)", False, f"HTTP {response.status_code}", response.text)
                 return False
                 
         except Exception as e:
-            self.log_test("Stripe Checkout Creation", False, f"Error: {str(e)}")
+            self.log_test("REAL Stripe Checkout Creation (CRITICAL)", False, f"Error: {str(e)}")
             return False
 
     def test_payment_status_check(self):

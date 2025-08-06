@@ -943,67 +943,14 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
           )}
         </div>
 
-        {/* Acceptance Checkboxes */}
-        <div className="bg-gray-50 border-t border-gray-200 p-6 space-y-4">
-          <div className="space-y-3">
-            <label className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">
-                I have read and agree to the <strong>Terms of Service</strong>
-              </span>
-            </label>
-
-            <label className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                checked={acceptedPrivacy}
-                onChange={(e) => setAcceptedPrivacy(e.target.checked)}
-                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">
-                I have read and agree to the <strong>Privacy Policy</strong>
-              </span>
-            </label>
-
-            <label className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                checked={acceptedLiability}
-                onChange={(e) => setAcceptedLiability(e.target.checked)}
-                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">
-                I have read and understand the <strong>Liability Agreement and Disclaimers</strong>
-              </span>
-            </label>
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4">
-            <button
-              onClick={handleDecline}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Decline & Exit Registration
-            </button>
-            <button
-              onClick={handleAccept}
-              disabled={!allAccepted}
-              className={`px-6 py-2 rounded-lg font-medium ${
-                allAccepted
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Accept All & Continue
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    // Set initial state to collapsed
+    if (currentTab === 'terms') {
+      setCurrentTab('collapsed');
+    }
+  }
+
+  return (
 };

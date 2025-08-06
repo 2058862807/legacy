@@ -19,10 +19,19 @@ logger = logging.getLogger(__name__)
 # Create router
 payment_router = APIRouter()
 
-# Initialize services
-real_ai_service = RealAIService()
-stripe_service = RealStripeService()
-guidance_service = UserGuidanceService(real_ai_service)
+# Initialize services lazily
+real_ai_service = None
+stripe_service = None
+guidance_service = None
+
+def get_services():
+    """Get initialized services (lazy loading)"""
+    global real_ai_service, stripe_service, guidance_service
+    if real_ai_service is None:
+        real_ai_service = RealAIService()
+        stripe_service = RealStripeService()
+        guidance_service = UserGuidanceService(real_ai_service)
+    return real_ai_service, stripe_service, guidance_service
 
 # Payment Endpoints
 @payment_router.get("/api/payments/packages")

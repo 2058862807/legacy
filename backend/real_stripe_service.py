@@ -342,7 +342,7 @@ class RealStripeService:
         """List payments for a customer by email"""
         try:
             # Find checkout sessions by customer email
-            sessions = stripe.checkout.Session.list(
+            sessions = CheckoutSession.list(
                 limit=50,
                 expand=['data.payment_intent']
             )

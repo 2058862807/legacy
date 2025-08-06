@@ -631,6 +631,21 @@ frontend:
         agent: "testing"
         comment: "✅ PASSED - Logout functionality working correctly. Sign Out button accessible via user menu. Successfully clears authentication and redirects to homepage. Protected routes properly redirect to login after logout. Session cleanup working as expected."
 
+  - task: "Improved Legal Agreement Modal"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/legal-documents.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Redesigned legal agreement modal to make it more user-friendly. Users can now agree without being forced to read all legal documents. Added quick checkbox interface with optional document review section."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Improved legal agreement modal working perfectly! Modal opens with prominent 'Required Agreements' section containing 3 well-designed checkbox options (Terms of Service, Privacy Policy, Liability Agreement) with clear descriptions. Each checkbox works independently, button disabled until all 3 checked, then shows '✓ Accept All & Create Account'. Optional document review section with collapsible tabs works perfectly. Users can expand to review full documents or complete registration without reading. All exit options (X button, Cancel, background click) functional. Complete registration flow successful with redirect to dashboard. The improved modal solves the original signup issue by making agreement acceptance much easier while maintaining legal compliance."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"

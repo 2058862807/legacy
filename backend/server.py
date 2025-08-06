@@ -51,6 +51,7 @@ create_tables()
 
 # Include payment and enhanced AI router
 app.include_router(payment_router)
+app.include_router(safe_combos_router)
 
 # Create upload directories
 os.makedirs("uploads/documents", exist_ok=True)

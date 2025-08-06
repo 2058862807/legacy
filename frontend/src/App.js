@@ -19,6 +19,12 @@ import {
   OnboardingChatbot
 } from './components';
 
+import {
+  TermsOfServicePage,
+  PrivacyPolicyPage,
+  LiabilityAgreementPage
+} from './legal-pages';
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);

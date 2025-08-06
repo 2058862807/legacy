@@ -127,11 +127,20 @@ class RealStripeService:
                 metadata=checkout_metadata
             )
 
-            logger.info(f"🔍 Session created, type: {type(session)}")
-            logger.info(f"🔍 Session attributes: {[attr for attr in dir(session) if not attr.startswith('_')]}")
+            logger.info(f"🔍 Session created successfully")
+            logger.info(f"🔍 Session type: {type(session)}")
             
-            session_id = session.id if hasattr(session, 'id') else None
-            session_url = session.url if hasattr(session, 'url') else None
+            # Try to access session properties safely
+            try:
+                session_id = session.id
+                session_url = session.url
+                logger.info(f"✅ Session ID: {session_id}")
+                logger.info(f"✅ Session URL: {session_url}")
+            except Exception as attr_error:
+                logger.error(f"❌ Error accessing session attributes: {str(attr_error)}")
+                # Try alternative access methods
+                session_id = session.get('id') if hasattr(session, 'get') else str(session)
+                session_url = session.get('url') if hasattr(session, 'get') else None
             
             logger.info(f"✅ Real Stripe checkout session created: {session_id}")
             logger.info(f"💰 Amount: ${package['amount']} for package: {package['name']}")

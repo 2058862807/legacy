@@ -781,8 +781,92 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
           </button>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Legal Agreements Required</h2>
           <p className="text-gray-600">
-            Please review and accept all legal agreements to continue using NextEra Estate, or click "Decline & Exit" to cancel registration.
+            Please accept our legal agreements to continue. You can review the full documents using the tabs below if needed.
           </p>
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>📋 Quick Summary:</strong> By agreeing, you acknowledge our terms of service, privacy practices, and liability limitations. 
+              Full legal documents are available for review in the tabs below.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Agreement Section - Make this prominent */}
+        <div className="bg-white border-b border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Required Agreements</h3>
+          <div className="space-y-3">
+            <label className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">
+                  I accept the <strong>Terms of Service</strong>
+                </span>
+                <p className="text-xs text-gray-600 mt-1">
+                  Governs your use of NextEra Estate services and platform features
+                </p>
+              </div>
+            </label>
+
+            <label className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+              <input
+                type="checkbox"
+                checked={acceptedPrivacy}
+                onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">
+                  I accept the <strong>Privacy Policy</strong>
+                </span>
+                <p className="text-xs text-gray-600 mt-1">
+                  Describes how we collect, use, and protect your personal information
+                </p>
+              </div>
+            </label>
+
+            <label className="flex items-start space-x-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+              <input
+                type="checkbox"
+                checked={acceptedLiability}
+                onChange={(e) => setAcceptedLiability(e.target.checked)}
+                className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">
+                  I understand the <strong>Liability Agreement</strong>
+                </span>
+                <p className="text-xs text-gray-600 mt-1">
+                  Important limitations and disclaimers regarding our AI and legal services
+                </p>
+              </div>
+            </label>
+          </div>
+
+          {/* Action Buttons - More prominent */}
+          <div className="flex justify-between items-center mt-6 pt-4 border-t">
+            <button
+              onClick={handleDecline}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel Registration
+            </button>
+            <button
+              onClick={handleAccept}
+              disabled={!allAccepted}
+              className={`px-8 py-3 rounded-lg font-semibold text-sm ${
+                allAccepted
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              } transition-all`}
+            >
+              {allAccepted ? '✓ Accept All & Create Account' : 'Please Accept All Agreements'}
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}

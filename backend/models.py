@@ -192,7 +192,7 @@ class BlockchainTransaction(Base):
     gas_used = Column(Integer, nullable=True)
     gas_price = Column(Float, nullable=True)
     status = Column(String, nullable=False)  # pending, confirmed, failed
-    metadata = Column(JSON, nullable=True)
+    transaction_metadata = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships

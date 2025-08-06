@@ -41,7 +41,7 @@ class RealStripeService:
             account = stripe.Account.retrieve()
             logger.info("✅ Real Stripe service initialized and API connection verified")
             logger.info(f"🔑 Using API key: {self.stripe_secret_key[:7]}...")
-            logger.info(f"📧 Connected to Stripe account: {account.get('email', 'N/A')}")
+            logger.info(f"📧 Connected to Stripe account: {getattr(account, 'email', 'N/A')}")
         except Exception as e:
             logger.warning(f"⚠️ Stripe API test failed: {str(e)}")
             logger.info("✅ Stripe service initialized (API test failed but continuing)")

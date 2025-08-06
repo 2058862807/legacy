@@ -18,6 +18,8 @@ import logging
 from models import *
 from auth import AuthService, get_current_user, get_current_user_optional
 from services import *
+from enhanced_services import RealAIService, StripePaymentService, UserGuidanceService
+from payment_endpoints import payment_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

@@ -1334,58 +1334,6 @@ export const RegisterPage = ({ onLogin }) => {
     }
   };
 
-  const handleLegalAcceptance = async () => {
-    setLoading(true);
-    setError('');
-
-    try {
-      // Convert to backend-compatible format
-      const registrationData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone || '',
-        jurisdiction: `${stateInfo?.fullName || formData.jurisdiction}, USA`,
-        legal_agreements_accepted: true,
-        legal_acceptance_timestamp: new Date().toISOString()
-      };
-
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(registrationData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('nextera_user', JSON.stringify(data.user));
-        
-        // Call onLogin if provided, otherwise navigate
-        if (onLogin) {
-          onLogin(data.user);
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        const errorData = await response.text();
-        setError(errorData || 'Registration failed. Please try again.');
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setError('Network error. Please check your connection and try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLegalDecline = () => {
-    setError('You must accept the legal agreements to use NextEra Estate.');
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">

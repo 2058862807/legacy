@@ -2342,6 +2342,38 @@ export const SmartWillBuilder = ({ user }) => {
             )}
           </div>
         </div>
+
+        {/* Premium Upgrade Prompt */}
+        {currentStep === 4 && (
+          <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">🚀 Upgrade for Blockchain Features</h3>
+            <p className="text-gray-600 mb-4">
+              Get immutable document notarization and enhanced will features with our premium plans.
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleUpgrade('basic_will')}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+              >
+                Basic Will - $29.99
+              </button>
+              <button
+                onClick={() => handleUpgrade('premium_will')}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:from-purple-700 hover:to-indigo-700 transition-colors"
+              >
+                Premium + Blockchain - $49.99
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Payment Modal */}
+        <PaymentModal 
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          packageId={Object.keys(premiumPackages).find(key => premiumPackages[key] === selectedPackage) || 'basic_will'}
+          packageInfo={selectedPackage}
+        />
       </div>
     </div>
   );

@@ -211,7 +211,7 @@ class DigitalAsset(Base):
     token_id = Column(String, nullable=True)  # For NFTs
     balance = Column(Float, default=0.0)
     usd_value = Column(Float, nullable=True)
-    metadata = Column(JSON, nullable=True)  # NFT metadata, etc.
+    asset_metadata = Column(JSON, nullable=True)  # NFT metadata, etc.
     image_url = Column(String, nullable=True)
     last_updated = Column(DateTime, default=datetime.utcnow)
     

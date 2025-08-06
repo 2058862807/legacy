@@ -127,13 +127,19 @@ class RealStripeService:
                 metadata=checkout_metadata
             )
 
-            logger.info(f"✅ Real Stripe checkout session created: {session.id}")
+            logger.info(f"🔍 Session created, type: {type(session)}")
+            logger.info(f"🔍 Session attributes: {dir(session)}")
+            
+            session_id = getattr(session, 'id', None)
+            session_url = getattr(session, 'url', None)
+            
+            logger.info(f"✅ Real Stripe checkout session created: {session_id}")
             logger.info(f"💰 Amount: ${package['amount']} for package: {package['name']}")
 
             return {
                 "success": True,
-                "checkout_url": session.url,
-                "session_id": session.id,
+                "checkout_url": session_url,
+                "session_id": session_id,
                 "session_uuid": session_uuid,
                 "amount": package["amount"],
                 "package_info": package

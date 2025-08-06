@@ -868,13 +868,12 @@ export const LegalAgreementModal = ({ isOpen, onAccept, onDecline }) => {
             </label>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex justify-end space-x-4 pt-4">
             <button
-              onClick={onDecline}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              onClick={handleDecline}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
-              Decline & Exit
+              Decline & Exit Registration
             </button>
             <button
               onClick={handleAccept}

@@ -653,7 +653,11 @@ class NextEraBackendTester:
             self.test_feature_tour,
             self.test_contextual_help,
             self.test_database_models,
-            self.test_cors_and_endpoints
+            self.test_cors_and_endpoints,
+            self.test_auth_security,
+            self.test_error_handling,
+            self.test_webhook_endpoint,
+            self.test_data_persistence
         ]
         
         passed = 0

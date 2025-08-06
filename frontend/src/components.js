@@ -1295,8 +1295,44 @@ export const RegisterPage = ({ onLogin }) => {
       return;
     }
 
-    // Show legal agreement modal
-    setShowLegalModal(true);
+    // Skip legal modal - go directly to registration
+    setLoading(true);
+    
+    try {
+      // Convert to backend-compatible format
+      const registrationData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone || '',
+        jurisdiction: `${stateInfo?.fullName || formData.jurisdiction}, USA`,
+        legal_agreements_accepted: true,
+        legal_acceptance_timestamp: new Date().toISOString()
+      };
+
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(registrationData)
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('Registration successful:', userData);
+        onRegister(userData);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLegalAcceptance = async () => {

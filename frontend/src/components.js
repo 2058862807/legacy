@@ -1557,13 +1557,6 @@ export const RegisterPage = ({ onLogin }) => {
           </div>
         </div>
       </div>
-
-      {/* Legal Agreement Modal */}
-      <LegalAgreementModal 
-        isOpen={showLegalModal}
-        onAccept={handleLegalAcceptance}
-        onDecline={handleLegalDecline}
-      />
     </div>
   );
 };

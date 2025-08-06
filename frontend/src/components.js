@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { blockchainService, formatAddress, formatBalance } from './blockchain';
 import { stateComplianceService, US_STATES_COMPLIANCE } from './stateCompliance';
+import { TermsOfService, PrivacyPolicy, LiabilityAgreement, LegalAgreementModal } from './legal-documents';
 
 // Payment and Premium Features Component
 export const PaymentModal = ({ isOpen, onClose, packageId, packageInfo }) => {

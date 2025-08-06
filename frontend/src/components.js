@@ -1335,7 +1335,6 @@ export const RegisterPage = ({ onLogin }) => {
   };
 
   const handleLegalAcceptance = async () => {
-    setShowLegalModal(false);
     setLoading(true);
     setError('');
 

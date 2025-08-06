@@ -849,6 +849,7 @@ export const Header = ({ user, onLogout }) => {
             <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Dashboard</Link>
             <Link to="/will-builder" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Will Builder</Link>
             <Link to="/vault" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Vault</Link>
+            <Link to="/safes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">🔐 Safes</Link>
             <Link to="/compliance" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">🏛️ 50-State</Link>
             <Link to="/blockchain" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">🔗 Blockchain</Link>
             <Link to="/heirs" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">Heirs</Link>

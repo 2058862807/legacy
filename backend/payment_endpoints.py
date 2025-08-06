@@ -402,6 +402,10 @@ async def get_contextual_help(
     try:
         _, _, guidance_service = get_services()
         
+        # Check if guidance service is available
+        if guidance_service is None:
+            raise HTTPException(status_code=503, detail="Guidance services temporarily unavailable")
+        
         session_id = f"help_{current_user.id if current_user else 'anonymous'}"
         help_response = await guidance_service.get_contextual_help(page, query, session_id)
         

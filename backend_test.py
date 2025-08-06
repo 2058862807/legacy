@@ -989,84 +989,54 @@ class NextEraBackendTester:
             self.log_test("Production Error Handling (ENHANCED)", False, f"Error: {str(e)}")
             return False
 
-    def run_all_tests(self):
-        """Run all backend tests including new production-ready features"""
-        print("🧪 Running Comprehensive Backend Tests for Production-Ready Features\n")
+    def run_critical_auth_tests(self):
+        """Run CRITICAL authentication flow tests as requested"""
+        print("🚨 URGENT: TESTING COMPLETE AUTH FLOW TO VERIFY IT'S WORKING")
+        print("🔐 Testing Registration → Login → Dashboard Access Flow")
+        print("=" * 80)
         
-        # Core functionality tests
-        tests = [
+        # Critical auth tests in order
+        critical_tests = [
             self.test_health_check,
-            self.test_user_registration_and_login,
-            
-            # CRITICAL STRIPE INTEGRATION TESTS
-            self.test_payment_packages,
-            self.test_stripe_checkout_creation,
-            self.test_payment_status_check,
-            self.test_webhook_endpoint,
-            
-            # NEW PERSONAL SAFE COMBOS FEATURE TESTS
-            self.test_safe_types_endpoint,
-            self.test_create_personal_safe,
-            self.test_get_personal_safes,
-            self.test_access_personal_safe,
-            self.test_delete_personal_safe,
-            
-            # ENHANCED SECURITY TESTS
-            self.test_encryption_security,
-            self.test_production_error_handling,
-            
-            # AI INTEGRATION TESTS
-            self.test_grief_companion_session,
-            self.test_grief_companion_ai_response,
-            self.test_will_ai_assistance,
-            self.test_user_guidance_welcome,
-            self.test_feature_tour,
-            self.test_contextual_help,
-            
-            # DATABASE AND INTEGRATION TESTS
-            self.test_database_models,
-            self.test_cors_and_endpoints,
-            self.test_auth_security,
-            self.test_data_persistence
+            self.test_user_registration,
+            self.test_user_login,
+            self.test_dashboard_data_access
         ]
         
         passed = 0
         failed = 0
         
-        for test in tests:
+        for test in critical_tests:
             try:
                 if test():
                     passed += 1
                 else:
                     failed += 1
+                    # If auth fails, stop testing dependent tests
+                    if test.__name__ in ['test_user_registration', 'test_user_login']:
+                        print(f"🛑 CRITICAL AUTH FAILURE - Stopping dependent tests")
+                        break
             except Exception as e:
                 print(f"❌ CRITICAL ERROR in {test.__name__}: {str(e)}")
                 failed += 1
+                break
         
-        # Print summary
+        # Print critical summary
         print("=" * 80)
-        print("📊 PRODUCTION-READY FEATURES TEST SUMMARY")
+        print("🚨 CRITICAL AUTH FLOW TEST RESULTS")
         print("=" * 80)
         print(f"✅ Passed: {passed}")
         print(f"❌ Failed: {failed}")
         print(f"📈 Success Rate: {(passed/(passed+failed)*100):.1f}%")
         
-        # Categorize results
-        critical_tests = ["REAL Stripe Checkout Creation (CRITICAL)", "Enhanced Payment Packages API"]
-        new_feature_tests = [r["test"] for r in self.test_results if "NEW FEATURE" in r["test"]]
-        enhanced_tests = [r["test"] for r in self.test_results if "ENHANCED" in r["test"]]
-        
-        print(f"\n🔥 CRITICAL STRIPE TESTS: {len([r for r in self.test_results if any(ct in r['test'] for ct in critical_tests) and r['success']])}/{len([r for r in self.test_results if any(ct in r['test'] for ct in critical_tests)])}")
-        print(f"🆕 NEW SAFE COMBOS TESTS: {len([r for r in self.test_results if r['test'] in new_feature_tests and r['success']])}/{len(new_feature_tests)}")
-        print(f"🛡️ ENHANCED SECURITY TESTS: {len([r for r in self.test_results if r['test'] in enhanced_tests and r['success']])}/{len(enhanced_tests)}")
-        
-        # Print detailed results
-        print("\n📋 DETAILED RESULTS:")
+        # Detailed results for critical tests
+        print("\n🔍 DETAILED AUTH FLOW RESULTS:")
         for result in self.test_results:
-            status = "✅" if result["success"] else "❌"
-            print(f"{status} {result['test']}")
-            if result["details"]:
-                print(f"    {result['details']}")
+            if "CRITICAL AUTH" in result["test"] or result["test"] == "Health Check":
+                status = "✅" if result["success"] else "❌"
+                print(f"{status} {result['test']}")
+                if result["details"]:
+                    print(f"    {result['details']}")
         
         return passed, failed
 

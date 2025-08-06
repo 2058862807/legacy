@@ -39,6 +39,7 @@ class User(Base):
     documents = relationship("Document", back_populates="owner")
     heirs = relationship("Heir", back_populates="owner")
     blockchain_wallets = relationship("BlockchainWallet", back_populates="owner")
+    personal_safes = relationship("PersonalSafe", back_populates="user")
     
     def verify_password(self, password: str) -> bool:
         return pwd_context.verify(password, self.hashed_password)

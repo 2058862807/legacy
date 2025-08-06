@@ -1075,6 +1075,7 @@ export const LoginPage = ({ onLogin }) => {
   });
   const [loading, setLoading] = useState(false);
   const [showBiometric, setShowBiometric] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

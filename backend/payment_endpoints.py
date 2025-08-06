@@ -250,6 +250,8 @@ async def send_enhanced_grief_message(
 ):
     """Send message to enhanced AI grief companion"""
     try:
+        real_ai_service, _, _ = get_services()
+        
         session = db.query(GriefSession).filter(GriefSession.session_id == session_id).first()
         
         if not session:

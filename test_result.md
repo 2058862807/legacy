@@ -126,7 +126,7 @@ backend:
     file: "/app/backend/payment_endpoints.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -137,6 +137,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Stripe payment integration now fully functional with DirectStripeService fallback implementation. Payment packages API working (5 packages available). Checkout session creation working with mock Stripe URLs. Payment status checking operational. Webhook endpoint exists and handles requests. Payment transaction database model working correctly. All payment flows are production-ready."
+      - working: "NA"
+        agent: "main"
+        comment: "✅ UPDATED - Stripe integration updated with real test API key provided by user (sk_test_51RgFei...). Backend restarted to load new environment variables. real_stripe_service.py configured with actual Stripe API integration. Ready for comprehensive testing with real Stripe checkout sessions instead of mock responses."
 
   - task: "Enhanced Grief Companion API"
     implemented: true

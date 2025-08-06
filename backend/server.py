@@ -478,7 +478,7 @@ async def create_heir(
         last_name=last_name,
         email=email,
         phone=phone,
-        relationship=relationship,
+        heir_relationship=relationship,
         role=role,
         percentage=percentage
     )

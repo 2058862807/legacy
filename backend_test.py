@@ -73,7 +73,7 @@ class NextEraBackendTester:
                 "password": "password123",
                 "first_name": "Auth Test",
                 "last_name": "User",
-                "jurisdiction": "California, USA",
+                "jurisdiction": "Alabama, USA",
                 "phone": "+1-555-0123"
             }
             

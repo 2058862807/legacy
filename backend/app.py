@@ -12,7 +12,7 @@ from providers.github_client import github_commit_push
 from providers.vercel_client import vercel_deploy
 from providers.email_client import fetch_unread, send_reply
 def set_a_record(*args, **kwargs):
-    return False, "namecheap disabled"
+    return False, "namecheap"
 
 from ai.llm import llm_complete
 from automation.agent import run_agent_task

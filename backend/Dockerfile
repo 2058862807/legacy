@@ -15,5 +15,6 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # Copy app code
 COPY . /app
 
-# Start FastAPI with uvicorn
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start FastAPI with uvicorn (bind to Railway’s dynamic PORT)
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
+

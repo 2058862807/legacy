@@ -100,3 +100,16 @@ export const LoginPage = ({ onLogin }) => {
     </div>
   );
 };
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async redirects() {
+    return [
+      // send /login straight to NextAuth
+      { source: '/login', destination: '/api/auth/signin', permanent: false },
+      // or send to home:
+      // { source: '/login', destination: '/', permanent: false },
+    ];
+  },
+};
+
+module.exports = nextConfig;

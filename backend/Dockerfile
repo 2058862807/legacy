@@ -2,22 +2,9 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y
-build-essential
-gcc
-git
-libpq-dev
-libjpeg-dev
-zlib1g-dev
-libfreetype6-dev
-libxml2-dev
-libxslt1-dev
-&& rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && apt-get install -y build-essential gcc git libpq-dev libjpeg-dev zlib1g-dev libfreetype6-dev libxml2-dev libxslt1-dev && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
-
 COPY . /app
 ENV PYTHONPATH=.
 CMD sh -c "uvicorn app:app --host 0.0.0.0 --port ${PORT}"

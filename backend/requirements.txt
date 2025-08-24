@@ -23,4 +23,3 @@ boto3==1.34.0
 psycopg2-binary==2.9.9
 stripe==12.4.0
 pydantic-settings==2.1.0
-emergentintegrations

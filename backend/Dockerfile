@@ -20,5 +20,4 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY . /app
 ENV PYTHONPATH=.
-
 CMD sh -c "uvicorn app:app --host 0.0.0.0 --port ${PORT}"

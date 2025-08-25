@@ -1,1 +1,1 @@
-
+await signIn("google")

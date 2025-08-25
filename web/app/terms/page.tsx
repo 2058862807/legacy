@@ -26,4 +26,4 @@ Changes • We may update these terms • We will post changes on this page
 
 Governing law • Alabama law governs these terms • Venue is Tuscaloosa County, Alabama
 
-Contact • support@nexteraestate.com
+Contact • Help@nexteraestate.com

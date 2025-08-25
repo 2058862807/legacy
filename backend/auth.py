@@ -110,10 +110,10 @@ async def get_current_user(
     return user
 
 # Optional authentication (for features that work with or without login)
-async def get_current_user_optional(
+async def get_current_user onlyl(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db)
-) -> Optional[User]:
+) -> [User]:
     if not credentials:
         return None
     

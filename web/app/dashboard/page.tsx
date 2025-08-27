@@ -23,14 +23,15 @@ export default function Dashboard() {
   }, [status])
 
   async function fetchUserData() {
-    try {
-      const res = await fetch('/api/user/dashboard', { cache: 'no-store' })
-      const data = await res.json()
-      setUserData(data)
-    } catch (e) {
-      console.error('dashboard fetch error', e)
-    }
-  }
+try {
+const res = await fetch('/api/proxy/api/user/dashboard-stats', { cache: 'no-store' })
+if (!res.ok) throw new Error(API ${res.status})
+const data = await res.json()
+setUserData(data)
+} catch (e) {
+console.error('dashboard fetch error', e)
+}
+}
 
   if (status === 'loading') return <div className="p-8">Loading...</div>
 

@@ -2,10 +2,8 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 
 export const {
-  handlers: { GET, POST },
+  handlers: { GET, POST }, // ✅ this gives Next.js what it expects
   auth,
-  signIn,
-  signOut,
 } = NextAuth({
   providers: [
     Google({

@@ -1,9 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+function isAuthed(req: NextRequest) {
+const a = req.cookies.get('next-auth.session-token')?.value
+const b = req.cookies.get('__Secure-next-auth.session-token')?.value
+return Boolean(a || b)
+}
+
 export function middleware(req: NextRequest) {
-  const isAuthed = req.cookies.get('next-auth.session-token') || req.cookies.get('__Secure-next-auth.session-token')
-  const isDash = req.nextUrl.pathname.startsWith('/dashboard')
-  if (isDash && !isAuthed) return NextResponse.redirect(new URL('/api/auth/signin', req.url))
-  return NextResponse.next()
+const url = req.nextUrl
+if (url.pathname === '/') {
+if (isAuthed(req)) {
+return NextResponse.redirect(new URL('/dashboard', url))
+}
+}
+return NextResponse.next()
+}
+
+export const config = {
+matcher: ['/']
 }

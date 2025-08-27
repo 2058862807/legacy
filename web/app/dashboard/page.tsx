@@ -1,82 +1,199 @@
-'use client'
-import { useEffect, useState } from 'react'
-import { useSession, signIn } from 'next-auth/react'
-import DashboardLayout from '@/components/Layout/DashboardLayout'
-import DocumentList from '@/components/Documents/DocumentList'
-import ComplianceStatus from '@/components/Compliance/ComplianceStatus'
-import AIChatAssistant from '@/components/AI/AIChatAssistant'
-import BlockchainStatus from '@/components/Blockchain/BlockchainStatus'
+'use client';
 
-type Tab = 'overview' | 'documents' | 'assistant'
+import { useEffect, useState } from 'react';
+import { useSession, signIn } from 'next-auth/react';
+import DashboardLayout from '@/components/Layout/DashboardLayout';
+import DocumentList from '@/components/Documents/DocumentList';
+import ComplianceStatus from '@/components/Compliance/ComplianceStatus';
+import AIChatAssistant from '@/components/AI/AIChatAssistant';
+import BlockchainStatus from '@/components/Blockchain/BlockchainStatus';
+
+type Tab = 'overview' | 'documents' | 'assistant';
+
+type RecentItem = {
+  action: string;
+  details?: string;
+  timestamp?: string | number;
+};
+
+type DashboardStats = {
+  documents?: any[];
+  heirs?: number;
+  willCompletion?: number;
+  state?: string;
+  compliance?: any;
+  recentActivity?: RecentItem[];
+};
 
 export default function Dashboard() {
-  const { data: session, status } = useSession()
-  const [userData, setUserData] = useState<any>(null)
-  const [activeTab, setActiveTab] = useState<Tab>('overview')
+  const { data: session, status } = useSession();
+  const [userData, setUserData] = useState<DashboardStats | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (status === 'unauthenticated') signIn('google')
-  }, [status])
+    if (status === 'unauthenticated') signIn('google');
+  }, [status]);
 
   useEffect(() => {
-    if (status === 'authenticated') fetchUserData()
-  }, [status])
+    if (status === 'authenticated') fetchUserData();
+  }, [status]);
 
   async function fetchUserData() {
-try {
-const res = await fetch('/api/proxy/api/user/dashboard-stats', { cache: 'no-store' })
-if (!res.ok) throw new Error(API ${res.status})
-const data = await res.json()
-setUserData(data)
-} catch (e) {
-console.error('dashboard fetch error', e)
-}
-}
+    try {
+      setLoading(true);
+      setError('');
+      const res = await fetch('/api/proxy/api/user/dashboard-stats', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = await res.json();
+      setUserData(data);
+    } catch (e: any) {
+      console.error('dashboard fetch error', e);
+      setError(e?.message || 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  if (status === 'loading') return <div className="p-8">Loading...</div>
+  if (status === 'loading') return <div className="p-8">Loading...</div>;
 
   return (
     <DashboardLayout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}</h1>
-          <p className="text-gray-600">Here is your estate planning overview.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">
+              Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}
+            </h1>
+            <p className="text-gray-600">Here is your estate planning overview.</p>
+          </div>
+          <button
+            onClick={fetchUserData}
+            className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
+          >
+            Refresh
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 space-y-6">
+        {error && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-1">
             <ComplianceStatus compliance={userData?.compliance} />
             <BlockchainStatus documents={userData?.documents} />
           </div>
 
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+            <div className="mb-6 rounded-xl bg-white p-6 shadow-md">
               <div className="flex border-b">
-                <button className={`py-2 px-4 ${activeTab === 'overview' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`} onClick={() => setActiveTab('overview')}>Overview</button>
-                <button className={`py-2 px-4 ${activeTab === 'documents' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`} onClick={() => setActiveTab('documents')}>Documents</button>
-                <button className={`py-2 px-4 ${activeTab === 'assistant' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'}`} onClick={() => setActiveTab('assistant')}>AI Assistant</button>
+                <button
+                  className={`py-2 px-4 ${
+                    activeTab === 'overview'
+                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      : 'text-gray-500'
+                  }`}
+                  onClick={() => setActiveTab('overview')}
+                >
+                  Overview
+                </button>
+                <button
+                  className={`py-2 px-4 ${
+                    activeTab === 'documents'
+                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      : 'text-gray-500'
+                  }`}
+                  onClick={() => setActiveTab('documents')}
+                >
+                  Documents
+                </button>
+                <button
+                  className={`py-2 px-4 ${
+                    activeTab === 'assistant'
+                      ? 'border-b-2 border-blue-500 text-blue-600'
+                      : 'text-gray-500'
+                  }`}
+                  onClick={() => setActiveTab('assistant')}
+                >
+                  AI Assistant
+                </button>
               </div>
 
               <div className="mt-4">
-                {activeTab === 'overview' && (
+                {loading && <div>Loading...</div>}
+
+                {!loading && activeTab === 'overview' && (
                   <div>
-                    <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <a href="/will" className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg text-left">Continue Will Builder</a>
-                      <a href="/vault" className="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg text-left">Add Trust Document</a>
-                      <a href="/notary" className="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg text-left">Request Notarization</a>
-                      <a href="/compliance" className="bg-orange-600 hover:bg-orange-700 text-white py-3 px-4 rounded-lg text-left">Check Compliance</a>
+                    <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <a
+                        href="/will"
+                        className="rounded-lg bg-blue-600 px-4 py-3 text-left text-white hover:bg-blue-700"
+                      >
+                        Continue Will Builder
+                      </a>
+                      <a
+                        href="/vault"
+                        className="rounded-lg bg-green-600 px-4 py-3 text-left text-white hover:bg-green-700"
+                      >
+                        Add Trust Document
+                      </a>
+                      <a
+                        href="/notary"
+                        className="rounded-lg bg-purple-600 px-4 py-3 text-left text-white hover:bg-purple-700"
+                      >
+                        Request Notarization
+                      </a>
+                      <a
+                        href="/compliance"
+                        className="rounded-lg bg-orange-600 px-4 py-3 text-left text-white hover:bg-orange-700"
+                      >
+                        Check Compliance
+                      </a>
                     </div>
 
-                    <h2 className="text-xl font-semibold mt-8 mb-4">Recent Activity</h2>
+                    <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="rounded-lg border p-4">
+                        <p className="text-sm text-gray-500">Documents Stored</p>
+                        <p className="text-2xl font-semibold">
+                          {Array.isArray(userData?.documents) ? userData?.documents?.length : 0}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border p-4">
+                        <p className="text-sm text-gray-500">Will Completion</p>
+                        <p className="text-2xl font-semibold">
+                          {userData?.willCompletion ?? 0}%
+                        </p>
+                      </div>
+                      <div className="rounded-lg border p-4">
+                        <p className="text-sm text-gray-500">Heirs Configured</p>
+                        <p className="text-2xl font-semibold">{userData?.heirs ?? 0}</p>
+                      </div>
+                      <div className="rounded-lg border p-4">
+                        <p className="text-sm text-gray-500">State Compliance</p>
+                        <p className="text-2xl font-semibold">{userData?.state ?? 'NA'}</p>
+                      </div>
+                    </div>
+
+                    <h2 className="mb-4 mt-8 text-xl font-semibold">Recent Activity</h2>
                     <div className="space-y-3">
-                      {(userData?.recentActivity || []).map((a: any, i: number) => (
-                        <div key={i} className="flex items-start p-3 bg-gray-50 rounded-lg">
-                          <div className="bg-blue-100 p-2 rounded-full mr-3"><span className="text-blue-600">✓</span></div>
+                      {(userData?.recentActivity || []).map((a: RecentItem, i: number) => (
+                        <div key={i} className="flex items-start rounded-lg bg-gray-50 p-3">
+                          <div className="mr-3 rounded-full bg-blue-100 p-2">
+                            <span className="text-blue-600">✓</span>
+                          </div>
                           <div>
                             <p className="font-medium">{a.action}</p>
-                            <p className="text-sm text-gray-600">{a.details}</p>
-                            <p className="text-xs text-gray-500">{new Date(a.timestamp).toLocaleString()}</p>
+                            {a.details && <p className="text-sm text-gray-600">{a.details}</p>}
+                            {a.timestamp && (
+                              <p className="text-xs text-gray-500">
+                                {new Date(a.timestamp).toLocaleString()}
+                              </p>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -84,13 +201,16 @@ console.error('dashboard fetch error', e)
                   </div>
                 )}
 
-                {activeTab === 'documents' && <DocumentList documents={userData?.documents} />}
-                {activeTab === 'assistant' && <AIChatAssistant />}
+                {!loading && activeTab === 'documents' && (
+                  <DocumentList documents={userData?.documents} />
+                )}
+
+                {!loading && activeTab === 'assistant' && <AIChatAssistant />}
               </div>
             </div>
           </div>
         </div>
       </div>
     </DashboardLayout>
-  )
+  );
 }

@@ -1,25 +1,31 @@
-// Backend API base URL
-const API = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
+export const API = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
 
-// Main API fetch function
-export async function apiFetch<T = any>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API}${path}`, {
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`API ${response.status} ${response.statusText}: ${text}`);
-  }
-
-  return response.json() as Promise<T>;
+type Opts = { 
+  method?: string, 
+  headers?: Record<string,string>, 
+  body?: any, 
+  cache?: RequestCache 
 }
 
-// Legacy compatibility exports
-export const API_BASE = API;
-export default apiFetch;
+export async function apiFetch<T = any>(path: string, opts: Opts = {}): Promise<T> {
+  const init: RequestInit = { 
+    method: opts.method || "GET", 
+    headers: { 
+      "Content-Type": "application/json", 
+      ...(opts.headers || {}) 
+    }, 
+    cache: opts.cache || "no-store" 
+  }
+  
+  if (opts.body !== undefined) {
+    init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body)
+  }
+  
+  const r = await fetch(`${API}${path}`, init)
+  
+  if (!r.ok) {
+    throw new Error(`API ${r.status}`)
+  }
+  
+  return r.json() as Promise<T>
+}

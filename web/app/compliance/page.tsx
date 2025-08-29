@@ -5,7 +5,15 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 // Component for action cards to avoid repetition
-const ActionCard = ({ href, title, description, icon, bgColor, hoverColor }) => {
+const ActionCard = ({ href, title, description, icon, bgColor, hoverColor, onClick }: {
+  href: string;
+  title: string;
+  description: string;
+  icon: string;
+  bgColor: string;
+  hoverColor: string;
+  onClick?: (e: React.MouseEvent) => void;
+}) => {
   return (
     <Link 
       href={href}

@@ -58,8 +58,8 @@ def create_checkout(payload: CheckoutIn):
                 },
                 "quantity": 1,
             }],
-            success_url=f"{FRONTEND_BASE_URL}/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{FRONTEND_BASE_URL}/cancel",
+            success_url=f"{FRONTEND_BASE_URL}/checkout/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{FRONTEND_BASE_URL}/checkout/cancel",
         )
         return {"url": session.url}
     except Exception as e:

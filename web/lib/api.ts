@@ -1,8 +1,8 @@
 const API = "/api/proxy"
 
-async function j(path: string, opts: RequestInit = {}) {
+export async function apiFetch(path: string, opts: RequestInit = {}) {
   const r = await fetch(`${API}${path}`, { ...opts, cache: "no-store" })
-  if (!r.ok) throw new Error(`${API} ${r.status}`)
+  if (!r.ok) throw new Error(`API ${r.status}`)
   return r.json()
 }
 

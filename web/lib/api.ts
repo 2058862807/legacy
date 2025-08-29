@@ -1,14 +1,42 @@
 const API = "/api/proxy"
 
-async function j<T = any>(path: string, opts: RequestInit = {}): Promise<T> {
-  const r = await fetch(`${API}${path}`, { 
-    ...opts, 
-    cache: "no-store" as RequestCache 
-  })
-  
-  if (!r.ok) throw new Error(`API ${r.status}: ${r.statusText}`)
-  
-  return r.json() as Promise<T>
+interface ApiError extends Error {
+  status?: number
 }
 
-export default j
+export async function apiFetch<T = any>(path: string, opts: RequestInit = {}): Promise<T> {
+  try {
+    const response = await fetch(`${API}${path}`, {
+      ...opts,
+      cache: "no-store" as RequestCache,
+      headers: {
+        'Content-Type': 'application/json',
+        ...opts.headers,
+      },
+    })
+
+    if (!response.ok) {
+      let errorData
+      try {
+        errorData = await response.text()
+      } catch {
+        errorData = response.statusText
+      }
+      
+      const error: ApiError = new Error(
+        `API ${response.status}: ${response.statusText}. ${errorData}`
+      )
+      error.status = response.status
+      throw error
+    }
+
+    return await response.json() as T
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error
+    }
+    throw new Error('Unknown API error occurred')
+  }
+}
+
+export default apiFetch

@@ -1,0 +1,1 @@
+export { default as AIChatAssistant } from './AIChatAssistant'

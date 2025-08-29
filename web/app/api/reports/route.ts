@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
 
+
 export async function GET() {
-  return NextResponse.json([
-    { id: "r1", title: "HIPAA baseline", status: "passing" },
-    { id: "r2", title: "NIST 800-53 mapping", status: "review" }
-  ])
+// Mock data so the page builds without your backend
+return NextResponse.json([
+{ id: "rpt-001", title: "HIPAA baseline", status: "passing" },
+{ id: "rpt-002", title: "NIST 800-53 map", status: "review" }
+])
 }

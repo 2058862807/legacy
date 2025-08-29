@@ -1,42 +1,46 @@
-const API = "/api/proxy"
+const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
 
-interface ApiError extends Error {
-  status?: number
+export interface ApiResponse<T = any> {
+  data?: T;
+  error?: string;
+  status: number;
 }
 
-export async function apiFetch<T = any>(path: string, opts: RequestInit = {}): Promise<T> {
+export async function apiFetch<T = any>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<ApiResponse<T>> {
+  const url = `${BACKEND_BASE_URL}${endpoint}`;
+  
   try {
-    const response = await fetch(`${API}${path}`, {
-      ...opts,
-      cache: "no-store" as RequestCache,
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
-        ...opts.headers,
+        ...options?.headers,
       },
-    })
+      ...options,
+    });
+
+    const isJson = response.headers.get('content-type')?.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
 
     if (!response.ok) {
-      let errorData
-      try {
-        errorData = await response.text()
-      } catch {
-        errorData = response.statusText
-      }
-      
-      const error: ApiError = new Error(
-        `API ${response.status}: ${response.statusText}. ${errorData}`
-      )
-      error.status = response.status
-      throw error
+      return {
+        error: data?.message || data || `HTTP ${response.status}`,
+        status: response.status,
+      };
     }
 
-    return await response.json() as T
+    return {
+      data,
+      status: response.status,
+    };
   } catch (error) {
-    if (error instanceof Error) {
-      throw error
-    }
-    throw new Error('Unknown API error occurred')
+    return {
+      error: error instanceof Error ? error.message : 'Network error',
+      status: 0,
+    };
   }
 }
 
-export default apiFetch
+export default apiFetch;

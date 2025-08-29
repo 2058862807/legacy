@@ -60,7 +60,6 @@ export default function Page() {
             icon="📋"
             bgColor="bg-orange-600"
             hoverColor="hover:bg-orange-700"
-            onClick={handleComplianceCheck}
           />
           
           <ActionCard

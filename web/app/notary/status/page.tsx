@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { API_BASE } from '@/lib/api'
-import DashboardLayout from '@/components/Layout/DashboardLayout'
+import { API_BASE } from '../../../lib/api'
+import DashboardLayout from '../../../components/Layout/DashboardLayout'
 
 type NotaryRequest = {
   id: string

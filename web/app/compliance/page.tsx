@@ -34,7 +34,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Simulate loading for compliance check
-  const handleComplianceCheck = (e) => {
+  const handleComplianceCheck = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsLoading(true);
     // In a real application, this would trigger an API call

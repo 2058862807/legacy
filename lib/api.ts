@@ -1,56 +1,21 @@
-{
-  "compilerOptions": {
-"target": "ES2020",
-"lib": ["dom", "dom.iterable", "es2020"],
-"allowJs": false,
-"skipLibCheck": true,
-"strict": true,
-"noEmit": true,
-"esModuleInterop": true,
-"module": "esnext",
-"moduleResolution": "bundler",
-"resolveJsonModule": true,
-"isolatedModules": true,
-"jsx": "preserve",
-"baseUrl": ".",
-"paths": {
-"@/*": ["./*"]
-}
-},
-"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-"exclude": ["node_modules"]
-}
+export const dynamic = "force-dynamic"
 
+type Report = { id: string; title: string; status: string }
 
-// File: web/lib/api.ts
-export const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
-
-
-type ApiOptions = {
-method?: "GET" | "POST" | "PUT" | "DELETE"
-headers?: Record<string, string>
-body?: any
-cache?: RequestCache
-next?: NextFetchRequestConfig
-}
-
-
-export async function apiFetch(path: string, opts: ApiOptions = {}) {
-const url = `${BASE_URL}${path}`
-const headers = { "Content-Type": "application/json", ...(opts.headers || {}) }
-const init: RequestInit = {
-method: opts.method || "GET",
-headers,
-cache: opts.cache || "no-store",
-next: opts.next
-}
-if (opts.body !== undefined) init.body = JSON.stringify(opts.body)
-
-
-const res = await fetch(url, init)
-if (!res.ok) {
-const text = await res.text()
-throw new Error(`API ${res.status} ${res.statusText}: ${text}`)
-}
-return res.json()
+export default async function ComplianceReportsPage() {
+  const res = await fetch("/api/reports", { cache: "no-store" })
+  const reports = (await res.json()) as Report[]
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-semibold">Compliance Reports</h1>
+      <ul className="mt-4 space-y-2">
+        {reports.map(r => (
+          <li key={r.id} className="border rounded p-3">
+            <div className="font-medium">{r.title}</div>
+            <div className="text-sm text-gray-500">{r.status}</div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }

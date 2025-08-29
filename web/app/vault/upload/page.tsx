@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { API_BASE } from '@/lib/api'
-import DashboardLayout from '@/components/Layout/DashboardLayout'
+import { API_BASE } from '../../../lib/api'
+import DashboardLayout from '../../../components/Layout/DashboardLayout'
 
 export default function VaultUploadPage() {
   const [file, setFile] = useState<File | null>(null)

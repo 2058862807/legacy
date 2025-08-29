@@ -1,46 +1,30 @@
-export const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
-if (opts.body !== undefined) init.body = JSON.stringify(opts.body)
+export const API = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
 
 
-const res = await fetch(url, init)
+export type Options = {
+method?: string
+headers?: Record<string, string>
+body?: any
+cache?: RequestCache
+}
+
+
+export async function apiFetch<T = any>(path: string, opts: Options = {}): Promise<T> {
+const init: RequestInit = {
+method: opts.method || "GET",
+headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+cache: opts.cache || "no-store"
+}
+if (opts.body !== undefined) {
+init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body)
+}
+
+
+const res = await fetch(`${API}${path}`, init)
 if (!res.ok) {
 const text = await res.text()
 throw new Error(`API ${res.status} ${res.statusText}: ${text}`)
 }
-return res.json()
-}
-
-
-// File: web/app/compliance/reports/page.tsx
-import { apiFetch } from "@/lib/api"
-
-
-export const dynamic = "force-dynamic"
-
-
-export default async function ComplianceReportsPage() {
-const reports = await getReports()
-return (
-<div className="p-6">
-<h1 className="text-2xl font-semibold">Compliance Reports</h1>
-<ul className="mt-4 space-y-2">
-{reports.map((r: any) => (
-<li key={r.id} className="border rounded p-3">
-<div className="font-medium">{r.title}</div>
-<div className="text-sm text-gray-500">{r.status}</div>
-</li>
-))}
-</ul>
-</div>
-)
-}
-
-
-async function getReports() {
-try {
-return await apiFetch("/api/reports")
-} catch (e) {
-console.error("Failed to load reports", e)
-return [] as any[]
-}
+const data: T = await res.json()
+return data
 }

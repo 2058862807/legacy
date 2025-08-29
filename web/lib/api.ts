@@ -1,4 +1,5 @@
 export const API = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
+export const API_BASE = API  // Legacy compatibility
 
 type Opts = { 
   method?: string, 

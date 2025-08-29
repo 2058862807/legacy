@@ -1,8 +1,10 @@
-export default function Page() {
+import React from "react"
+import DocumentList from "@/components/Documents/DocumentList"
+export default function DashboardPage() {
 return (
-<main>
-<h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-<p className="text-gray-600">Pick a module in the top nav</p>
-</main>
+<div className="p-6">
+<h1 className="text-2xl font-semibold">Dashboard</h1>
+<DocumentList />
+</div>
 )
 }

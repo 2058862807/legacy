@@ -4,12 +4,20 @@ type Report = { id: string; title: string; status: string }
 
 export default async function ComplianceReportsPage() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""}/api/reports`, { 
-      cache: "no-store" 
+    // Construct the full URL for the API endpoint
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    
+    const res = await fetch(`${baseUrl}/api/reports`, { 
+      cache: "no-store",
+      headers: {
+        'Content-Type': 'application/json',
+      }
     })
     
     if (!res.ok) {
-      throw new Error(`Failed to fetch reports: ${res.status} ${res.statusText}`)
+      const errorText = await res.text().catch(() => res.statusText)
+      throw new Error(`API ${res.status}: ${errorText}`)
     }
     
     const reports = (await res.json()) as Report[]
@@ -35,6 +43,7 @@ export default async function ComplianceReportsPage() {
         <h1 className="text-2xl font-semibold">Compliance Reports</h1>
         <div className="mt-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded">
           <p>Error loading reports. Please try again later.</p>
+          <p className="text-xs mt-2">{error instanceof Error ? error.message : 'Unknown error'}</p>
         </div>
       </div>
     )

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Library Implementation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .code-container {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .endpoint {
+            color: #fdbb2d;
+        }
+        
+        .method {
+            color: #74b9ff;
+            font-weight: bold;
+        }
+        
+        .button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .button-success {
+            background: #27ae60;
+        }
+        
+        .button-success:hover {
+            background: #219653;
+        }
+        
+        .button-danger {
+            background: #e74c3c;
+        }
+        
+        .button-danger:hover {
+            background: #c0392b;
+        }
+        
+        .test-area {
+            margin-top: 20px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+        }
+        
+        .success {
+            border-left-color: #27ae60;
+        }
+        
+        .error {
+            border-left-color: #e74c3c;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .flex {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>API Library Implementation</h1>
+            <p class="subtitle">A robust TypeScript API client with error handling, timeouts, and interceptors</p>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2>API Client Implementation</h2>
+                
+                <div class="code-container">
+                    <pre><code>// lib/api.ts
+const API_BASE = "/api/proxy";
+
+/**
+ * Robust API client with error handling and timeout support
+ */
+class ApiClient {
+  private timeout: number;
+  
+  constructor(timeout: number = 8000) {
+    this.timeout = timeout;
+  }
+
+  async request&lt;T&gt;(
+    path: string, 
+    options: RequestInit = {}
+  ): Promise&lt;T&gt; {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+    
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        cache: 'no-store',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timeout after ${this.timeout}ms`);
+      }
+      
+      throw error;
+    }
+  }
+
+  // Convenience methods
+  async get&lt;T&gt;(path: string): Promise&lt;T&gt; {
+    return this.request&lt;T&gt;(path);
+  }
+
+  async post&lt;T&gt;(path: string, data: any): Promise&lt;T&gt; {
+    return this.request&lt;T&gt;(path, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async put&lt;T&gt;(path: string, data: any): Promise&lt;T&gt; {
+    return this.request&lt;T&gt;(path, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async delete&lt;T&gt;(path: string): Promise&lt;T&gt; {
+    return this.request&lt;T&gt;(path, {
+      method: 'DELETE',
+    });
+  }
+}
+
+// Create a default instance
+export const api = new ApiClient();</code></pre>
+                </div>
+                
+                <p>This implementation includes:</p>
+                <ul>
+                    <li>Request timeout handling</li>
+                    <li>Proper error handling with specific error messages</li>
+                    <li>TypeScript generics for type safety</li>
+                    <li>Convenience methods for common HTTP verbs</li>
+                    <li>Default JSON content type</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>API Test Panel</h2>
+                <p>Test the API client implementation (simulated responses)</p>
+                
+                <div class="test-area">
+                    <button class="button" onclick="testRequest('get')">Test GET Request</button>
+                    <button class="button button-success" onclick="testRequest('post')">Test POST Request</button>
+                    <button class="button" onclick="testRequest('put')">Test PUT Request</button>
+                    <button class="button button-danger" onclick="testRequest('delete')">Test DELETE Request</button>
+                    <button class="button button-danger" onclick="testRequest('error')">Test Error Case</button>
+                    <button class="button" onclick="testRequest('timeout')">Test Timeout</button>
+                    
+                    <div class="result" id="result">
+                        <p>Results will appear here...</p>
+                    </div>
+                </div>
+                
+                <h2>How to Use</h2>
+                <div class="code-container">
+                    <pre><code>// Import the api instance
+import { api } from './lib/api';
+
+// Example usage
+async function fetchUserData() {
+  try {
+    const user = await api.get('/users/123');
+    console.log('User data:', user);
+  } catch (error) {
+    console.error('Failed to fetch user:', error.message);
+  }
+}
+
+async function createPost() {
+  try {
+    const newPost = await api.post('/posts', {
+      title: 'New Post',
+      content: 'This is the content'
+    });
+    console.log('Created post:', newPost);
+  } catch (error) {
+    console.error('Failed to create post:', error.message);
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated API client for demonstration
+        class DemoApiClient {
+            constructor() {
+                this.delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            }
+            
+            async simulateRequest(type) {
+                // Simulate network delay
+                await this.delay(1000);
+                
+                switch(type) {
+                    case 'get':
+                        return { 
+                            status: 200, 
+                            data: { 
+                                id: 1, 
+                                name: 'John Doe', 
+                                email: 'john@example.com' 
+                            } 
+                        };
+                    case 'post':
+                        return { 
+                            status: 201, 
+                            data: { 
+                                id: 2, 
+                                title: 'New Post', 
+                                content: 'This is the content' 
+                            } 
+                        };
+                    case 'put':
+                        return { 
+                            status: 200, 
+                            data: { 
+                                id: 1, 
+                                title: 'Updated Post', 
+                                content: 'Updated content' 
+                            } 
+                        };
+                    case 'delete':
+                        return { 
+                            status: 200, 
+                            message: 'Resource deleted successfully' 
+                        };
+                    case 'error':
+                        throw new Error('HTTP 404: Resource not found');
+                    case 'timeout':
+                        // Simulate longer delay to show timeout
+                        await this.delay(3000);
+                        return { status: 200, data: { message: 'This should not appear' } };
+                    default:
+                        return { status: 200, data: {} };
+                }
+            }
+        }
+        
+        const demoApi = new DemoApiClient();
+        
+        // Test function for the demo
+        async function testRequest(type) {
+            const resultElement = document.getElementById('result');
+            resultElement.className = 'result';
+            resultElement.innerHTML = '<div class="flex"><div class="loading"></div><span> Making request...</span></div>';
+            
+            try {
+                const response = await demoApi.simulateRequest(type);
+                resultElement.classList.add('success');
+                resultElement.innerHTML = `
+                    <h3>Success!</h3>
+                    <p>Status: ${response.status}</p>
+                    <pre>${JSON.stringify(response.data || response.message, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultElement.classList.add('error');
+                resultElement.innerHTML = `
+                    <h3>Error</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

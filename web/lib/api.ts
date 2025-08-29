@@ -1,43 +1,46 @@
-const API = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || "/api/proxy"
+export const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || ""
+if (opts.body !== undefined) init.body = JSON.stringify(opts.body)
 
-function normalizeInit(opts: RequestInit = {}): RequestInit {
-const headers = new Headers(opts.headers || {})
-const init: RequestInit = {
-method: opts.method || "GET",
-headers,
-cache: opts.cache || "no-store",
-credentials: opts.credentials,
-redirect: opts.redirect
-}
-if (opts.body !== undefined) {
-const isString = typeof opts.body === "string"
-if (!isString && !headers.has("Content-Type")) {
-headers.set("Content-Type", "application/json")
-}
-init.body = isString ? opts.body : JSON.stringify(opts.body)
-}
-return init
-}
 
-export async function apiFetch<T = any>(path: string, opts: RequestInit = {}): Promise<T> {
-const init = normalizeInit(opts)
-const res = await fetch(${API}${path}, init)
+const res = await fetch(url, init)
 if (!res.ok) {
 const text = await res.text()
-throw new Error(API ${res.status} ${res.statusText}: ${text})
+throw new Error(`API ${res.status} ${res.statusText}: ${text}`)
 }
-return res.json() as Promise<T>
+return res.json()
 }
 
-export const getHealth = () => apiFetch("/health")
 
-export const getDashboardStats = () => apiFetch("/api/user/dashboard-stats")
+// File: web/app/compliance/reports/page.tsx
+import { apiFetch } from "@/lib/api"
 
-export const createCheckout = (body: any) =>
-apiFetch("/api/payments/create-checkout", {
-method: "POST",
-body
-})
 
-export const getPaymentStatus = (q?: string) =>
-apiFetch(/api/payments/status${q ? ?${q} : ""})
+export const dynamic = "force-dynamic"
+
+
+export default async function ComplianceReportsPage() {
+const reports = await getReports()
+return (
+<div className="p-6">
+<h1 className="text-2xl font-semibold">Compliance Reports</h1>
+<ul className="mt-4 space-y-2">
+{reports.map((r: any) => (
+<li key={r.id} className="border rounded p-3">
+<div className="font-medium">{r.title}</div>
+<div className="text-sm text-gray-500">{r.status}</div>
+</li>
+))}
+</ul>
+</div>
+)
+}
+
+
+async function getReports() {
+try {
+return await apiFetch("/api/reports")
+} catch (e) {
+console.error("Failed to load reports", e)
+return [] as any[]
+}
+}

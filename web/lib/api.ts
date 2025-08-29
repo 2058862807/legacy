@@ -1,4 +1,5 @@
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
+// Backend API base URL
+export const API_BASE = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000';
 
 export interface ApiResponse<T = any> {
   data?: T;
@@ -6,11 +7,12 @@ export interface ApiResponse<T = any> {
   status: number;
 }
 
+// Main API fetch function with error handling
 export async function apiFetch<T = any>(
   endpoint: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
-  const url = `${BACKEND_BASE_URL}${endpoint}`;
+  const url = `${API_BASE}${endpoint}`;
   
   try {
     const response = await fetch(url, {
@@ -41,6 +43,35 @@ export async function apiFetch<T = any>(
       status: 0,
     };
   }
+}
+
+// Legacy compatibility - matches the old API structure
+type Opts = {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: any;
+  cache?: RequestCache;
+};
+
+export async function apiFetchLegacy<T = any>(path: string, opts: Opts = {}): Promise<T> {
+  const init: RequestInit = {
+    method: opts.method || "GET",
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    cache: opts.cache || "no-store"
+  };
+  
+  if (opts.body !== undefined) {
+    init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body);
+  }
+  
+  const res = await fetch(`${API_BASE}${path}`, init);
+  
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`API ${res.status} ${res.statusText}: ${text}`);
+  }
+  
+  return res.json() as Promise<T>;
 }
 
 export default apiFetch;

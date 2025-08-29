@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   try {
     const { planId } = await req.json()
-    const base = process.env.BACKEND_BASE_URL
+    const base = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
     const res = await fetch(`${base}/api/payments/create-checkout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

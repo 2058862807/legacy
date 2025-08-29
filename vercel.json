@@ -1,7 +1,14 @@
 {
-  "version": 2,
+  "buildCommand": "cd web && npm install && npm run build",
+  "outputDirectory": "web/.next",
+  "installCommand": "cd web && npm install",
   "framework": "nextjs",
-  "projectSettings": {
-    "rootDirectory": "web"
+  "functions": {
+    "web/app/**/*.ts": {
+      "runtime": "@vercel/node"
+    },
+    "web/app/**/*.tsx": {
+      "runtime": "@vercel/node"
+    }
   }
 }

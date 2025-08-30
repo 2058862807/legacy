@@ -5,6 +5,7 @@ import { useSession, signIn } from 'next-auth/react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import DocumentList from '../../components/Documents/DocumentList';
 import ComplianceStatus from '../../components/Compliance/ComplianceStatus';
+import ComplianceBadge from '../../components/Compliance/ComplianceBadge';
 import AIChatAssistant from '../../components/AI/AIChatAssistant';
 import BlockchainStatus from '../../components/Blockchain/BlockchainStatus';
 

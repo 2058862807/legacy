@@ -1,47 +1,80 @@
 'use client'
-import { signIn, getSession } from "next-auth/react"
+import { signIn, getSession, getProviders } from "next-auth/react"
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [providers, setProviders] = useState<any>(null)
+  const [error, setError] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     setMounted(true)
+    
+    // Check for authentication errors in URL
+    const urlError = searchParams.get('error')
+    if (urlError) {
+      setError(urlError)
+    }
+    
+    // Check session
     getSession().then((session) => {
       if (session) {
         router.push('/dashboard')
       }
     })
-  }, [router])
+
+    // Get available providers
+    getProviders().then((providers) => {
+      setProviders(providers)
+    })
+  }, [router, searchParams])
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
+    setError('')
+    
     try {
       const result = await signIn("google", { 
         callbackUrl: "/dashboard",
         redirect: false 
       })
-      if (result?.url) {
+      
+      if (result?.error) {
+        setError(result.error)
+        setIsLoading(false)
+      } else if (result?.url) {
         router.push(result.url)
       }
-    } catch (error) {
-      console.error('Sign in error:', error)
-    } finally {
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed')
       setIsLoading(false)
     }
   }
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white">Loading...</div>
-      </div>
-    )
+  const getErrorMessage = (errorCode: string) => {
+    switch (errorCode) {
+      case 'Configuration':
+        return 'Google OAuth is not properly configured. Please set up Google OAuth credentials.'
+      case 'AccessDenied':
+        return 'Access was denied. Please try again.'
+      case 'Verification':
+        return 'Verification failed. Please try again.'
+      default:
+        return `Authentication error: ${errorCode}`
+    }
   }
+
+  if (!mounted) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  const hasGoogleProvider = providers && providers.google
+  const errorMessage = error ? getErrorMessage(error) : null
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">

@@ -1,14 +1,9 @@
-import { withAuth } from "next-auth/middleware"
-export default withAuth({ pages: { signIn: "/login" } })
+import { auth } from '@/auth'
+ 
+export default auth((req) => {
+  // Add any middleware logic here
+})
+
 export const config = {
-matcher: [
-"/dashboard/:path*",
-"/companion/:path*",
-"/heirs/:path*",
-"/blockchain/:path*",
-"/safes/:path*",
-"/vault/:path*",
-"/compliance/:path*",
-"/will-builder/:path*"
-]
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 }

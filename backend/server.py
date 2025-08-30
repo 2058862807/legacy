@@ -315,6 +315,40 @@ async def payment_status(session_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Stripe webhook endpoint
+@app.post("/api/stripe/webhook")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    if not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+    
+    payload = await request.body()
+    sig_header = request.headers.get('stripe-signature')
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid payload")
+    except stripe.error.SignatureVerificationError:
+        raise HTTPException(status_code=400, detail="Invalid signature")
+    
+    # Handle the event
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        # Handle successful payment
+        print(f"Payment succeeded for session: {session['id']}")
+        
+    elif event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']
+        print(f"Payment intent succeeded: {payment_intent['id']}")
+        
+    else:
+        print(f'Unhandled event type: {event["type"]}')
+    
+    return {"received": True}
+
 # Bot endpoints
 @app.post("/api/bot/help", response_model=BotResponse)
 async def help_bot(request: BotRequest):

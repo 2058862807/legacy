@@ -92,7 +92,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
       // Request account access
       await window.ethereum.request({ method: 'eth_requestAccounts' })
       
-      const web3Provider = new ethers.BrowserProvider(window.ethereum)
+      const web3Provider = new ethers.BrowserProvider(window.ethereum as any)
       const currentSigner = await web3Provider.getSigner()
       const currentNetwork = await web3Provider.getNetwork()
       const address = await currentSigner.getAddress()

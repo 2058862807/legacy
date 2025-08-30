@@ -8,6 +8,7 @@ import stripe
 import hashlib
 import json
 import secrets
+import uuid
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException, Depends, Query, Request
 from fastapi.middleware.cors import CORSMiddleware

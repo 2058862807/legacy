@@ -53,7 +53,8 @@ export default function Bot({ type }: HelpBotProps) {
       }
 
       const endpoint = type === 'help' ? '/api/bot/help' : '/api/bot/grief'
-      const response = await apiFetch<{ reply: string; escalate?: boolean }>(endpoint, {
+      const userEmail = session?.user?.email || 'anonymous@example.com'
+      const response = await apiFetch<{ reply: string; escalate?: boolean }>(`${endpoint}?user_email=${encodeURIComponent(userEmail)}`, {
         method: 'POST',
         body: JSON.stringify({ message: userMessage, history: messages })
       })

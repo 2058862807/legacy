@@ -202,7 +202,7 @@ export default function Dashboard() {
                 )}
 
                 {!loading && activeTab === 'documents' && (
-                  <DocumentList documents={userData?.documents} />
+                  <DocumentList />
                 )}
 
                 {!loading && activeTab === 'assistant' && <AIChatAssistant />}

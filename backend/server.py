@@ -29,6 +29,8 @@ from compliance_service import ComplianceService, ComplianceRuleResponse, Compli
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+LLM_PROVIDER = os.environ.get('LLM_PROVIDER', 'openai')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 POLYGON_RPC_URL = os.environ.get('POLYGON_RPC_URL', 'https://rpc-amoy.polygon.technology')
 POLYGON_PRIVATE_KEY = os.environ.get('POLYGON_PRIVATE_KEY')
 NOTARY_CONTRACT_ADDRESS = os.environ.get('NOTARY_CONTRACT_ADDRESS')

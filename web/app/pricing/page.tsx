@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import Bot from '@/components/Bot'
+import Bot from '../../components/Bot'
 
 const plans = [
   { 

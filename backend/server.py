@@ -196,7 +196,63 @@ class BotResponse(BaseModel):
 # Health check
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
+    return {
+        "status": "ok", 
+        "timestamp": datetime.utcnow().isoformat(),
+        "database": is_database_available(),
+        "compliance_enabled": ComplianceService.is_enabled()
+    }
+
+# Compliance endpoints
+@app.get("/api/compliance/rules", response_model=Optional[ComplianceRuleResponse])
+async def get_compliance_rules(
+    state: str = Query(..., description="State code (e.g., CA, NY)"),
+    doc_type: str = Query(..., description="Document type (e.g., will, pet_trust)"),
+    db: Session = Depends(get_db)
+):
+    """Get compliance rules for specific state and document type"""
+    if not ComplianceService.is_enabled():
+        raise HTTPException(status_code=503, detail="Compliance service is disabled")
+    
+    if not is_database_available() or db is None:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    rule = ComplianceService.get_rule(state, doc_type, db)
+    if not rule:
+        raise HTTPException(status_code=404, detail="Rule not found for this state and document type")
+    
+    return rule
+
+@app.get("/api/compliance/summary", response_model=Optional[ComplianceSummary])
+async def get_compliance_summary(db: Session = Depends(get_db)):
+    """Get compliance summary across all states"""
+    if not ComplianceService.is_enabled():
+        raise HTTPException(status_code=503, detail="Compliance service is disabled")
+    
+    if not is_database_available() or db is None:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    summary = ComplianceService.get_summary(db)
+    if not summary:
+        raise HTTPException(status_code=404, detail="No compliance data available")
+    
+    return summary
+
+@app.post("/api/compliance/refresh")
+async def refresh_compliance_data(db: Session = Depends(get_db)):
+    """Refresh compliance data from seed file"""
+    if not ComplianceService.is_enabled():
+        raise HTTPException(status_code=503, detail="Compliance service is disabled")
+    
+    if not is_database_available() or db is None:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    result = ComplianceService.refresh_from_seed(db)
+    
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+    
+    return result
 
 # Stripe Payments
 @app.post("/api/payments/create-checkout")

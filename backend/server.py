@@ -748,31 +748,89 @@ async def stripe_webhook(request: Request):
     
     return {"received": True}
 
+# Rate limiting helper
+async def check_rate_limit(user_email: str, endpoint: str, db: Session, limit: int = 20):
+    """Check if user has exceeded rate limit"""
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        return False
+    
+    # Get today's date
+    today = datetime.now(timezone.utc).date()
+    
+    # Get or create rate limit record
+    rate_limit = db.query(RateLimit).filter(
+        RateLimit.user_id == user.id,
+        RateLimit.endpoint == endpoint
+    ).first()
+    
+    if not rate_limit:
+        rate_limit = RateLimit(
+            user_id=user.id,
+            endpoint=endpoint,
+            requests_count=1,
+            reset_date=datetime.now(timezone.utc)
+        )
+        db.add(rate_limit)
+        db.commit()
+        return True
+    
+    # Reset if it's a new day
+    if rate_limit.reset_date.date() < today:
+        rate_limit.requests_count = 1
+        rate_limit.reset_date = datetime.now(timezone.utc)
+        db.commit()
+        return True
+    
+    # Check if under limit
+    if rate_limit.requests_count >= limit:
+        return False
+    
+    # Increment counter
+    rate_limit.requests_count += 1
+    db.commit()
+    return True
+
 # Bot endpoints
 @app.post("/api/bot/help", response_model=BotResponse)
-async def help_bot(request: BotRequest):
-    if not openai_client:
+async def help_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):
+    if not db or not await check_rate_limit(user_email, "bot_help", db):
         return BotResponse(
-            reply="I'm here to help with estate planning questions! However, AI services are currently unavailable. Please contact our support team.",
+            reply="Daily limit reached (20 requests). Please try again tomorrow.",
+            escalate=False
+        )
+    
+    if not gemini_client and not openai_client:
+        return BotResponse(
+            reply="AI services currently unavailable. Please contact support.",
             escalate=False
         )
     
     try:
-        messages = [
-            {"role": "system", "content": "You are a helpful estate planning assistant. Provide helpful, accurate information about wills, trusts, and estate planning. If asked about specific legal advice, recommend consulting with a qualified attorney."},
-            {"role": "user", "content": request.message}
-        ]
+        system_prompt = "You are a helpful estate planning assistant. Provide concise, accurate information about wills, trusts, and estate planning. Keep responses under 256 tokens. If asked about specific legal advice, recommend consulting an attorney."
         
-        response = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=200,
-            temperature=0.7
-        )
+        if gemini_client:
+            response = gemini_client.generate_content(
+                f"{system_prompt}\n\nUser: {request.message}",
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=256,
+                    temperature=0.7,
+                )
+            )
+            reply = response.text
+        else:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.message}
+            ]
+            response = openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages,
+                max_tokens=256,
+                temperature=0.7
+            )
+            reply = response.choices[0].message.content
         
-        reply = response.choices[0].message.content
-        
-        # Check if escalation is needed based on keywords
         escalate_keywords = ['emergency', 'urgent', 'dying', 'hospital', 'immediate']
         escalate = any(keyword in request.message.lower() for keyword in escalate_keywords)
         
@@ -780,7 +838,7 @@ async def help_bot(request: BotRequest):
         
     except Exception as e:
         return BotResponse(
-            reply="I apologize, but I'm having trouble processing your request right now. Please try again or contact our support team.",
+            reply="I'm having trouble processing your request. Please try again or contact support.",
             escalate=False
         )
 

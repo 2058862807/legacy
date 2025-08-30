@@ -157,8 +157,10 @@ class PolygonBlockchain:
 if STRIPE_SECRET_KEY:
     stripe.api_key = STRIPE_SECRET_KEY
 
+# Initialize OpenAI client
+openai_client = None
 if OPENAI_API_KEY:
-    openai.api_key = OPENAI_API_KEY
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Initialize Polygon blockchain
 polygon = PolygonBlockchain(POLYGON_RPC_URL, POLYGON_PRIVATE_KEY)

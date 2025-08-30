@@ -7,22 +7,40 @@ export default function Home() {
     <div>
       <main className="max-w-5xl mx-auto p-8 space-y-12">
         {/* Hero Section */}
-        <div className="text-center space-y-6">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <section className="text-center space-y-8">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             NexteraEstate
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Secure estate planning with AI assistance, blockchain notarization, and seamless payments
+          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
+            Secure your legacy with cutting-edge technology, AI guidance, and blockchain security.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/dashboard" className="btn-primary text-lg px-8 py-3">
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link href="/will" className="btn-primary">
               Get Started
             </Link>
-            <Link href="/pricing" className="btn-secondary text-lg px-8 py-3">
+            <Link href="/pricing" className="btn-secondary">
               View Pricing
             </Link>
+            <WalletButton />
           </div>
-        </div>
+          
+          <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
+            <span className="flex items-center space-x-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>SSL Secured</span>
+            </span>
+            <span className="flex items-center space-x-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>Blockchain Verified</span>
+            </span>
+            <span className="flex items-center space-x-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <span>MetaMask Ready</span>
+            </span>
+          </div>
+        </section>
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8">

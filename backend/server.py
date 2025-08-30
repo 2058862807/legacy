@@ -336,34 +336,74 @@ async def generate_hash(request: HashRequest):
 @app.post("/api/notary/create")
 async def create_notarization(request: NotarizeRequest):
     """Send transaction to Polygon blockchain"""
-    if not POLYGON_PRIVATE_KEY or not NOTARY_CONTRACT_ADDRESS:
-        raise HTTPException(status_code=500, detail="Blockchain services not configured")
+    if not POLYGON_PRIVATE_KEY:
+        raise HTTPException(status_code=500, detail="Blockchain services not configured - POLYGON_PRIVATE_KEY required")
     
     try:
-        # For demo purposes, return mock transaction data
-        # In production, this would interact with actual Polygon network
-        mock_tx_hash = f"0x{''.join([hex(ord(c))[2:] for c in request.hash[:32]])}"
-        explorer_url = f"https://amoy.polygonscan.com/tx/{mock_tx_hash}"
+        # Create data payload with hash
+        # This encodes the hash into the transaction data
+        hash_data = f"0x{request.hash}"
+        
+        # Use a default notarization address if contract not specified
+        to_address = NOTARY_CONTRACT_ADDRESS or polygon.account.address
+        
+        # Send transaction to Polygon
+        tx_hash = await polygon.send_transaction(
+            to_address=to_address,
+            data=hash_data
+        )
+        
+        explorer_url = f"https://amoy.polygonscan.com/tx/{tx_hash}"
         
         return {
-            "txHash": mock_tx_hash,
-            "explorerUrl": explorer_url
+            "txHash": tx_hash,
+            "explorerUrl": explorer_url,
+            "network": "Polygon Amoy Testnet",
+            "timestamp": datetime.utcnow().isoformat()
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Blockchain transaction failed: {str(e)}")
 
 @app.get("/api/notary/status")
 async def get_notary_status(tx: str):
     """Check transaction status on blockchain"""
+    if not POLYGON_PRIVATE_KEY:
+        raise HTTPException(status_code=500, detail="Blockchain services not configured")
+    
     try:
-        # Mock response for demo - in production would query actual blockchain
+        status_info = await polygon.get_transaction_status(tx)
+        
         return {
-            "confirmations": 12,
-            "status": "confirmed",
-            "blockNumber": 12345678
+            "txHash": tx,
+            "status": status_info["status"],
+            "confirmations": status_info["confirmations"], 
+            "blockNumber": status_info["blockNumber"],
+            "explorerUrl": f"https://amoy.polygonscan.com/tx/{tx}",
+            "network": "Polygon Amoy Testnet"
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to check transaction status: {str(e)}")
+
+@app.get("/api/notary/wallet-info")
+async def get_wallet_info():
+    """Get wallet information for blockchain transactions"""
+    if not POLYGON_PRIVATE_KEY:
+        raise HTTPException(status_code=500, detail="Blockchain services not configured")
+    
+    try:
+        address = polygon.account.address
+        nonce = await polygon.get_nonce(address)
+        gas_price = await polygon.get_gas_price()
+        
+        return {
+            "address": address,
+            "nonce": nonce,
+            "gasPrice": gas_price,
+            "network": "Polygon Amoy Testnet",
+            "rpcUrl": POLYGON_RPC_URL
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get wallet info: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

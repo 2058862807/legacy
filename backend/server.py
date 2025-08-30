@@ -2,6 +2,7 @@ import os
 import stripe
 import hashlib
 import json
+import secrets
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +10,8 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import requests
 import openai
+from eth_account import Account
+from eth_utils import to_hex
 
 # Environment variables
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

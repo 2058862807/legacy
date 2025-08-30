@@ -147,6 +147,9 @@ if STRIPE_SECRET_KEY:
 if OPENAI_API_KEY:
     openai.api_key = OPENAI_API_KEY
 
+# Initialize Polygon blockchain
+polygon = PolygonBlockchain(POLYGON_RPC_URL, POLYGON_PRIVATE_KEY)
+
 app = FastAPI()
 
 # CORS middleware

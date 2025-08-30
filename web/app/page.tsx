@@ -3,8 +3,7 @@ import Bot from '../components/Bot'
 
 export default function Home() {
   return (
-    <Providers>
-      <main className="max-w-5xl mx-auto p-8 space-y-12">
+    <main className="max-w-5xl mx-auto p-8 space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-6">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

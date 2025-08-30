@@ -355,7 +355,7 @@ async def stripe_webhook(request: Request):
 # Bot endpoints
 @app.post("/api/bot/help", response_model=BotResponse)
 async def help_bot(request: BotRequest):
-    if not OPENAI_API_KEY:
+    if not openai_client:
         return BotResponse(
             reply="I'm here to help with estate planning questions! However, AI services are currently unavailable. Please contact our support team.",
             escalate=False
@@ -367,7 +367,7 @@ async def help_bot(request: BotRequest):
             {"role": "user", "content": request.message}
         ]
         
-        response = openai.ChatCompletion.create(
+        response = openai_client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=200,

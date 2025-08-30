@@ -20,6 +20,126 @@ POLYGON_RPC_URL = os.environ.get('POLYGON_RPC_URL', 'https://rpc-amoy.polygon.te
 POLYGON_PRIVATE_KEY = os.environ.get('POLYGON_PRIVATE_KEY')
 NOTARY_CONTRACT_ADDRESS = os.environ.get('NOTARY_CONTRACT_ADDRESS')
 
+# Blockchain utilities
+class PolygonBlockchain:
+    def __init__(self, rpc_url: str, private_key: str = None):
+        self.rpc_url = rpc_url
+        self.private_key = private_key
+        self.account = Account.from_key(private_key) if private_key else None
+    
+    async def get_nonce(self, address: str) -> int:
+        """Get transaction count for address"""
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_getTransactionCount",
+            "params": [address, "latest"],
+            "id": 1
+        }
+        
+        response = requests.post(self.rpc_url, json=payload)
+        result = response.json()
+        
+        if 'error' in result:
+            raise Exception(f"RPC Error: {result['error']}")
+        
+        return int(result['result'], 16)
+    
+    async def get_gas_price(self) -> int:
+        """Get current gas price"""
+        payload = {
+            "jsonrpc": "2.0", 
+            "method": "eth_gasPrice",
+            "params": [],
+            "id": 1
+        }
+        
+        response = requests.post(self.rpc_url, json=payload)
+        result = response.json()
+        
+        if 'error' in result:
+            raise Exception(f"RPC Error: {result['error']}")
+        
+        return int(result['result'], 16)
+    
+    async def send_transaction(self, to_address: str, data: str = "0x") -> str:
+        """Send transaction to blockchain"""
+        if not self.account:
+            raise Exception("Private key not configured")
+        
+        # Get nonce and gas price
+        nonce = await self.get_nonce(self.account.address)
+        gas_price = await self.get_gas_price()
+        
+        # Build transaction
+        transaction = {
+            'nonce': nonce,
+            'gasPrice': gas_price,
+            'gas': 21000,  # Standard gas limit
+            'to': to_address,
+            'value': 0,
+            'data': data,
+            'chainId': 80002  # Polygon Amoy testnet
+        }
+        
+        # Sign transaction
+        signed_txn = self.account.sign_transaction(transaction)
+        
+        # Send transaction
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_sendRawTransaction", 
+            "params": [signed_txn.rawTransaction.hex()],
+            "id": 1
+        }
+        
+        response = requests.post(self.rpc_url, json=payload)
+        result = response.json()
+        
+        if 'error' in result:
+            raise Exception(f"Transaction Error: {result['error']}")
+        
+        return result['result']
+    
+    async def get_transaction_status(self, tx_hash: str) -> Dict:
+        """Get transaction status and confirmations"""
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_getTransactionReceipt", 
+            "params": [tx_hash],
+            "id": 1
+        }
+        
+        response = requests.post(self.rpc_url, json=payload)
+        result = response.json()
+        
+        if 'error' in result:
+            raise Exception(f"RPC Error: {result['error']}")
+        
+        receipt = result['result']
+        if not receipt:
+            return {"status": "pending", "confirmations": 0}
+        
+        # Get current block number for confirmations
+        block_payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_blockNumber",
+            "params": [],
+            "id": 1
+        }
+        
+        block_response = requests.post(self.rpc_url, json=block_payload)
+        block_result = block_response.json()
+        current_block = int(block_result['result'], 16)
+        tx_block = int(receipt['blockNumber'], 16)
+        confirmations = current_block - tx_block + 1
+        
+        return {
+            "status": "confirmed" if receipt['status'] == '0x1' else "failed",
+            "confirmations": confirmations,
+            "blockNumber": tx_block,
+            "gasUsed": int(receipt['gasUsed'], 16)
+        }
+
 # Initialize services
 if STRIPE_SECRET_KEY:
     stripe.api_key = STRIPE_SECRET_KEY

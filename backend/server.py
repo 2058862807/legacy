@@ -807,7 +807,7 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         )
     
     try:
-        system_prompt = "You are a helpful estate planning assistant. Provide concise, accurate information about wills, trusts, and estate planning. Keep responses under 256 tokens. If asked about specific legal advice, recommend consulting an attorney."
+        system_prompt = "You are a helpful estate planning assistant. Provide concise, accurate information about wills, trusts, and estate planning. Keep responses under 256 tokens. If asked about specific legal advice, recommend consulting with Esquire AI, our specialized AI lawyer chatbot for detailed legal guidance."
         
         if gemini_client:
             response = gemini_client.generate_content(

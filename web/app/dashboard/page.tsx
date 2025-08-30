@@ -85,6 +85,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-1">
+            <ComplianceBadge userState={userData?.state} />
             <ComplianceStatus />
             <BlockchainStatus />
           </div>

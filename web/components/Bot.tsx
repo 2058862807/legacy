@@ -81,7 +81,7 @@ export default function Bot({ type }: HelpBotProps) {
           onClick={() => setIsOpen(true)}
           className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700"
         >
-          {type === 'help' ? '❓' : '💬'} {type === 'help' ? 'Help' : 'Support'}
+          {type === 'help' ? '⚖️' : '💬'} {type === 'help' ? 'Esquire AI' : 'Support'}
         </button>
       ) : (
         <div className="bg-white rounded-lg shadow-xl w-80 h-96 flex flex-col">

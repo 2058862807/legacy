@@ -3,8 +3,9 @@ import { signIn, getSession } from "next-auth/react"
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Providers } from '../components/Providers'
 
-export default function LoginPage() {
+function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   const router = useRouter()
@@ -21,7 +22,13 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn("google", { callbackUrl: "/dashboard" })
+      const result = await signIn("google", { 
+        callbackUrl: "/dashboard",
+        redirect: false 
+      })
+      if (result?.url) {
+        router.push(result.url)
+      }
     } catch (error) {
       console.error('Sign in error:', error)
     } finally {
@@ -30,7 +37,11 @@ export default function LoginPage() {
   }
 
   if (!mounted) {
-    return null
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-white">Loading...</div>
+      </div>
+    )
   }
 
   return (
@@ -41,9 +52,6 @@ export default function LoginPage() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
         <div className="absolute top-3/4 left-1/3 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl animate-pulse animation-delay-2000"></div>
       </div>
-
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
       {/* Header */}
       <header className="relative z-10 p-6">
@@ -163,5 +171,13 @@ export default function LoginPage() {
       {/* Bottom Ambient Light */}
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-64 bg-gradient-to-t from-purple-600/10 via-blue-600/5 to-transparent blur-3xl"></div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Providers>
+      <LoginContent />
+    </Providers>
   )
 }

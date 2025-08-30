@@ -3,7 +3,6 @@ import { signIn, getSession } from "next-auth/react"
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Providers } from '../components/Providers'
 
 function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)

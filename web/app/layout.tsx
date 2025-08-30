@@ -1,6 +1,6 @@
 import './globals.css'
-import { SessionProvider } from 'next-auth/react'
 import { Inter } from 'next/font/google'
+import { Providers } from '../components/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 

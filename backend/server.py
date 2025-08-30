@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import requests
 import openai
+from openai import OpenAI
 from eth_account import Account
 from eth_utils import to_hex
 from sqlalchemy.orm import Session

@@ -17,9 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider>
+        <div id="__next">
           {children}
-        </SessionProvider>
+        </div>
       </body>
     </html>
   )

@@ -44,29 +44,38 @@ export default function Home() {
 
         {/* Features Grid */}
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="card text-center">
-            <div className="text-3xl mb-4">🏛️</div>
-            <h3 className="text-xl font-semibold mb-2">Estate Planning</h3>
+          <Link href="/features/estate-planning" className="card text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group">
+            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🏛️</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">Estate Planning</h3>
             <p className="text-gray-600">
               Comprehensive will and trust creation with legal compliance checking
             </p>
-          </div>
+            <div className="mt-4 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              Learn More →
+            </div>
+          </Link>
           
-          <div className="card text-center">
-            <div className="text-3xl mb-4">🔗</div>
-            <h3 className="text-xl font-semibold mb-2">Blockchain Notarization</h3>
+          <Link href="/features/blockchain-notarization" className="card text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group">
+            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🔗</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">Blockchain Notarization</h3>
             <p className="text-gray-600">
               Secure document timestamps on Polygon blockchain for immutable proof
             </p>
-          </div>
+            <div className="mt-4 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              Learn More →
+            </div>
+          </Link>
           
-          <div className="card text-center">
-            <div className="text-3xl mb-4">🤖</div>
-            <h3 className="text-xl font-semibold mb-2">AI Assistance</h3>
+          <Link href="/features/ai-assistance" className="card text-center hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group">
+            <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🤖</div>
+            <h3 className="text-xl font-semibold mb-2 group-hover:text-blue-600 transition-colors">AI Assistance</h3>
             <p className="text-gray-600">
               Smart guidance through estate planning with personalized recommendations
             </p>
-          </div>
+            <div className="mt-4 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              Learn More →
+            </div>
+          </Link>
         </div>
 
         {/* Call to Action */}

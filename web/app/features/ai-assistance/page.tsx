@@ -201,21 +201,15 @@ export default function AIAssistancePage() {
       <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Try Our AI Bots</h2>
         <p className="text-gray-600 mb-6">
-          Experience our AI assistance right now! Click the bot widgets below to see how our AI can help with your estate planning needs.
+          Experience our AI assistance on any page! Look for the blue Help bot and Support bot widgets in the bottom-right corner of every page.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button 
-            onClick={() => window.helpBot?.open?.()} 
-            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
-          >
-            Open Help Bot 💬
-          </button>
-          <button 
-            onClick={() => window.griefBot?.open?.()} 
-            className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors"
-          >
-            Open Grief Support 🫂
-          </button>
+          <div className="bg-blue-100 text-blue-800 px-6 py-3 rounded-xl font-semibold text-center">
+            💬 Help Bot Available on Every Page
+          </div>
+          <div className="bg-purple-100 text-purple-800 px-6 py-3 rounded-xl font-semibold text-center">
+            🫂 Grief Support Always Available
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Bot from '../components/Bot'
-import { Providers } from '../components/Providers'
 
 export default function Home() {
   return (

@@ -15,6 +15,7 @@ interface HelpBotProps {
 }
 
 export default function Bot({ type }: HelpBotProps) {
+  const { data: session } = useSession()
   const [messages, setMessages] = useState<BotMessage[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)

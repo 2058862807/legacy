@@ -843,50 +843,59 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         )
 
 @app.post("/api/bot/grief", response_model=BotResponse)
-async def grief_bot(request: BotRequest):
-    # Crisis resources message for first interaction
-    crisis_resources = """
-    I understand you may be going through a difficult time. Here are some crisis resources:
+async def grief_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):
+    crisis_resources = """🚨 CRISIS RESOURCES 🚨
+• National Suicide Prevention Lifeline: 988
+• Crisis Text Line: Text HOME to 741741  
+• National Alliance on Mental Illness: 1-800-950-6264
+
+Please note: I cannot provide medical advice. For emergencies, call 911."""
     
-    • National Suicide Prevention Lifeline: 988
-    • Crisis Text Line: Text HOME to 741741
-    • National Alliance on Mental Illness: 1-800-950-6264
-    
-    Please note: I cannot provide medical advice. For emergencies, call 911.
-    
-    I'm here to listen and provide support regarding grief and estate planning concerns.
-    """
-    
-    if not openai_client:
+    if not db or not await check_rate_limit(user_email, "bot_grief", db):
         return BotResponse(
-            reply=crisis_resources + "\n\nAI services are currently unavailable, but please reach out to our human support team.",
+            reply=crisis_resources + "\n\nDaily limit reached (20 requests). Please try again tomorrow.",
+            escalate=True
+        )
+    
+    if not gemini_client and not openai_client:
+        return BotResponse(
+            reply=crisis_resources + "\n\nAI services currently unavailable, but please reach out to our support team.",
             escalate=True
         )
     
     try:
-        messages = [
-            {"role": "system", "content": "You are a compassionate grief support assistant focused on estate planning after loss. Provide empathetic, supportive responses. Never give medical advice. If someone mentions self-harm, suicidal thoughts, or immediate danger, always escalate. Focus on practical estate planning support during grief."},
-            {"role": "user", "content": request.message}
-        ]
+        system_prompt = "You are a compassionate grief support assistant focused on estate planning after loss. Provide empathetic, supportive responses under 256 tokens. Never give medical advice. If someone mentions self-harm, suicidal thoughts, or immediate danger, always escalate. Focus on practical estate planning support during grief."
         
-        response = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=200,
-            temperature=0.6
-        )
+        if gemini_client:
+            response = gemini_client.generate_content(
+                f"{system_prompt}\n\nUser: {request.message}",
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=256,
+                    temperature=0.6,
+                )
+            )
+            reply = response.text
+        else:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.message}
+            ]
+            response = openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages,
+                max_tokens=256,
+                temperature=0.6
+            )
+            reply = response.choices[0].message.content
         
-        reply = response.choices[0].message.content
-        
-        # Check for crisis indicators
         crisis_keywords = ['suicide', 'kill myself', 'end it all', 'not worth living', 'hurt myself']
         escalate = any(keyword in request.message.lower() for keyword in crisis_keywords)
         
-        return BotResponse(reply=reply, escalate=escalate)
+        return BotResponse(reply=f"{crisis_resources}\n\n{reply}", escalate=escalate)
         
     except Exception as e:
         return BotResponse(
-            reply="I'm sorry you're going through this difficult time. While I'm having technical difficulties right now, please know that support is available. Consider reaching out to the crisis resources listed above or our support team.",
+            reply=crisis_resources + "\n\nI'm sorry you're going through this difficult time. While I'm having technical difficulties, please know that support is available. Consider reaching out to the crisis resources above or our support team.",
             escalate=True
         )
 

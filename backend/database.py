@@ -115,6 +115,16 @@ class ActivityLog(Base):
     resource_id = Column(String, nullable=True)
     timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+class RateLimit(Base):
+    __tablename__ = "rate_limits"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    endpoint = Column(String, nullable=False)  # "bot_help", "bot_grief"
+    requests_count = Column(Integer, default=0)
+    reset_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
 # Compliance Models (existing)
 class ComplianceRule(Base):
     __tablename__ = "compliance_rules"

@@ -87,7 +87,7 @@ export default function Bot({ type }: HelpBotProps) {
         <div className="bg-white rounded-lg shadow-xl w-80 h-96 flex flex-col">
           <div className="flex items-center justify-between p-4 border-b">
             <h3 className="font-semibold">
-              {type === 'help' ? 'Help Bot' : 'Grief Support'}
+              {type === 'help' ? 'Esquire AI' : 'Grief Support'}
             </h3>
             <button
               onClick={() => setIsOpen(false)}

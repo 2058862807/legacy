@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import DashboardLayout from '../../components/Layout/DashboardLayout';
-import DocumentList from '../../components/Documents/DocumentList';
-import ComplianceStatus from '../../components/Compliance/ComplianceStatus';
-import AIChatAssistant from '../../components/AI/AIChatAssistant';
-import BlockchainStatus from '../../components/Blockchain/BlockchainStatus';
+import DashboardLayout from '@/components/Layout/DashboardLayout';
+import DocumentList from '@/components/Documents/DocumentList';
+import ComplianceStatus from '@/components/Compliance/ComplianceStatus';
+import AIChatAssistant from '@/components/AI/AIChatAssistant';
+import BlockchainStatus from '@/components/Blockchain/BlockchainStatus';
 
 type Tab = 'overview' | 'documents' | 'assistant';
 

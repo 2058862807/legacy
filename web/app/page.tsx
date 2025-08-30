@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import Bot from '../components/Bot'
+import { Providers } from '../components/Providers'
 
 export default function Home() {
   return (
-    <>
+    <Providers>
       <main className="max-w-5xl mx-auto p-8 space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-6">
@@ -163,6 +164,6 @@ export default function Home() {
 
       {/* Bot Components */}
       <Bot type="help" />
-    </>
+    </Providers>
   )
 }

@@ -4,69 +4,111 @@
     "success": true,
     "details": "Status: ok",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.494458"
+    "timestamp": "2025-08-30T17:01:59.404833"
+  },
+  {
+    "test": "Help Bot - Response Structure",
+    "success": true,
+    "details": "Valid JSON with reply and escalate fields. Escalate: False",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.408881"
+  },
+  {
+    "test": "Help Bot - Esquire AI Mention",
+    "success": false,
+    "details": "Response does not mention 'Esquire AI'",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.408916"
+  },
+  {
+    "test": "Help Bot - Functionality",
+    "success": true,
+    "details": "AI response received: Daily limit reached (20 requests). Please try again tomorrow....",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.408923"
+  },
+  {
+    "test": "Grief Bot - Response Structure",
+    "success": true,
+    "details": "Valid JSON with reply and escalate fields. Escalate: True",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.412834"
+  },
+  {
+    "test": "Grief Bot - Crisis Resources",
+    "success": true,
+    "details": "Response includes crisis resources",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.412864"
+  },
+  {
+    "test": "Grief Bot - Functionality",
+    "success": true,
+    "details": "AI response received: \ud83d\udea8 CRISIS RESOURCES \ud83d\udea8\n\u2022 National Suicide Prevention Lifeline: 988\n\u2022 Crisis Text Line: Text HOME to 74...",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.412872"
+  },
+  {
+    "test": "Error Handling - Missing user_email",
+    "success": true,
+    "details": "Correctly rejected request without user_email parameter",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.415293"
+  },
+  {
+    "test": "Rate Limiting",
+    "success": true,
+    "details": "Rate limiting triggered after 0 requests",
+    "response_data": null,
+    "timestamp": "2025-08-30T17:01:59.418825"
   },
   {
     "test": "Stripe Create Checkout",
     "success": true,
     "details": "Expected error - Stripe not configured",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.497099"
+    "timestamp": "2025-08-30T17:01:59.421159"
   },
   {
     "test": "Stripe Invalid Plan",
     "success": true,
     "details": "Service unavailable - cannot test plan validation",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.498937"
+    "timestamp": "2025-08-30T17:01:59.422832"
   },
   {
     "test": "Stripe Payment Status",
     "success": true,
     "details": "Expected error - Stripe not configured",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.500664"
-  },
-  {
-    "test": "AI Help Bot",
-    "success": true,
-    "details": "Expected fallback - OpenAI not configured",
-    "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.504010"
-  },
-  {
-    "test": "AI Grief Bot",
-    "success": true,
-    "details": "Crisis resources provided or fallback message",
-    "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.505764"
+    "timestamp": "2025-08-30T17:01:59.424541"
   },
   {
     "test": "Blockchain Hash Generation",
     "success": true,
     "details": "Hash generated: 977b3b10ba310038...",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.507950"
+    "timestamp": "2025-08-30T17:01:59.426613"
   },
   {
     "test": "Blockchain Notarization",
     "success": true,
     "details": "Expected error - Blockchain not configured",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.510453"
+    "timestamp": "2025-08-30T17:01:59.428582"
   },
   {
     "test": "Error Handling - Invalid JSON",
     "success": true,
     "details": "Correctly rejected invalid JSON",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.512055"
+    "timestamp": "2025-08-30T17:01:59.430050"
   },
   {
     "test": "Error Handling - Missing Fields",
     "success": true,
     "details": "Correctly rejected missing fields",
     "response_data": null,
-    "timestamp": "2025-08-30T10:32:18.513663"
+    "timestamp": "2025-08-30T17:01:59.431610"
   }
 ]

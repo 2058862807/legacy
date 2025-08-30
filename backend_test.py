@@ -406,9 +406,9 @@ class BackendTester:
             self.log_result("Error Handling - Missing Fields", False, f"Request error: {str(e)}")
     
     def run_all_tests(self):
-        """Run all backend tests"""
+        """Run focused AI bot endpoint tests"""
         print("=" * 60)
-        print("NexteraEstate Backend API Test Suite")
+        print("NexteraEstate AI Bot Endpoints Test Suite")
         print("=" * 60)
         
         # Test basic connectivity first
@@ -416,16 +416,12 @@ class BackendTester:
             print("\n❌ CRITICAL: Backend health check failed. Cannot proceed with other tests.")
             return False
         
-        print("\n🔄 Testing Stripe Payment Integration...")
-        self.test_stripe_endpoints()
-        
-        print("\n🔄 Testing AI Bot Endpoints...")
+        print("\n🤖 Testing AI Bot Endpoints (Primary Focus)...")
         self.test_ai_bot_endpoints()
         
-        print("\n🔄 Testing Blockchain Notarization...")
+        print("\n🔄 Testing Additional Backend Functionality...")
+        self.test_stripe_endpoints()
         self.test_blockchain_endpoints()
-        
-        print("\n🔄 Testing Error Handling...")
         self.test_error_handling()
         
         # Summary
@@ -441,6 +437,13 @@ class BackendTester:
         print(f"Passed: {passed_tests}")
         print(f"Failed: {failed_tests}")
         print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+        
+        # Focus on AI bot test results
+        ai_bot_tests = [r for r in self.results if 'Bot' in r['test'] or 'Rate Limiting' in r['test']]
+        ai_passed = sum(1 for r in ai_bot_tests if r['success'])
+        ai_total = len(ai_bot_tests)
+        
+        print(f"\n🤖 AI Bot Tests: {ai_passed}/{ai_total} passed")
         
         if failed_tests > 0:
             print("\n❌ FAILED TESTS:")

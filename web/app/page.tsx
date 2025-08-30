@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Bot from '../components/Bot'
+import WalletButton from '../components/Wallet/WalletButton'
 
 export default function Home() {
   return (

@@ -172,10 +172,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://nexteraestate.com",
+        "https://www.nexteraestate.com", 
         "https://*.vercel.app",
         "http://localhost:3000",
         "http://localhost:3002",
-        "*"  # For development
+        "*"  # For development - restrict in production
     ],
     allow_credentials=True,
     allow_methods=["*"],

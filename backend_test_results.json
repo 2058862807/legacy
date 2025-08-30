@@ -1,9 +1,72 @@
 [
   {
     "test": "Health Check",
+    "success": true,
+    "details": "Status: ok",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.823869"
+  },
+  {
+    "test": "Stripe Create Checkout",
+    "success": true,
+    "details": "Expected error - Stripe not configured",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.826614"
+  },
+  {
+    "test": "Stripe Invalid Plan",
     "success": false,
-    "details": "HTTP 502",
-    "response_data": "",
-    "timestamp": "2025-08-30T03:57:00.003369"
+    "details": "Expected 400, got 500",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.828505"
+  },
+  {
+    "test": "Stripe Payment Status",
+    "success": true,
+    "details": "Expected error - Stripe not configured",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.830412"
+  },
+  {
+    "test": "AI Help Bot",
+    "success": true,
+    "details": "Expected fallback - OpenAI not configured",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.834410"
+  },
+  {
+    "test": "AI Grief Bot",
+    "success": true,
+    "details": "Crisis resources provided or fallback message",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.836644"
+  },
+  {
+    "test": "Blockchain Hash Generation",
+    "success": true,
+    "details": "Hash generated: 977b3b10ba310038...",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.839149"
+  },
+  {
+    "test": "Blockchain Notarization",
+    "success": true,
+    "details": "Expected error - Blockchain not configured",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.841597"
+  },
+  {
+    "test": "Error Handling - Invalid JSON",
+    "success": true,
+    "details": "Correctly rejected invalid JSON",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.843166"
+  },
+  {
+    "test": "Error Handling - Missing Fields",
+    "success": true,
+    "details": "Correctly rejected missing fields",
+    "response_data": null,
+    "timestamp": "2025-08-30T03:57:04.844913"
   }
 ]

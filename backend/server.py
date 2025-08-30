@@ -160,9 +160,16 @@ class PolygonBlockchain:
 if STRIPE_SECRET_KEY:
     stripe.api_key = STRIPE_SECRET_KEY
 
-# Initialize OpenAI client
+# Initialize AI clients
 openai_client = None
-if OPENAI_API_KEY:
+gemini_client = None
+
+if LLM_PROVIDER == 'gemini' and GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    gemini_client = genai.GenerativeModel('gemini-1.5-flash')
+elif LLM_PROVIDER == 'openai' and OPENAI_API_KEY:
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
+elif OPENAI_API_KEY:  # fallback to OpenAI
     openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Initialize Polygon blockchain

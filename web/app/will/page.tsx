@@ -1,38 +1,204 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import DashboardLayout from '../../components/Layout/DashboardLayout'
 import Link from 'next/link'
 
-interface WillProgress {
-  personalInfo: number
-  assets: number
-  heirs: number
-  preferences: number
-  legal: number
+interface Will {
+  id: string
+  title: string
+  status: 'draft' | 'completed' | 'signed' | 'notarized'
+  completion_percentage: number
+  state: string
+  created_at: string
+  updated_at: string
 }
 
-interface WillData {
-  id?: string
-  lastUpdated?: string
-  status: 'draft' | 'review' | 'completed'
-  progress: WillProgress
-  totalProgress: number
+interface WillDetails {
+  id: string
+  title: string
+  status: string
+  completion_percentage: number
+  state: string
+  personal_info: any
+  executors: any[]
+  beneficiaries: any[]
+  assets: any[]
+  bequests: any[]
+  guardians: any[]
+  special_instructions: string
+  witnesses_required: number
+  notarization_required: boolean
+  witnesses_signed: boolean
+  notarized: boolean
+}
+
+interface ComplianceInfo {
+  witnesses_required: number
+  notarization_required: boolean
+  ron_allowed: boolean
+  citations: string[]
 }
 
 export default function WillBuilderPage() {
-  const [willData, setWillData] = useState<WillData>({
-    status: 'draft',
-    progress: {
-      personalInfo: 75,
-      assets: 40,
-      heirs: 60,
-      preferences: 20,
-      legal: 0
-    },
-    totalProgress: 39
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [wills, setWills] = useState<Will[]>([])
+  const [selectedWill, setSelectedWill] = useState<WillDetails | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [newWillData, setNewWillData] = useState({
+    title: '',
+    state: 'CA'
   })
-  
-  const [activeStep, setActiveStep] = useState(0)
+  const [complianceInfo, setComplianceInfo] = useState<ComplianceInfo | null>(null)
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+      return
+    }
+    if (status === 'authenticated') {
+      fetchUserWills()
+    }
+  }, [status])
+
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
+
+  const fetchUserWills = async () => {
+    try {
+      setLoading(true)
+      setError('')
+      
+      if (!session?.user?.email) return
+      
+      const response = await fetch(`${backendUrl}/api/wills?user_email=${encodeURIComponent(session.user.email)}`, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch wills: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      setWills(data)
+      
+      // Auto-select the first will if available
+      if (data.length > 0 && !selectedWill) {
+        await fetchWillDetails(data[0].id)
+      }
+    } catch (err: any) {
+      console.error('Error fetching wills:', err)
+      setError(err.message || 'Failed to load wills')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchWillDetails = async (willId: string) => {
+    try {
+      if (!session?.user?.email) return
+      
+      const response = await fetch(`${backendUrl}/api/wills/${willId}?user_email=${encodeURIComponent(session.user.email)}`, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch will details: ${response.status}`)
+      }
+      
+      const willDetails = await response.json()
+      setSelectedWill(willDetails)
+      
+      // Fetch compliance info for the will's state
+      await fetchComplianceInfo(willDetails.state)
+    } catch (err: any) {
+      console.error('Error fetching will details:', err)
+      setError(err.message || 'Failed to load will details')
+    }
+  }
+
+  const fetchComplianceInfo = async (state: string) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/compliance/rules?state=${state}&doc_type=will`, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      
+      if (response.ok) {
+        const compliance = await response.json()
+        setComplianceInfo(compliance)
+      }
+    } catch (err) {
+      console.error('Error fetching compliance info:', err)
+    }
+  }
+
+  const createNewWill = async () => {
+    try {
+      if (!session?.user?.email || !newWillData.title || !newWillData.state) return
+      
+      const response = await fetch(`${backendUrl}/api/wills?user_email=${encodeURIComponent(session.user.email)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newWillData.title,
+          state: newWillData.state,
+          personal_info: {}
+        })
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to create will: ${response.status}`)
+      }
+      
+      const newWill = await response.json()
+      
+      // Refresh the wills list and select the new will
+      await fetchUserWills()
+      await fetchWillDetails(newWill.id)
+      
+      // Reset form
+      setNewWillData({ title: '', state: 'CA' })
+      setShowCreateForm(false)
+    } catch (err: any) {
+      console.error('Error creating will:', err)
+      setError(err.message || 'Failed to create will')
+    }
+  }
+
+  const updateWillSection = async (sectionData: any) => {
+    try {
+      if (!selectedWill || !session?.user?.email) return
+      
+      const response = await fetch(`${backendUrl}/api/wills/${selectedWill.id}?user_email=${encodeURIComponent(session.user.email)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sectionData)
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to update will: ${response.status}`)
+      }
+      
+      const result = await response.json()
+      
+      // Refresh will details to show updated completion percentage
+      await fetchWillDetails(selectedWill.id)
+    } catch (err: any) {
+      console.error('Error updating will:', err)
+      setError(err.message || 'Failed to update will')
+    }
+  }
+
+  if (loading && status === 'loading') {
+    return <div className="p-8">Loading...</div>
+  }
+
+  if (status === 'unauthenticated') {
+    return null // Will redirect to login
+  }
 
   const steps = [
     {

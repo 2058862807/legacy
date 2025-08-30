@@ -32,18 +32,19 @@ Consolidate all previous requirements, add observability (Sentry, uptime), email
 </product_requirements>
 
 <key_technical_concepts>
--   **Next.js 14 (React):** Frontend framework for  directory.
--   **FastAPI (Python):** Backend framework for  directory.
--   **PostgreSQL:** Database for compliance data (Railway).
--   **MongoDB:** Initial database for core app data.
--   **NextAuth v5 (Google OAuth):** User authentication.
--   **Stripe:** Payment processing for transactions and webhooks.
--   **MetaMask (ethers.js):** Client-side blockchain integration for Polygon notarization.
--   **OpenAI:** AI services for Help and Grief bots.
--   **SQLAlchemy & Alembic:** ORM and database migrations for PostgreSQL.
--   **Tailwind CSS, PostCSS, Autoprefixer:** Modern UI styling.
--   **Vercel & Railway:** Deployment platforms.
--   **TypeScript:** Type safety for frontend.
+-   **Next.js 14 (React):** Frontend development, App Router.
+-   **FastAPI (Python):** Backend API,  directory.
+-   **PostgreSQL & MongoDB:** Databases.
+-   **NextAuth v5 (Google OAuth):** Authentication system.
+-   **Stripe:** Payment gateway.
+-   **MetaMask (ethers.js):** Client-side blockchain interaction.
+-   **OpenAI & Google Gemini Flash:** AI services.
+-   **SQLAlchemy & Alembic:** ORM and migrations.
+-   **Tailwind CSS:** UI styling.
+-   **Vercel & Railway:** Deployment.
+-   **TypeScript:** Frontend type safety.
+-   **:** Environment variable management.
+-   **:** HTTP client.
 </key_technical_concepts>
 
 <code_architecture>
@@ -53,50 +54,103 @@ The application follows a monorepo structure, strictly enforcing frontend code i
 
 **Key Files and Changes Summary:**
 
-*   **/app/web/app/page.tsx**: Modernized hero section, added MetaMask connect button, wrapped feature cards in  components.
-*   **/app/web/app/login/page.tsx**: Transformed to cutting-edge design, enhanced Google sign-in with dynamic provider loading, robust error handling, and clear UI feedback for OAuth configuration status. Marked as  to prevent prerender errors.
-*   **/app/web/app/will/page.tsx & /app/web/app/vault/page.tsx & /app/web/app/vault/upload/page.tsx**: UI modernized to feature-rich experiences.
-*   **/app/web/app/privacy/page.tsx & /app/web/app/terms/page.tsx**: Newly created with comprehensive legal content.
-*   **/app/web/tsconfig.json**: Corrected ,  (initially , then removed), and added  for MetaMask.
-*   **/app/web/lib/api.ts**: Centralized API helper using .
-*   **/app/backend/server.py**: Main FastAPI app. Updated with new API endpoints for payments, AI bots, blockchain, and compliance. Initially used , then switched to HTTP requests, then back to / for server-side Polygon calls, but ultimately blockchain interaction was moved to frontend MetaMask. Added Stripe webhook.
-*   **/app/web/vercel.json**: Configured for Vercel deployment, specifying  directory and API rewrites ( on Vercel, others to backend).
-*   **/app/web/package.json**: Manages frontend dependencies, including Tailwind, PostCSS, Autoprefixer, .
-*   **/app/web/app/globals.css**: Ensured Tailwind directives.
-*   **/app/web/app/layout.tsx**: Root layout. Integrated  (NextAuth), , and added SEO/meta tags.
-*   **/app/web/components/Providers.tsx**: Centralizes NextAuth .
-*   **/app/web/middleware.ts**: Adjusted for NextAuth authentication flow.
-*   **/app/web/auth.ts**: NextAuth configuration, dynamically loads Google provider based on environment variable presence.
-*   **/app/backend/requirements.txt**: Python dependencies. Evolved to include To use the fastapi command, please install "fastapi[standard]":
+*   ****: The core FastAPI application.
+    *   **Summary:** This file orchestrates all backend API endpoints and service integrations.
+    *   **Changes:** Significantly modified to update AI bot endpoints from deprecated OpenAI syntax to new v1+ client, then migrated to Google Gemini Flash 1.5 with rate limiting (20 requests/day/user) and . New user management, will creation, and document handling API endpoints with associated Pydantic models were added.
+*   ****: Defines SQLAlchemy models and database connection.
+    *   **Summary:** Central for defining the database schema.
+    *   **Changes:** Extended to include  and  models, laying the foundation for real user data and will generation.
+*   ****: Manages Python dependencies.
+    *   **Summary:** Ensures all necessary backend libraries are installed.
+    *   **Changes:** usage: openai [-h] [-v] [-b API_BASE] [-k API_KEY] [-p PROXY [PROXY ...]]
+              [-o ORGANIZATION] [-t {openai,azure}]
+              [--api-version API_VERSION] [--azure-endpoint AZURE_ENDPOINT]
+              [--azure-ad-token AZURE_AD_TOKEN] [-V]
+              {api,tools,migrate,grit} ...
 
-	pip install "fastapi[standard]", , , , , , , , , , , , .
-*   **/app/backend/database.py**: New file for SQLAlchemy models (, ) for PostgreSQL.
-*   **/app/backend/compliance_service.py**: New file for compliance logic, including seed loading, upserting, and in-memory caching.
-*   **/app/backend/data/compliance_seed.json**: New file, JSON data for compliance rules.
-*   **/app/web/components/Wallet/MetaMaskProvider.tsx, WalletButton.tsx**: New components for MetaMask wallet integration.
-*   **/app/web/components/Blockchain/MetaMaskNotarization.tsx**: New component for client-side blockchain notarization using MetaMask.
-*   **/app/web/types/window.d.ts**: New file for TypeScript declarations for the  object on .
-*   **/app/web/app/api/debug/auth-config/route.ts**: New endpoint to debug NextAuth environment variables.
-*   **/app/web/components/ErrorBoundary.tsx**: New component for handling runtime errors.
-*   **/app/web/next.config.mjs**: Adjusted to prevent build issues (e.g., ).
-*   **/app/web/.env.production, robots.txt, public/sitemap.xml**: New files for production environment and SEO.
+positional arguments:
+  {api,tools,migrate,grit}
+    api                 Direct API calls
+    tools               Client side tools for convenience
+
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         Set verbosity.
+  -b API_BASE, --api-base API_BASE
+                        What API base url to use.
+  -k API_KEY, --api-key API_KEY
+                        What API key to use.
+  -p PROXY [PROXY ...], --proxy PROXY [PROXY ...]
+                        What proxy to use.
+  -o ORGANIZATION, --organization ORGANIZATION
+                        Which organization to run as (will use your default
+                        organization if not specified)
+  -t {openai,azure}, --api-type {openai,azure}
+                        The backend API to call, must be `openai` or `azure`
+  --api-version API_VERSION
+                        The Azure API version, e.g.
+                        'https://learn.microsoft.com/en-us/azure/ai-
+                        services/openai/reference#rest-api-versioning'
+  --azure-endpoint AZURE_ENDPOINT
+                        The Azure endpoint, e.g.
+                        'https://endpoint.openai.azure.com'
+  --azure-ad-token AZURE_AD_TOKEN
+                        A token from Azure Active Directory,
+                        https://www.microsoft.com/en-
+                        us/security/business/identity-access/microsoft-entra-
+                        id
+  -V, --version         show program's version number and exit was upgraded to  and  was constrained () to resolve dependency conflicts.  was added for Gemini integration.
+*   ****: Initial compliance rules data.
+    *   **Summary:** Provides the legal compliance data for various states.
+    *   **Changes:** Replaced with  to include a comprehensive 50-state + DC dataset.
+*   ****: The main homepage.
+    *   **Summary:** The primary entry point for users.
+    *   **Changes:** Feature cards were wrapped with  components to direct users to new, dedicated explanation pages.
+*   ****: New feature explanation pages.
+    *   **Summary:** Provides detailed information for core application features.
+    *   **Changes:** New directories and files created for , , and  to provide professional content for each feature.
+*   ****: User's personalized dashboard.
+    *   **Summary:** Displays user-specific progress and data.
+    *   **Changes:** Modified to fetch and display real user data, document counts, will counts, and completion percentages from new backend API endpoints.
+*   ****: The Will Builder interface.
+    *   **Summary:** Enables users to create and manage their wills.
+    *   **Changes:** Updated to interact with the new backend API to save actual will data and dynamically integrate state-specific compliance rules, replacing static placeholder content.
+*   ****: NextAuth authentication configuration.
+    *   **Summary:** Handles all authentication logic and provider setup.
+    *   **Changes:** A  callback was added to register users in the backend database automatically upon successful Google OAuth login.
+*   ****: Frontend TypeScript declarations.
+    *   **Summary:** Extends the global  interface for custom objects.
+    *   **Changes:** Added declarations for  and  to resolve TypeScript build errors, enabling direct access to bot functions from the global window object.
+*   ****: AI Bot UI component.
+    *   **Summary:** Provides the interactive chat assistant widgets.
+    *   **Changes:** Updated to ensure  functions of the bots are correctly exposed and typed via the global  object.
+*   ** & **: Frontend environment variables.
+    *   **Summary:** Stores critical configuration like API keys and URLs.
+    *   **Changes:**  and  were updated for both local and production environments.
 </code_architecture>
 
 <pending_tasks>
-- Create professional feature explanation pages for the dead links on the homepage. The AI engineer has identified the feature cards and the need for these pages and is currently working on this.
+-   Change the AI bot's fallback/escalation message from recommend consulting an attorney. to refer to an AI Lawyer chatbot called Esquire AI.
+-   Implement Document Management System (file upload, storage, organization, version control, sharing).
+-   Implement PDF Generation for wills.
+-   Further AI enhancements (document analysis, smart recommendations).
+-   Configure Stripe for real payment processing and subscription management.
+-   Integrate real blockchain notarization and document verification.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was addressing the user's feedback that the feature cards on the homepage () were dead links and should lead to professional explanation pages.
+Immediately before this summary request, the AI engineer was addressing the user's explicit request to rebrand instances of call our lawyers to an AI Lawyer chatbot named Esquire AI. The engineer had successfully identified the specific line in the  file (line 810) that contained the phrase recommend consulting an attorney, which is part of the AI bot's fallback or escalation response. The engineer was in the process of formulating the edit to update this text.
 
-The engineer's last action was:
-1.  **Identify Dead Links:** Located the feature cards in .
-2.  **Start Wrapping in Links:** Began the process of making these cards clickable by wrapping them in  components.
-3.  **Plan New Pages:** Stated the intention to create dedicated, professional feature explanation pages that these links will point to.
+This task follows a significant period of development where the application was transformed from a placeholder-heavy demo to a fully functional estate planning platform. This included:
+1.  **50-State Compliance System:** The compliance system was updated from a limited 4-state display to a comprehensive 50-state + DC system, utilizing a full  dataset and a refresh mechanism.
+2.  **Core User System:** A complete user management system was implemented, including database models (, , ), user registration via NextAuth callbacks, and API endpoints for user profiles and dashboard statistics.
+3.  **Will Builder:** The  was made functional to save actual will data to the backend, integrating with the state compliance rules.
+4.  **Dashboard:** The  was updated to display real user statistics (total wills, documents, completion percentage) and recent activity, instead of static data.
+5.  **AI Bot Migration & Enhancements:** The AI bots were migrated from OpenAI to Google Gemini Flash 1.5. This involved updating  with , changing the client initialization in , and refactoring the  and  endpoints to use the Gemini API. A hard rate limit of 20 requests per user per day and a  output constraint were also implemented.
 
-The application is otherwise declared production-ready, with all major features (Google Login, Stripe, AI Bots, Polygon Notarization via MetaMask, 50-State Compliance) implemented, configured, and tested locally. The previous major issues regarding Vercel prerendering errors and Railway crashes due to  dependencies have been resolved. The engineer has also generated comprehensive deployment guides and documentation. The current task is a refinement of the homepage UX to make the feature cards functional and informative.
+The current state is a robust, production-ready application with a functional login, comprehensive compliance, a working will builder, and integrated Gemini AI bots, now being refined for specific branding requested by the user.
 </current_work>
 
 <optional_next_step>
-Create the dedicated professional feature explanation pages that the homepage links will point to.
+The next step is to modify  at line 810 to change recommend consulting an attorney. to refer to the Esquire AI chatbot.
 </optional_next_step>

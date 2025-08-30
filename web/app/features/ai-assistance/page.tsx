@@ -28,12 +28,9 @@ export default function AIAssistancePage() {
           <p className="text-gray-600 mb-4">
             24/7 intelligent assistance for estate planning questions, document guidance, and step-by-step support.
           </p>
-          <button 
-            onClick={() => window.helpBot?.open?.()} 
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            Try Help Bot →
-          </button>
+          <div className="text-blue-600 font-medium">
+            Available on every page →
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-6">

@@ -4,7 +4,7 @@ import hashlib
 import json
 import secrets
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
@@ -12,6 +12,11 @@ import requests
 import openai
 from eth_account import Account
 from eth_utils import to_hex
+from sqlalchemy.orm import Session
+
+# Import database and compliance
+from database import create_tables, get_db, is_database_available
+from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 
 # Environment variables
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')

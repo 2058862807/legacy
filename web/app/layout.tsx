@@ -19,9 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <div id="__next">
-            {children}
-          </div>
+          <MetaMaskProvider>
+            <div id="__next">
+              {children}
+            </div>
+          </MetaMaskProvider>
         </Providers>
       </body>
     </html>

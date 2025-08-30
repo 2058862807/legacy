@@ -403,7 +403,7 @@ async def grief_bot(request: BotRequest):
     I'm here to listen and provide support regarding grief and estate planning concerns.
     """
     
-    if not OPENAI_API_KEY:
+    if not openai_client:
         return BotResponse(
             reply=crisis_resources + "\n\nAI services are currently unavailable, but please reach out to our human support team.",
             escalate=True
@@ -415,7 +415,7 @@ async def grief_bot(request: BotRequest):
             {"role": "user", "content": request.message}
         ]
         
-        response = openai.ChatCompletion.create(
+        response = openai_client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=200,

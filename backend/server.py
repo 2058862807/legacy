@@ -276,11 +276,329 @@ class CheckoutRequest(BaseModel):
 @app.get("/api/health")
 async def health_check():
     return {
-        "status": "ok", 
+        "status": "ok",
         "timestamp": datetime.utcnow().isoformat(),
-        "database": is_database_available(),
-        "compliance_enabled": ComplianceService.is_enabled()
+        "compliance_enabled": os.environ.get('COMPLIANCE_ENABLED', 'false').lower() == 'true',
+        "database_available": is_database_available()
     }
+
+# User Management Endpoints
+@app.post("/api/users", response_model=UserResponse)
+async def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
+    """Create or update user from OAuth"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    # Check if user already exists
+    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    
+    if existing_user:
+        # Update existing user
+        existing_user.name = user_data.name
+        existing_user.image = user_data.image
+        existing_user.updated_at = datetime.now(timezone.utc)
+        db.commit()
+        user = existing_user
+    else:
+        # Create new user
+        user = User(
+            email=user_data.email,
+            name=user_data.name,
+            image=user_data.image,
+            provider=user_data.provider,
+            provider_id=user_data.provider_id
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        
+        # Log user creation
+        log_activity(db, user.id, "user_registered", {"provider": user_data.provider})
+    
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        name=user.name,
+        image=user.image,
+        state=user.state,
+        subscription_status=user.subscription_status,
+        created_at=user.created_at.isoformat()
+    )
+
+@app.get("/api/users/{user_email}", response_model=UserResponse)
+async def get_user(user_email: str, db: Session = Depends(get_db)):
+    """Get user by email"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        name=user.name,
+        image=user.image,
+        state=user.state,
+        subscription_status=user.subscription_status,
+        created_at=user.created_at.isoformat()
+    )
+
+@app.put("/api/users/{user_id}/state")
+async def update_user_state(user_id: str, state_data: dict, db: Session = Depends(get_db)):
+    """Update user's state for compliance"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.state = state_data.get("state")
+    user.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    
+    log_activity(db, user_id, "updated_state", {"state": user.state})
+    
+    return {"success": True, "state": user.state}
+
+# Will Management Endpoints
+@app.post("/api/wills", response_model=WillResponse)
+async def create_will(will_data: WillCreate, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Create a new will for user"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    # Get user
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get compliance requirements for the state
+    compliance = await get_compliance_rule(will_data.state, "will", db)
+    
+    # Create will
+    will = Will(
+        user_id=user.id,
+        title=will_data.title,
+        state=will_data.state,
+        personal_info=will_data.personal_info,
+        witnesses_required=compliance.witnesses_required if compliance else 2,
+        notarization_required=compliance.notarization_required if compliance else False
+    )
+    db.add(will)
+    db.commit()
+    db.refresh(will)
+    
+    # Update user's state if not set
+    if not user.state:
+        user.state = will_data.state
+        db.commit()
+    
+    log_activity(db, user.id, "created_will", {"will_id": will.id, "state": will.state})
+    
+    return WillResponse(
+        id=will.id,
+        title=will.title,
+        status=will.status,
+        completion_percentage=will.completion_percentage,
+        state=will.state,
+        created_at=will.created_at.isoformat(),
+        updated_at=will.updated_at.isoformat()
+    )
+
+@app.get("/api/wills", response_model=List[WillResponse])
+async def get_user_wills(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get all wills for a user"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    wills = db.query(Will).filter(Will.user_id == user.id).order_by(Will.updated_at.desc()).all()
+    
+    return [
+        WillResponse(
+            id=will.id,
+            title=will.title,
+            status=will.status,
+            completion_percentage=will.completion_percentage,
+            state=will.state,
+            created_at=will.created_at.isoformat(),
+            updated_at=will.updated_at.isoformat()
+        ) for will in wills
+    ]
+
+@app.put("/api/wills/{will_id}")
+async def update_will(will_id: str, will_update: WillUpdate, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Update a will"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    will = db.query(Will).filter(Will.id == will_id, Will.user_id == user.id).first()
+    if not will:
+        raise HTTPException(status_code=404, detail="Will not found")
+    
+    # Update fields
+    update_data = will_update.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(will, field, value)
+    
+    # Calculate completion percentage
+    will.completion_percentage = calculate_will_completion(will)
+    will.updated_at = datetime.now(timezone.utc)
+    
+    db.commit()
+    
+    log_activity(db, user.id, "updated_will", {"will_id": will.id})
+    
+    return {"success": True, "completion_percentage": will.completion_percentage}
+
+@app.get("/api/wills/{will_id}")
+async def get_will_details(will_id: str, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get detailed will information"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    will = db.query(Will).filter(Will.id == will_id, Will.user_id == user.id).first()
+    if not will:
+        raise HTTPException(status_code=404, detail="Will not found")
+    
+    return {
+        "id": will.id,
+        "title": will.title,
+        "status": will.status,
+        "completion_percentage": will.completion_percentage,
+        "state": will.state,
+        "personal_info": will.personal_info,
+        "executors": will.executors,
+        "beneficiaries": will.beneficiaries,
+        "assets": will.assets,
+        "bequests": will.bequests,
+        "guardians": will.guardians,
+        "special_instructions": will.special_instructions,
+        "witnesses_required": will.witnesses_required,
+        "notarization_required": will.notarization_required,
+        "witnesses_signed": will.witnesses_signed,
+        "notarized": will.notarized,
+        "created_at": will.created_at.isoformat(),
+        "updated_at": will.updated_at.isoformat()
+    }
+
+# Dashboard Endpoint
+@app.get("/api/user/dashboard-stats", response_model=DashboardStats)
+async def get_dashboard_stats(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get dashboard statistics for user"""
+    if not db:
+        # Return demo data if database not available
+        return DashboardStats(
+            total_documents=0,
+            total_wills=0,
+            completion_percentage=0.0,
+            recent_activity=[
+                {"action": "Database not configured", "timestamp": datetime.now().isoformat()}
+            ]
+        )
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get user statistics
+    total_documents = db.query(Document).filter(Document.user_id == user.id).count()
+    total_wills = db.query(Will).filter(Will.user_id == user.id).count()
+    
+    # Calculate average completion percentage
+    wills = db.query(Will).filter(Will.user_id == user.id).all()
+    avg_completion = sum(will.completion_percentage for will in wills) / len(wills) if wills else 0.0
+    
+    # Get recent activity
+    recent_activity = db.query(ActivityLog).filter(
+        ActivityLog.user_id == user.id
+    ).order_by(ActivityLog.timestamp.desc()).limit(10).all()
+    
+    # Get compliance status if user has a state
+    compliance_status = None
+    if user.state:
+        try:
+            compliance_rule = await get_compliance_rule(user.state, "will", db)
+            if compliance_rule:
+                compliance_status = {
+                    "state": user.state,
+                    "witnesses_required": compliance_rule.witnesses_required,
+                    "notarization_required": compliance_rule.notarization_required,
+                    "ron_allowed": compliance_rule.ron_allowed
+                }
+        except:
+            pass
+    
+    return DashboardStats(
+        total_documents=total_documents,
+        total_wills=total_wills,
+        completion_percentage=avg_completion,
+        recent_activity=[
+            {
+                "action": activity.action,
+                "details": activity.details,
+                "timestamp": activity.timestamp.isoformat()
+            } for activity in recent_activity
+        ],
+        compliance_status=compliance_status
+    )
+
+# Utility Functions
+def log_activity(db: Session, user_id: str, action: str, details: dict = None):
+    """Log user activity"""
+    activity = ActivityLog(
+        user_id=user_id,
+        action=action,
+        details=details or {}
+    )
+    db.add(activity)
+    db.commit()
+
+def calculate_will_completion(will: Will) -> float:
+    """Calculate will completion percentage"""
+    total_sections = 7  # personal_info, executors, beneficiaries, assets, bequests, guardians, special_instructions
+    completed_sections = 0
+    
+    if will.personal_info and len(will.personal_info) > 0:
+        completed_sections += 1
+    if will.executors and len(will.executors) > 0:
+        completed_sections += 1
+    if will.beneficiaries and len(will.beneficiaries) > 0:
+        completed_sections += 1
+    if will.assets and len(will.assets) > 0:
+        completed_sections += 1
+    if will.bequests and len(will.bequests) > 0:
+        completed_sections += 1
+    if will.guardians and len(will.guardians) > 0:
+        completed_sections += 1
+    if will.special_instructions and len(will.special_instructions.strip()) > 0:
+        completed_sections += 1
+    
+    return (completed_sections / total_sections) * 100.0
+
+async def get_compliance_rule(state: str, doc_type: str, db: Session):
+    """Get compliance rule for state and document type"""
+    try:
+        from compliance_service import ComplianceService
+        compliance_service = ComplianceService()
+        await compliance_service.load_rules(db)
+        return await compliance_service.get_rule(state, doc_type)
+    except:
+        return None
 
 # Compliance endpoints
 @app.get("/api/compliance/rules", response_model=Optional[ComplianceRuleResponse])

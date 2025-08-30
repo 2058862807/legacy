@@ -60,7 +60,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
     try {
       if (!isMetaMaskInstalled()) return
 
-      const web3Provider = new ethers.BrowserProvider(window.ethereum)
+      const web3Provider = new ethers.BrowserProvider(window.ethereum as any)
       const accounts = await web3Provider.listAccounts()
       
       if (accounts.length > 0) {

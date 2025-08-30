@@ -174,9 +174,5 @@ function LoginContent() {
 }
 
 export default function LoginPage() {
-  return (
-    <Providers>
-      <LoginContent />
-    </Providers>
-  )
+  return <LoginContent />
 }

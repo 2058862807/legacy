@@ -186,13 +186,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Pydantic models
-class CheckoutRequest(BaseModel):
-    planId: str
-
+# Pydantic models for requests/responses
 class BotRequest(BaseModel):
     message: str
     history: Optional[List[Dict[str, Any]]] = []
+
+class BotResponse(BaseModel):
+    reply: str
+    escalate: bool = False
 
 class HashRequest(BaseModel):
     content: str
@@ -200,9 +201,76 @@ class HashRequest(BaseModel):
 class NotarizeRequest(BaseModel):
     hash: str
 
-class BotResponse(BaseModel):
-    reply: str
-    escalate: Optional[bool] = False
+class PaymentRequest(BaseModel):
+    plan: str
+
+# User Management Models
+class UserCreate(BaseModel):
+    email: str
+    name: str
+    image: Optional[str] = None
+    provider: str = "google"
+    provider_id: Optional[str] = None
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    name: str
+    image: Optional[str]
+    state: Optional[str]
+    subscription_status: str
+    created_at: str
+
+class WillCreate(BaseModel):
+    title: Optional[str] = "My Will"
+    state: str
+    personal_info: Optional[Dict[str, Any]] = {}
+
+class WillUpdate(BaseModel):
+    title: Optional[str] = None
+    personal_info: Optional[Dict[str, Any]] = None
+    executors: Optional[List[Dict[str, Any]]] = None
+    beneficiaries: Optional[List[Dict[str, Any]]] = None
+    assets: Optional[List[Dict[str, Any]]] = None
+    bequests: Optional[List[Dict[str, Any]]] = None
+    guardians: Optional[List[Dict[str, Any]]] = None
+    special_instructions: Optional[str] = None
+
+class WillResponse(BaseModel):
+    id: str
+    title: str
+    status: str
+    completion_percentage: float
+    state: str
+    created_at: str
+    updated_at: str
+
+class DocumentUpload(BaseModel):
+    filename: str
+    file_size: int
+    file_type: str
+    document_type: Optional[str] = None
+    description: Optional[str] = None
+    tags: Optional[List[str]] = []
+
+class DocumentResponse(BaseModel):
+    id: str
+    filename: str
+    file_size: int
+    file_type: str
+    document_type: Optional[str]
+    blockchain_verified: bool
+    uploaded_at: str
+
+class DashboardStats(BaseModel):
+    total_documents: int
+    total_wills: int
+    completion_percentage: float
+    recent_activity: List[Dict[str, Any]]
+    compliance_status: Optional[Dict[str, Any]] = None
+
+class CheckoutRequest(BaseModel):
+    planId: str
 
 # Health check
 @app.get("/api/health")

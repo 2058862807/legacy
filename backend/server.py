@@ -756,11 +756,9 @@ async def check_rate_limit(user_email: str, endpoint: str, db: Session, limit: i
     if not user:
         # For anonymous users, allow access but create a temporary user record
         user = User(
-            id=str(uuid.uuid4()),
             email=user_email,
             name="Anonymous User",
-            subscription_status="free",
-            created_at=datetime.now(timezone.utc)
+            subscription_status="free"
         )
         db.add(user)
         db.commit()

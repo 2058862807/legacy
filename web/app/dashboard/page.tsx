@@ -45,8 +45,28 @@ export default function Dashboard() {
     try {
       setLoading(true);
       setError('');
-      const res = await fetch('/api/proxy/api/user/dashboard-stats', { cache: 'no-store' });
-      if (!res.ok) throw new Error(`API ${res.status}`);
+      
+      if (!session?.user?.email) {
+        throw new Error('User email not available');
+      }
+      
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001';
+      const url = `${backendUrl}/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
+      
+      const res = await fetch(url, { 
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!res.ok) {
+        if (res.status === 404) {
+          throw new Error('User not found. Please sign in again.');
+        }
+        throw new Error(`API Error ${res.status}`);
+      }
+      
       const data = await res.json();
       setUserData(data);
     } catch (e: any) {

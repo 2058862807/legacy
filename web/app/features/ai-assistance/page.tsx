@@ -39,12 +39,9 @@ export default function AIAssistancePage() {
           <p className="text-gray-600 mb-4">
             Compassionate AI support during difficult times with crisis resources and emotional guidance.
           </p>
-          <button 
-            onClick={() => window.griefBot?.open?.()} 
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            Access Support →
-          </button>
+          <div className="text-blue-600 font-medium">
+            Available on every page →
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 p-6">

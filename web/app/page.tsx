@@ -162,6 +162,6 @@ export default function Home() {
 
       {/* Bot Components */}
       <Bot type="help" />
-    </Providers>
+    </main>
   )
 }

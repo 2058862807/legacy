@@ -118,9 +118,5 @@ function DashboardContent({ children }: DashboardLayoutProps) {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  return (
-    <Providers>
-      <DashboardContent>{children}</DashboardContent>
-    </Providers>
-  )
+  return <DashboardContent>{children}</DashboardContent>
 }

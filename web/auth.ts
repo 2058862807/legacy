@@ -25,6 +25,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   debug: process.env.NODE_ENV === 'development',
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // Create or update user in our database when they sign in
+      if (account?.provider === 'google' && user.email) {
+        try {
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
+          
+          const response = await fetch(`${backendUrl}/api/users`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: user.email,
+              name: user.name || '',
+              image: user.image || null,
+              provider: 'google',
+              provider_id: account.providerAccountId
+            }),
+          })
+          
+          if (!response.ok) {
+            console.error('Failed to create/update user in backend:', response.status)
+            // Continue with sign in even if backend fails
+          }
+        } catch (error) {
+          console.error('Error creating/updating user:', error)
+          // Continue with sign in even if backend fails
+        }
+      }
+      
+      return true
+    },
     async jwt({ token, account, profile }) {
       if (account) {
         token.accessToken = account.access_token

@@ -157,10 +157,19 @@ polygon = PolygonBlockchain(POLYGON_RPC_URL, POLYGON_PRIVATE_KEY)
 
 app = FastAPI()
 
+# Create database tables on startup
+create_tables()
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure for production
+    allow_origins=[
+        "https://nexteraestate.com",
+        "https://*.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:3002",
+        "*"  # For development
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Bot from '@/components/Bot'
+import Bot from '../components/Bot'
 
 export default function Home() {
   return (

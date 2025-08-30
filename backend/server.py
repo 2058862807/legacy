@@ -16,12 +16,13 @@ from typing import Optional, List, Dict, Any
 import requests
 import openai
 from openai import OpenAI
+import google.generativeai as genai
 from eth_account import Account
 from eth_utils import to_hex
 from sqlalchemy.orm import Session
 
 # Import database and compliance
-from database import create_tables, get_db, is_database_available, User, Will, Document, ActivityLog
+from database import create_tables, get_db, is_database_available, User, Will, Document, ActivityLog, RateLimit
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 
 # Environment variables

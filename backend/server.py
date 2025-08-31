@@ -22,6 +22,7 @@ import google.generativeai as genai
 from eth_account import Account
 from eth_utils import to_hex
 from sqlalchemy.orm import Session
+from fastapi.responses import FileResponse
 
 # Import database and compliance
 from database import create_tables, get_db, is_database_available, User, Will, Document, ActivityLog, RateLimit, ChatHistory

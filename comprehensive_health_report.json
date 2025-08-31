@@ -1,242 +1,235 @@
-[
-  {
-    "category": "Health",
-    "test": "Backend Service",
-    "success": true,
-    "details": "Status: ok, DB Available: True",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.152720"
+{
+  "timestamp": "2025-08-31T18:44:10.318639",
+  "summary": {
+    "total_tests": 23,
+    "passed_tests": 21,
+    "failed_tests": 2,
+    "critical_failures": 0,
+    "success_rate": 91.30434782608695,
+    "production_ready": true
   },
-  {
-    "category": "Health",
-    "test": "Compliance Service",
-    "success": true,
-    "details": "Compliance Enabled: True",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.152749"
+  "categories": {
+    "Core API": {
+      "total": 3,
+      "passed": 3,
+      "critical_failed": 0
+    },
+    "AI Integration": {
+      "total": 3,
+      "passed": 3,
+      "critical_failed": 0
+    },
+    "Compliance": {
+      "total": 5,
+      "passed": 5,
+      "critical_failed": 0
+    },
+    "Payment": {
+      "total": 4,
+      "passed": 4,
+      "critical_failed": 0
+    },
+    "Authentication": {
+      "total": 3,
+      "passed": 3,
+      "critical_failed": 0
+    },
+    "Document System": {
+      "total": 3,
+      "passed": 1,
+      "critical_failed": 0
+    },
+    "Blockchain": {
+      "total": 2,
+      "passed": 2,
+      "critical_failed": 0
+    }
   },
-  {
-    "category": "Auth",
-    "test": "User Creation",
-    "success": true,
-    "details": "User created/updated: platform.test@nexteraestate.com",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.169352"
-  },
-  {
-    "category": "Auth",
-    "test": "User Retrieval",
-    "success": true,
-    "details": "User retrieved: platform.test@nexteraestate.com",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.172158"
-  },
-  {
-    "category": "Will",
-    "test": "Will Creation",
-    "success": true,
-    "details": "Will created: Platform Test Will (ID: 04a3622c...)",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.196790"
-  },
-  {
-    "category": "Will",
-    "test": "Will Retrieval",
-    "success": true,
-    "details": "Will details retrieved: Platform Test Will",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.201410"
-  },
-  {
-    "category": "Will",
-    "test": "Will Update",
-    "success": true,
-    "details": "Will updated, completion: 42.857142857142854%",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.218187"
-  },
-  {
-    "category": "Will",
-    "test": "Will List",
-    "success": true,
-    "details": "Retrieved 1 wills for user",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.222353"
-  },
-  {
-    "category": "Documents",
-    "test": "Document List",
-    "success": true,
-    "details": "Retrieved 0 documents",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.227335"
-  },
-  {
-    "category": "Documents",
-    "test": "File Upload",
-    "success": true,
-    "details": "Endpoint available (file upload requires multipart form data)",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.227368"
-  },
-  {
-    "category": "Compliance",
-    "test": "Summary Data",
-    "success": true,
-    "details": "Compliance data for 51 states available",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.232279"
-  },
-  {
-    "category": "Compliance",
-    "test": "CA Rules",
-    "success": true,
-    "details": "Witnesses: 2, Notary: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.234216"
-  },
-  {
-    "category": "Compliance",
-    "test": "NY Rules",
-    "success": true,
-    "details": "Witnesses: 2, Notary: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.236826"
-  },
-  {
-    "category": "Compliance",
-    "test": "TX Rules",
-    "success": true,
-    "details": "Witnesses: 2, Notary: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.239358"
-  },
-  {
-    "category": "Compliance",
-    "test": "FL Rules",
-    "success": true,
-    "details": "Witnesses: 2, Notary: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:40.241991"
-  },
-  {
-    "category": "AI Bots",
-    "test": "Help Bot Response",
-    "success": true,
-    "details": "Response received, escalate: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:41.322135"
-  },
-  {
-    "category": "AI Bots",
-    "test": "Esquire AI Branding",
-    "success": false,
-    "details": "Response does not mention Esquire AI",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:41.322170"
-  },
-  {
-    "category": "AI Bots",
-    "test": "Grief Bot Response",
-    "success": true,
-    "details": "Response received, escalate: False",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:42.369537"
-  },
-  {
-    "category": "AI Bots",
-    "test": "Crisis Resources",
-    "success": true,
-    "details": "Response includes crisis resources",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:42.369581"
-  },
-  {
-    "category": "PDF",
-    "test": "Will PDF Generation",
-    "success": true,
-    "details": "Endpoint available (404 expected for invalid will ID)",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:42.373287"
-  },
-  {
-    "category": "PDF",
-    "test": "Pet Trust PDF",
-    "success": true,
-    "details": "Pet trust PDF generation successful",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:42.386694"
-  },
-  {
-    "category": "Payments",
-    "test": "Checkout Basic",
-    "success": true,
-    "details": "Checkout URL generated successfully",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:42.795351"
-  },
-  {
-    "category": "Payments",
-    "test": "Checkout Premium",
-    "success": true,
-    "details": "Checkout URL generated successfully",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.082877"
-  },
-  {
-    "category": "Payments",
-    "test": "Checkout Full",
-    "success": true,
-    "details": "Checkout URL generated successfully",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.397532"
-  },
-  {
-    "category": "Payments",
-    "test": "Invalid Plan Validation",
-    "success": true,
-    "details": "Correctly rejected invalid plan",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.399252"
-  },
-  {
-    "category": "Blockchain",
-    "test": "Hash Generation",
-    "success": true,
-    "details": "SHA256 hash generated: 82380d259fb0bc49...",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.400743"
-  },
-  {
-    "category": "Blockchain",
-    "test": "Notarization",
-    "success": true,
-    "details": "Expected error - Blockchain not configured",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.402116"
-  },
-  {
-    "category": "Blockchain",
-    "test": "Wallet Info",
-    "success": true,
-    "details": "Expected error - Blockchain not configured",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.403355"
-  },
-  {
-    "category": "Dashboard",
-    "test": "User Statistics",
-    "success": true,
-    "details": "Docs: 0, Wills: 1, Completion: 42.857142857142854%",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.417016"
-  },
-  {
-    "category": "Dashboard",
-    "test": "Compliance Status",
-    "success": false,
-    "details": "No compliance status in dashboard",
-    "response_data": null,
-    "timestamp": "2025-08-31T06:50:43.417055"
-  }
-]
+  "critical_failures": [],
+  "detailed_results": [
+    {
+      "category": "Core API",
+      "test": "Health Endpoint",
+      "success": true,
+      "details": "Status: ok, DB: True",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:06.510243"
+    },
+    {
+      "category": "Core API",
+      "test": "Compliance System",
+      "success": true,
+      "details": "Enabled and ready",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:06.510307"
+    },
+    {
+      "category": "Core API",
+      "test": "User Management",
+      "success": true,
+      "details": "User creation/update working",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:06.547218"
+    },
+    {
+      "category": "AI Integration",
+      "test": "Esquire AI Bot",
+      "success": true,
+      "details": "Working with proper branding",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:07.487484"
+    },
+    {
+      "category": "AI Integration",
+      "test": "AI Response Quality",
+      "success": true,
+      "details": "Relevant estate planning response",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:07.487523"
+    },
+    {
+      "category": "AI Integration",
+      "test": "Grief Bot",
+      "success": true,
+      "details": "Working with crisis resources",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.175776"
+    },
+    {
+      "category": "Compliance",
+      "test": "50-State Data",
+      "success": true,
+      "details": "Data for 51 states loaded",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.182861"
+    },
+    {
+      "category": "Compliance",
+      "test": "State Rules (CA)",
+      "success": true,
+      "details": "Witnesses: 2, Notary: False",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.187702"
+    },
+    {
+      "category": "Compliance",
+      "test": "State Rules (NY)",
+      "success": true,
+      "details": "Witnesses: 2, Notary: False",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.192656"
+    },
+    {
+      "category": "Compliance",
+      "test": "State Rules (TX)",
+      "success": true,
+      "details": "Witnesses: 2, Notary: False",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.195883"
+    },
+    {
+      "category": "Compliance",
+      "test": "State Rules (FL)",
+      "success": true,
+      "details": "Witnesses: 2, Notary: False",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.198717"
+    },
+    {
+      "category": "Payment",
+      "test": "Stripe Checkout (basic)",
+      "success": true,
+      "details": "Checkout URL generated successfully",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.665896"
+    },
+    {
+      "category": "Payment",
+      "test": "Stripe Checkout (premium)",
+      "success": true,
+      "details": "Checkout URL generated successfully",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:09.966099"
+    },
+    {
+      "category": "Payment",
+      "test": "Stripe Checkout (full)",
+      "success": true,
+      "details": "Checkout URL generated successfully",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.271611"
+    },
+    {
+      "category": "Payment",
+      "test": "Plan Validation",
+      "success": true,
+      "details": "Invalid plans correctly rejected",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.273346"
+    },
+    {
+      "category": "Authentication",
+      "test": "User Creation",
+      "success": true,
+      "details": "User created with ID: d8cf59b5...",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.288767"
+    },
+    {
+      "category": "Authentication",
+      "test": "User Retrieval",
+      "success": true,
+      "details": "User retrieved successfully",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.291904"
+    },
+    {
+      "category": "Authentication",
+      "test": "State Update",
+      "success": true,
+      "details": "User state updated successfully",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.304480"
+    },
+    {
+      "category": "Document System",
+      "test": "Document Listing",
+      "success": true,
+      "details": "Found 0 documents",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.307392"
+    },
+    {
+      "category": "Document System",
+      "test": "Will Creation",
+      "success": false,
+      "details": "HTTP 404",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.311686"
+    },
+    {
+      "category": "Document System",
+      "test": "Pet Trust PDF",
+      "success": false,
+      "details": "HTTP 404",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.314694"
+    },
+    {
+      "category": "Blockchain",
+      "test": "Hash Generation",
+      "success": true,
+      "details": "SHA256 hash: 22845b04d3a8ffd1...",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.316572"
+    },
+    {
+      "category": "Blockchain",
+      "test": "Notarization",
+      "success": true,
+      "details": "Expected - Blockchain not configured for demo",
+      "is_critical": false,
+      "timestamp": "2025-08-31T18:44:10.318385"
+    }
+  ]
+}

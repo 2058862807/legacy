@@ -1138,6 +1138,117 @@ async def delete_document(document_id: str, user_email: str = Query(...), db: Se
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
 
+# PDF Generation
+@app.get("/api/wills/{will_id}/pdf")
+async def generate_will_pdf(will_id: str, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Generate and download PDF for a will"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    # Get user
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get will
+    will = db.query(Will).filter(Will.id == will_id, Will.user_id == user.id).first()
+    if not will:
+        raise HTTPException(status_code=404, detail="Will not found")
+    
+    try:
+        # Get compliance data for the user's state
+        compliance_service = ComplianceService()
+        compliance_rules = compliance_service.get_rules_by_state(user.state or 'CA')
+        
+        # Prepare will data
+        will_data = {
+            'id': will.id,
+            'title': will.title,
+            'executors': will.executors or [],
+            'assets': will.assets or [],
+            'bequests': will.bequests or [], 
+            'guardians': will.guardians or [],
+            'special_instructions': will.special_instructions or '',
+            'pet_provisions': will.pet_provisions or {}
+        }
+        
+        # Prepare user data
+        user_data = {
+            'name': user.name,
+            'email': user.email,
+            'state': user.state or 'CA'
+        }
+        
+        # Prepare compliance data
+        compliance_data = {}
+        if compliance_rules:
+            compliance_data = {
+                'witnesses_required': f"{compliance_rules[0].witnesses_required} witnesses" if compliance_rules else "2 witnesses",
+                'notarization_required': compliance_rules[0].notarization_required if compliance_rules else False,
+                'self_proving_allowed': compliance_rules[0].self_proving_allowed if compliance_rules else True
+            }
+        
+        # Generate PDF
+        pdf_generator = WillPDFGenerator()
+        pdf_path = pdf_generator.generate_will_pdf(will_data, user_data, compliance_data)
+        
+        # Log activity
+        log_activity(db, user.id, "generated_will_pdf", {
+            "will_id": will_id,
+            "will_title": will.title
+        })
+        
+        # Return PDF file
+        return FileResponse(
+            path=pdf_path,
+            filename=f"{will.title.replace(' ', '_')}_Will.pdf",
+            media_type='application/pdf'
+        )
+        
+    except Exception as e:
+        print(f"PDF generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+@app.post("/api/pet-trust/pdf")
+async def generate_pet_trust_pdf(pet_data: dict, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Generate PDF for pet trust provisions"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    # Get user
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    try:
+        # Prepare user data
+        user_data = {
+            'name': user.name,
+            'email': user.email,
+            'state': user.state or 'CA'
+        }
+        
+        # Generate PDF
+        pdf_generator = WillPDFGenerator()
+        pdf_path = pdf_generator.generate_pet_trust_pdf(pet_data, user_data)
+        
+        # Log activity
+        log_activity(db, user.id, "generated_pet_trust_pdf", {
+            "pet_count": len(pet_data.get('pets', [])),
+            "trust_amount": pet_data.get('trust_amount', 0)
+        })
+        
+        # Return PDF file
+        return FileResponse(
+            path=pdf_path,
+            filename="Pet_Trust_Provisions.pdf",
+            media_type='application/pdf'
+        )
+        
+    except Exception as e:
+        print(f"Pet trust PDF generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Pet trust PDF generation failed: {str(e)}")
+
 # Blockchain Notarization
 @app.post("/api/notary/hash")
 async def generate_hash(request: HashRequest):

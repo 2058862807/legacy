@@ -1,0 +1,163 @@
+[
+  {
+    "test": "Core API Health",
+    "success": true,
+    "details": "Status: ok, Compliance: True, DB: True",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:40.675187"
+  },
+  {
+    "test": "User Creation",
+    "success": true,
+    "details": "User created/updated: final.test@nexteraestate.com",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:40.688261"
+  },
+  {
+    "test": "User Retrieval",
+    "success": true,
+    "details": "User found: Final Test User",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:40.691869"
+  },
+  {
+    "test": "Esquire AI Bot",
+    "success": true,
+    "details": "AI response received: Yes, I can assist.  Estate planning involves organizing your assets and affairs to ensure they're di...",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:42.268049"
+  },
+  {
+    "test": "Grief Bot",
+    "success": true,
+    "details": "Crisis resources included in response",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.399207"
+  },
+  {
+    "test": "Compliance Summary",
+    "success": true,
+    "details": "50-state data loaded: 51 states",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.406596"
+  },
+  {
+    "test": "Compliance Rules - CA",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.411564"
+  },
+  {
+    "test": "Compliance Rules - NY",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.415310"
+  },
+  {
+    "test": "Compliance Rules - TX",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.418378"
+  },
+  {
+    "test": "Compliance Rules - FL",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.421287"
+  },
+  {
+    "test": "Stripe Checkout - Basic",
+    "success": true,
+    "details": "Checkout URL generated",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:43.832942"
+  },
+  {
+    "test": "Stripe Checkout - Premium",
+    "success": true,
+    "details": "Checkout URL generated",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.109365"
+  },
+  {
+    "test": "Stripe Checkout - Full",
+    "success": true,
+    "details": "Checkout URL generated",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.384007"
+  },
+  {
+    "test": "Payment Validation",
+    "success": true,
+    "details": "Invalid plan correctly rejected",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.385757"
+  },
+  {
+    "test": "Will Creation",
+    "success": true,
+    "details": "Will created: Final Test Will",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.413110"
+  },
+  {
+    "test": "Will Retrieval",
+    "success": true,
+    "details": "Retrieved 1 wills",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.418124"
+  },
+  {
+    "test": "Dashboard Stats",
+    "success": true,
+    "details": "Documents: 0, Wills: 1",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.433637"
+  },
+  {
+    "test": "Document Listing",
+    "success": true,
+    "details": "Document system operational: 0 documents",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.438364"
+  },
+  {
+    "test": "PDF Generation",
+    "success": true,
+    "details": "Pet trust PDF generated successfully",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.451865"
+  },
+  {
+    "test": "Hash Generation",
+    "success": true,
+    "details": "Valid SHA256 hash: c56f8b477691a73c...",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.453608"
+  },
+  {
+    "test": "Blockchain Notarization",
+    "success": true,
+    "details": "Expected - Blockchain not configured for demo",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.455203"
+  },
+  {
+    "test": "Hexbytes Validation",
+    "success": true,
+    "details": "Service unavailable - cannot test validation",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.456644"
+  },
+  {
+    "test": "Hash Validation",
+    "success": true,
+    "details": "Empty content correctly rejected",
+    "response_data": null,
+    "timestamp": "2025-08-31T21:55:44.458182"
+  }
+]

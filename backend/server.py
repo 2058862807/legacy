@@ -9,8 +9,9 @@ import hashlib
 import json
 import secrets
 import uuid
+import shutil
 from datetime import datetime, timezone
-from fastapi import FastAPI, HTTPException, Depends, Query, Request
+from fastapi import FastAPI, HTTPException, Depends, Query, Request, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any

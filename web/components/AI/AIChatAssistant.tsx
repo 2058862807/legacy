@@ -1,22 +1,54 @@
 'use client'
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 export default function AIChatAssistant() {
+  const { data: session } = useSession()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { text: "Hi! I'm your AI estate planning assistant. How can I help you today?", isUser: false }
+    { text: "Hi! I'm Esquire AI, your estate planning assistant. How can I help you today?", isUser: false }
   ])
   const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const sendMessage = () => {
-    if (!input.trim()) return
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return
     
-    setMessages(prev => [
-      ...prev,
-      { text: input, isUser: true },
-      { text: "I'm here to help with estate planning questions! This is a demo response.", isUser: false }
-    ])
+    const userMessage = input
     setInput('')
+    setMessages(prev => [...prev, { text: userMessage, isUser: true }])
+    setIsLoading(true)
+    
+    try {
+      const userEmail = session?.user?.email || 'anonymous@example.com'
+      const response = await fetch(`/api/bot/help?user_email=${encodeURIComponent(userEmail)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          session_id: `chat_${Date.now()}`
+        })
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setMessages(prev => [...prev, { text: data.reply, isUser: false }])
+      } else {
+        setMessages(prev => [...prev, { 
+          text: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment.", 
+          isUser: false 
+        }])
+      }
+    } catch (error) {
+      setMessages(prev => [...prev, { 
+        text: "I'm currently unavailable. Please try again later or contact support.", 
+        isUser: false 
+      }])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

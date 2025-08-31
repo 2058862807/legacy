@@ -14,13 +14,18 @@ interface Document {
 }
 
 export default function DocumentList() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [documents, setDocuments] = useState<Document[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchDocuments = async () => {
+      // Wait for auth to finish loading
+      if (status === 'loading') {
+        return
+      }
+      
       if (!session?.user?.email) {
         setLoading(false)
         return
@@ -56,7 +61,7 @@ export default function DocumentList() {
     }
 
     fetchDocuments()
-  }, [session?.user?.email])
+  }, [session?.user?.email, status])
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes'

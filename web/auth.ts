@@ -13,6 +13,7 @@ const isGoogleConfigured = () => {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true, // Allow dynamic host URLs
   providers: isGoogleConfigured() ? [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,

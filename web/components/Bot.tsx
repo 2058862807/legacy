@@ -20,6 +20,7 @@ export default function Bot({ type }: HelpBotProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
 
   const addMessage = (text: string, isUser: boolean) => {
     const message: BotMessage = {

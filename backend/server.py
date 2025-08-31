@@ -23,7 +23,7 @@ from eth_utils import to_hex
 from sqlalchemy.orm import Session
 
 # Import database and compliance
-from database import create_tables, get_db, is_database_available, User, Will, Document, ActivityLog, RateLimit
+from database import create_tables, get_db, is_database_available, User, Will, Document, ActivityLog, RateLimit, ChatHistory
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 
 # Environment variables

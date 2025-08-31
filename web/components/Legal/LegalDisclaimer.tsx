@@ -56,6 +56,19 @@ This service provides technical verification - not legal validation of document 
 • Documents and tools should be reviewed by qualified attorneys before use
 
 Always seek professional legal advice for estate planning decisions. NexteraEstate™ is a technology platform providing tools and information only.`
+    },
+    'pet-trust': {
+      title: "Pet Trust Legal Disclaimer",
+      content: `🐾 PET TRUST LEGAL DISCLAIMER: Pet trust documents require careful legal consideration and vary significantly by state.
+
+• Pet trust laws vary by jurisdiction - some states have specific requirements
+• Trust funding amounts and care instructions should be realistic and legally enforceable  
+• Caretaker selection and backup arrangements are critical for document validity
+• Some states require court approval or have maximum duration limits for pet trusts
+• Tax implications may apply to pet trust funding and distributions
+• Veterinary care provisions should be specific and comprehensive
+
+This pet trust builder provides a foundation - professional legal review is strongly recommended before execution. Consider consulting an estate planning attorney familiar with your state's pet trust laws.`
     }
   }
 

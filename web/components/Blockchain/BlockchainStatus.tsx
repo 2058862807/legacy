@@ -12,13 +12,18 @@ interface NotarizedDocument {
 }
 
 export default function BlockchainStatus() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
   const [documents, setDocuments] = useState<NotarizedDocument[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchNotarizedDocuments = async () => {
+      // Wait for auth to finish loading
+      if (status === 'loading') {
+        return
+      }
+      
       if (!session?.user?.email) {
         setLoading(false)
         return
@@ -55,7 +60,7 @@ export default function BlockchainStatus() {
     }
 
     fetchNotarizedDocuments()
-  }, [session?.user?.email])
+  }, [session?.user?.email, status])
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -112,11 +112,15 @@ function LoginContent() {
           <div className="backdrop-blur-xl bg-white/[0.08] border border-white/20 rounded-3xl p-8 shadow-2xl hover:shadow-purple-500/10 transition-all duration-500">
             {/* Brand Section */}
             <div className="text-center mb-8">
-              <div className="mx-auto w-20 h-20 flex items-center justify-center mb-6 transition-transform duration-300 hover:scale-105">
+              <div className="mx-auto w-16 h-16 flex items-center justify-center mb-6 transition-transform duration-300 hover:scale-105">
                 <img 
                   src="/nextera-logo.png" 
                   alt="NexteraEstate Logo" 
-                  className="w-20 h-20 drop-shadow-2xl"
+                  className="w-16 h-16 object-contain filter drop-shadow-2xl"
+                  style={{
+                    imageRendering: 'crisp-edges',
+                    imageRendering: '-webkit-optimize-contrast',
+                  }}
                 />
               </div>
               <h1 className="text-4xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent mb-3">

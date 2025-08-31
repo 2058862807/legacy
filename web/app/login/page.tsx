@@ -116,7 +116,7 @@ function LoginContent() {
                 <span className="text-3xl font-black text-white">NE</span>
               </div>
               <h1 className="text-4xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent mb-3">
-                NexteraEstate
+                NexteraEstate™
               </h1>
               <div className="h-0.5 w-16 bg-gradient-to-r from-blue-400 to-purple-500 mx-auto mb-4 rounded-full"></div>
               <p className="text-blue-100/70 text-lg font-medium">

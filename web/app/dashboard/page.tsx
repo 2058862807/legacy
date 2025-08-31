@@ -47,11 +47,12 @@ export default function Dashboard() {
       setError('');
       
       if (!session?.user?.email) {
-        throw new Error('User email not available');
+        throw new Error('User email not available - please sign in again');
       }
       
       // Use Next.js API route instead of direct backend call
       const url = `/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
+      console.log('Fetching dashboard data from:', url);
       
       const res = await fetch(url, { 
         cache: 'no-store',
@@ -60,8 +61,11 @@ export default function Dashboard() {
         },
       });
       
+      console.log('Dashboard API response status:', res.status);
+      
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        const errorData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        console.error('Dashboard API error:', errorData);
         if (res.status === 404) {
           throw new Error('User not found. Please sign in again.');
         }
@@ -69,9 +73,10 @@ export default function Dashboard() {
       }
       
       const data = await res.json();
+      console.log('Dashboard data received:', data);
       setUserData(data);
     } catch (e: any) {
-      console.error('dashboard fetch error', e);
+      console.error('Dashboard fetch error:', e);
       setError(e?.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);

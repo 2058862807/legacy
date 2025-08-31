@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Footer from '../Footer'
+import NexteraLogo from '../NexteraLogo'
 
 interface DashboardLayoutProps {
   children: React.ReactNode

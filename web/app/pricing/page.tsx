@@ -50,16 +50,29 @@ export default function Pricing() {
   const [loading, setLoading] = useState<string | null>(null)
 
   async function upgrade(id: string) {
+    console.log('Upgrade function called with ID:', id)
     setLoading(id)
     try {
+      console.log('Making checkout request...')
       const res = await fetch('/api/checkout', { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ planId: id }) 
       })
+      
+      console.log('Checkout response status:', res.status)
       const data = await res.json()
-      if (data.url) window.location.href = data.url
+      console.log('Checkout response data:', data)
+      
+      if (data.url) {
+        console.log('Redirecting to:', data.url)
+        window.location.href = data.url
+      } else {
+        console.error('No URL in response:', data)
+        alert('Checkout failed: No checkout URL received')
+      }
     } catch (error) {
+      console.error('Checkout error:', error)
       alert('Checkout failed. Please try again.')
     } finally {
       setLoading(null)

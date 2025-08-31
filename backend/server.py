@@ -30,6 +30,10 @@ from database import create_tables, get_db, is_database_available, User, Will, D
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 from pdf_generator import WillPDFGenerator
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Environment variables
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')

@@ -489,6 +489,18 @@ export default function WillBuilderPage() {
                           {selectedWill.guardians?.length || 0} appointed
                         </div>
                       </div>
+
+                      <Link
+                        href="/will/pet-trust"
+                        className="p-4 border border-blue-200 rounded-lg hover:border-blue-300 transition-colors block"
+                      >
+                        <div className="text-2xl mb-2">🐾</div>
+                        <h3 className="font-semibold mb-1 text-blue-700">Pet Trust</h3>
+                        <p className="text-sm text-gray-600 mb-3">Ensure care for your beloved pets</p>
+                        <div className="text-blue-600 text-sm font-medium">
+                          Create Pet Trust →
+                        </div>
+                      </Link>
                     </div>
 
                     {/* Special Instructions */}

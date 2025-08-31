@@ -50,8 +50,8 @@ export default function Dashboard() {
         throw new Error('User email not available');
       }
       
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001';
-      const url = `${backendUrl}/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
+      // Use Next.js API route instead of direct backend call
+      const url = `/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
       
       const res = await fetch(url, { 
         cache: 'no-store',
@@ -61,10 +61,11 @@ export default function Dashboard() {
       });
       
       if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
         if (res.status === 404) {
           throw new Error('User not found. Please sign in again.');
         }
-        throw new Error(`API Error ${res.status}`);
+        throw new Error(errorData.error || `API Error ${res.status}`);
       }
       
       const data = await res.json();

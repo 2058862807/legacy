@@ -960,6 +960,182 @@ Please note: I cannot provide medical advice. For emergencies, call 911."""
             escalate=True
         )
 
+# Document Upload and Management
+@app.post("/api/documents/upload")
+async def upload_document(
+    file: UploadFile = File(...),
+    document_type: str = Form(...),
+    description: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),
+    user_email: str = Query(...),
+    blockchain_notarize: bool = Form(False),
+    db: Session = Depends(get_db)
+):
+    """Upload a document to user's vault"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    # Get or create user
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        user = User(
+            id=str(uuid.uuid4()),
+            email=user_email,
+            name="Anonymous User",
+            subscription_status="free",
+            created_at=datetime.now(timezone.utc)
+        )
+        db.add(user)
+        db.commit()
+    
+    try:
+        # Validate file
+        if file.size > 10 * 1024 * 1024:  # 10MB limit
+            raise HTTPException(status_code=413, detail="File too large (max 10MB)")
+        
+        allowed_types = ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png']
+        file_ext = file.filename.split('.')[-1].lower() if file.filename else ''
+        if file_ext not in allowed_types:
+            raise HTTPException(status_code=400, detail="File type not allowed")
+        
+        # Create upload directory
+        upload_dir = f"/app/uploads/{user.id}"
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Generate unique filename
+        file_id = str(uuid.uuid4())
+        filename = f"{file_id}.{file_ext}"
+        file_path = os.path.join(upload_dir, filename)
+        
+        # Save file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Parse tags
+        tags_list = []
+        if tags:
+            tags_list = [tag.strip() for tag in tags.split(',') if tag.strip()]
+        
+        # Generate blockchain hash if requested
+        blockchain_hash = None
+        if blockchain_notarize:
+            with open(file_path, 'rb') as f:
+                file_content = f.read()
+                blockchain_hash = hashlib.sha256(file_content).hexdigest()
+        
+        # Save to database
+        document = Document(
+            id=file_id,
+            user_id=user.id,
+            filename=filename,
+            original_filename=file.filename or "unknown",
+            file_size=file.size or 0,
+            file_type=file_ext,
+            file_path=file_path,
+            document_type=document_type,
+            tags=tags_list,
+            description=description,
+            blockchain_hash=blockchain_hash,
+            blockchain_verified=blockchain_notarize,
+            uploaded_at=datetime.now(timezone.utc)
+        )
+        db.add(document)
+        
+        # Log activity
+        log_activity(db, user.id, "uploaded_document", {
+            "document_id": file_id,
+            "filename": file.filename,
+            "document_type": document_type,
+            "file_size": file.size
+        })
+        
+        db.commit()
+        
+        return {
+            "id": file_id,
+            "filename": file.filename,
+            "document_type": document_type,
+            "file_size": file.size,
+            "blockchain_hash": blockchain_hash,
+            "uploaded_at": document.uploaded_at.isoformat(),
+            "message": "Document uploaded successfully"
+        }
+        
+    except Exception as e:
+        if hasattr(e, 'status_code'):
+            raise e
+        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+@app.get("/api/documents/list")
+async def list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get user's document list"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        return {"documents": []}
+    
+    documents = db.query(Document).filter(Document.user_id == user.id).order_by(Document.uploaded_at.desc()).all()
+    
+    return {
+        "documents": [
+            {
+                "id": doc.id,
+                "filename": doc.original_filename,
+                "document_type": doc.document_type,
+                "file_size": doc.file_size,
+                "file_type": doc.file_type,
+                "description": doc.description,
+                "tags": doc.tags,
+                "blockchain_verified": doc.blockchain_verified,
+                "blockchain_hash": doc.blockchain_hash,
+                "uploaded_at": doc.uploaded_at.isoformat(),
+                "is_shared": doc.is_shared
+            }
+            for doc in documents
+        ]
+    }
+
+@app.delete("/api/documents/{document_id}")
+async def delete_document(document_id: str, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Delete a document"""
+    if not db:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    document = db.query(Document).filter(
+        Document.id == document_id,
+        Document.user_id == user.id
+    ).first()
+    
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+    
+    try:
+        # Delete file from filesystem
+        if os.path.exists(document.file_path):
+            os.remove(document.file_path)
+        
+        # Delete from database
+        db.delete(document)
+        
+        # Log activity
+        log_activity(db, user.id, "deleted_document", {
+            "document_id": document_id,
+            "filename": document.original_filename
+        })
+        
+        db.commit()
+        
+        return {"message": "Document deleted successfully"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Delete failed: {str(e)}")
+
 # Blockchain Notarization
 @app.post("/api/notary/hash")
 async def generate_hash(request: HashRequest):

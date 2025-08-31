@@ -9,7 +9,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="text-center space-y-8">
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            NexteraEstate
+            NexteraEstate™
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
             Secure your legacy with cutting-edge technology, AI guidance, and blockchain security.

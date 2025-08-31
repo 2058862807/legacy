@@ -29,9 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       // Create or update user in our database when they sign in
       if (account?.provider === 'google' && user.email) {
         try {
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
-          
-          const response = await fetch(`${backendUrl}/api/users`, {
+          const response = await fetch('/api/users', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

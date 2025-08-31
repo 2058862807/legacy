@@ -883,6 +883,17 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         escalate_keywords = ['emergency', 'urgent', 'dying', 'hospital', 'immediate']
         escalate = any(keyword in request.message.lower() for keyword in escalate_keywords)
         
+        # Save bot response to database
+        bot_chat = ChatHistory(
+            user_id=user.id,
+            bot_type="help",
+            session_id=session_id,
+            message_type="bot",
+            message=reply
+        )
+        db.add(bot_chat)
+        db.commit()
+        
         return BotResponse(reply=reply, escalate=escalate)
         
     except Exception as e:

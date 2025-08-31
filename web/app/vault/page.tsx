@@ -60,6 +60,9 @@ export default function VaultPage() {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString()
   }
+
+  // Mock documents for demo purposes
+  const mockDocuments = [
     {
       id: '1',
       name: 'Last Will and Testament',
@@ -93,7 +96,7 @@ export default function VaultPage() {
       notarized: false,
       shared: 0
     }
-  ])
+  ]
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [filterType, setFilterType] = useState<string>('all')

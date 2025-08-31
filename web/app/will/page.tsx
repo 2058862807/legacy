@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import DashboardLayout from '../../components/Layout/DashboardLayout'
 import Link from 'next/link'
+import LegalDisclaimer from '../../components/Legal/LegalDisclaimer'
 
 interface Will {
   id: string

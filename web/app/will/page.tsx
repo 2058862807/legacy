@@ -66,8 +66,6 @@ export default function WillBuilderPage() {
     }
   }, [status])
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
-
   const fetchUserWills = async () => {
     try {
       setLoading(true)

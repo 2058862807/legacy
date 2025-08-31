@@ -49,7 +49,7 @@ export default function VaultUploadPage() {
     }
   }
 
-  const handleFiles = (fileList: FileList) => {
+  const handleFiles = async (fileList: FileList) => {
     const newFiles: UploadedFile[] = []
     
     for (let i = 0; i < fileList.length; i++) {
@@ -67,10 +67,48 @@ export default function VaultUploadPage() {
     
     setFiles(prev => [...prev, ...newFiles])
     
-    // Simulate upload progress
+    // Actually upload files to backend
     newFiles.forEach(uploadedFile => {
-      simulateUpload(uploadedFile.id)
+      realUpload(uploadedFile)
     })
+  }
+
+  const realUpload = async (uploadedFile: UploadedFile) => {
+    try {
+      const formData = new FormData()
+      formData.append('file', uploadedFile.file)
+      formData.append('document_type', uploadedFile.type)
+      formData.append('description', `Uploaded ${uploadedFile.file.name}`)
+      formData.append('blockchain_notarize', 'true')
+      
+      const userEmail = 'user@example.com' // TODO: Get from session
+      
+      const response = await fetch(`/api/documents/upload?user_email=${encodeURIComponent(userEmail)}`, {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        setFiles(prev => prev.map(file => 
+          file.id === uploadedFile.id 
+            ? { ...file, progress: 100, status: 'completed' }
+            : file
+        ))
+      } else {
+        setFiles(prev => prev.map(file => 
+          file.id === uploadedFile.id 
+            ? { ...file, status: 'error' }
+            : file
+        ))
+      }
+    } catch (error) {
+      setFiles(prev => prev.map(file => 
+        file.id === uploadedFile.id 
+          ? { ...file, status: 'error' }
+          : file
+      ))
+    }
   }
 
   const simulateUpload = (fileId: string) => {

@@ -103,16 +103,16 @@ export default function VaultPage() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const documentTypes = [
-    { id: 'all', name: 'All Documents', icon: '📄', count: documents.length },
-    { id: 'will', name: 'Wills', icon: '📜', count: documents.filter(d => d.type === 'will').length },
-    { id: 'trust', name: 'Trusts', icon: '🏛️', count: documents.filter(d => d.type === 'trust').length },
-    { id: 'power-of-attorney', name: 'Power of Attorney', icon: '⚖️', count: documents.filter(d => d.type === 'power-of-attorney').length },
-    { id: 'healthcare', name: 'Healthcare', icon: '🏥', count: documents.filter(d => d.type === 'healthcare').length },
-    { id: 'insurance', name: 'Insurance', icon: '🛡️', count: documents.filter(d => d.type === 'insurance').length },
-    { id: 'other', name: 'Other', icon: '📁', count: documents.filter(d => d.type === 'other').length }
+    { id: 'all', name: 'All Documents', icon: '📄', count: mockDocuments.length },
+    { id: 'will', name: 'Wills', icon: '📜', count: mockDocuments.filter(d => d.type === 'will').length },
+    { id: 'trust', name: 'Trusts', icon: '🏛️', count: mockDocuments.filter(d => d.type === 'trust').length },
+    { id: 'power-of-attorney', name: 'Power of Attorney', icon: '⚖️', count: mockDocuments.filter(d => d.type === 'power-of-attorney').length },
+    { id: 'healthcare', name: 'Healthcare', icon: '🏥', count: mockDocuments.filter(d => d.type === 'healthcare').length },
+    { id: 'insurance', name: 'Insurance', icon: '🛡️', count: mockDocuments.filter(d => d.type === 'insurance').length },
+    { id: 'other', name: 'Other', icon: '📁', count: mockDocuments.filter(d => d.type === 'other').length }
   ]
 
-  const filteredDocuments = documents.filter(doc => {
+  const filteredDocuments = mockDocuments.filter(doc => {
     const matchesType = filterType === 'all' || doc.type === filterType
     const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesType && matchesSearch

@@ -1294,12 +1294,27 @@ async def save_pet_trust(pet_trust_data: dict, user_email: str = Query(...), db:
 async def generate_hash(request: HashRequest):
     """Generate SHA256 hash of content"""
     try:
+        if not request.content:
+            raise HTTPException(status_code=400, detail="Content is required")
+        
+        # Validate input
+        if len(request.content.strip()) == 0:
+            raise HTTPException(status_code=400, detail="Content cannot be empty")
+            
         content_bytes = request.content.encode('utf-8')
         hash_object = hashlib.sha256(content_bytes)
         hex_hash = hash_object.hexdigest()
+        
+        # Validate generated hash
+        if not all(c in '0123456789abcdef' for c in hex_hash):
+            raise HTTPException(status_code=500, detail="Invalid hash generated")
+            
         return {"hash": hex_hash}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Hash generation error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to generate hash")
 
 @app.post("/api/notary/create")
 async def create_notarization(request: NotarizeRequest):

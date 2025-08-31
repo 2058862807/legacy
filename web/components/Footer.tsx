@@ -12,7 +12,11 @@ export default function Footer() {
               <img 
                 src="/nextera-logo.png" 
                 alt="NexteraEstate Logo" 
-                className="w-10 h-10"
+                className="w-8 h-8 object-contain"
+                style={{
+                  imageRendering: 'crisp-edges',
+                  imageRendering: '-webkit-optimize-contrast',
+                }}
               />
               <span className="text-xl font-bold">NexteraEstate™</span>
             </div>

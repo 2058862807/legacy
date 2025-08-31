@@ -53,12 +53,12 @@ export default function ComplianceBadge({ userState = 'CA' }: ComplianceBadgePro
 
   if (!complianceEnabled) {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
         <div className="flex items-center space-x-3">
-          <div className="text-blue-600 text-2xl">ℹ️</div>
+          <div className="text-red-600 text-2xl">⚠️</div>
           <div>
-            <h3 className="font-semibold text-blue-900 text-sm">Compliance Center</h3>
-            <p className="text-blue-700 text-xs">Coming soon - 50-state legal requirements</p>
+            <h3 className="font-semibold text-red-900 text-sm">Compliance Service Error</h3>
+            <p className="text-red-700 text-xs">Unable to connect to compliance system</p>
           </div>
         </div>
       </div>

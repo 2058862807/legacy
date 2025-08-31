@@ -123,7 +123,7 @@ export default function WillBuilderPage() {
 
   const fetchComplianceInfo = async (state: string) => {
     try {
-      const response = await fetch(`${backendUrl}/api/compliance/rules?state=${state}&doc_type=will`, {
+      const response = await fetch(`/api/compliance/rules?state=${state}&doc_type=will`, {
         headers: { 'Content-Type': 'application/json' },
       })
       
@@ -140,7 +140,7 @@ export default function WillBuilderPage() {
     try {
       if (!session?.user?.email || !newWillData.title || !newWillData.state) return
       
-      const response = await fetch(`${backendUrl}/api/wills?user_email=${encodeURIComponent(session.user.email)}`, {
+      const response = await fetch(`/api/wills?user_email=${encodeURIComponent(session.user.email)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

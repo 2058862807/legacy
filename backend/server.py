@@ -200,6 +200,7 @@ app.add_middleware(
 # Pydantic models for requests/responses
 class BotRequest(BaseModel):
     message: str
+    session_id: Optional[str] = None
     history: Optional[List[Dict[str, Any]]] = []
 
 class BotResponse(BaseModel):

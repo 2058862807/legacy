@@ -57,7 +57,11 @@ export default function Bot({ type }: HelpBotProps) {
       const userEmail = session?.user?.email || 'anonymous@example.com'
       const response = await apiFetch<{ reply: string; escalate?: boolean }>(`${endpoint}?user_email=${encodeURIComponent(userEmail)}`, {
         method: 'POST',
-        body: JSON.stringify({ message: userMessage, history: messages })
+        body: JSON.stringify({ 
+          message: userMessage, 
+          session_id: sessionId,
+          history: messages 
+        })
       })
 
       addMessage(response.reply, false)

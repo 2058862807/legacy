@@ -125,6 +125,20 @@ class RateLimit(Base):
     reset_date = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+class ChatHistory(Base):
+    __tablename__ = "chat_history"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    bot_type = Column(String, nullable=False)  # "help", "grief"
+    session_id = Column(String, nullable=False)  # unique per conversation session
+    message_type = Column(String, nullable=False)  # "user", "bot"
+    message = Column(Text, nullable=False)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    
+    # Relationships
+    user = relationship("User")
+
 # Compliance Models (existing)
 class ComplianceRule(Base):
     __tablename__ = "compliance_rules"

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { apiFetch } from '../lib/api'
+import LegalDisclaimer from './Legal/LegalDisclaimer'
 
 interface BotMessage {
   id: string

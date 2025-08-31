@@ -1,10 +1,11 @@
-const API_BASE = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8000'
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
 
 export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  // Use Next.js API routes instead of direct backend calls
+  const response = await fetch(endpoint, {
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',

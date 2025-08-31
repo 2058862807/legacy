@@ -1323,9 +1323,24 @@ async def create_notarization(request: NotarizeRequest):
         raise HTTPException(status_code=500, detail="Blockchain services not configured - POLYGON_PRIVATE_KEY required")
     
     try:
+        # Validate hash input
+        if not request.hash:
+            raise HTTPException(status_code=400, detail="Hash is required")
+        
+        # Clean and validate hash format
+        clean_hash = request.hash.strip().lower()
+        if clean_hash.startswith('0x'):
+            clean_hash = clean_hash[2:]
+        
+        # Validate hex format
+        if not all(c in '0123456789abcdef' for c in clean_hash):
+            raise HTTPException(status_code=400, detail="Invalid hash format - must be hexadecimal")
+        
+        if len(clean_hash) != 64:  # SHA256 is 64 chars
+            raise HTTPException(status_code=400, detail="Invalid hash length - must be 64 characters")
+        
         # Create data payload with hash
-        # This encodes the hash into the transaction data
-        hash_data = f"0x{request.hash}"
+        hash_data = f"0x{clean_hash}"
         
         # Use a default notarization address if contract not specified
         to_address = NOTARY_CONTRACT_ADDRESS or polygon.account.address

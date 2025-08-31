@@ -104,6 +104,7 @@ export default function Bot({ type }: HelpBotProps) {
           </div>
           
           <div className="flex-1 p-4 overflow-y-auto space-y-3">
+            <LegalDisclaimer type="ai" className="mb-4" />
             {messages.map(message => (
               <div
                 key={message.id}

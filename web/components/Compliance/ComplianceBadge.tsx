@@ -28,21 +28,19 @@ export default function ComplianceBadge({ userState = 'CA' }: ComplianceBadgePro
   useEffect(() => {
     const checkAndFetch = async () => {
       try {
-        // Check if compliance is enabled
-        const healthResponse = await apiFetch('/api/health')
-        const enabled = healthResponse.compliance_enabled || false
-        setComplianceEnabled(enabled)
-
-        if (enabled) {
-          setLoading(true)
-          // Fetch compliance rule for user's state and will
-          const ruleResponse = await apiFetch<ComplianceRule>(
-            `/api/compliance/rules?state=${userState}&doc_type=will`
-          )
-          setRule(ruleResponse)
-        }
+        setLoading(true)
+        
+        // First, try to fetch the compliance rule directly
+        const ruleResponse = await apiFetch<ComplianceRule>(
+          `/api/compliance/rules?state=${userState}&doc_type=will`
+        )
+        setRule(ruleResponse)
+        setComplianceEnabled(true)
+        
       } catch (err) {
         console.error('Failed to fetch compliance data:', err)
+        setComplianceEnabled(false)
+        setRule(null)
       } finally {
         setLoading(false)
       }

@@ -1,23 +1,65 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import DashboardLayout from '../../components/Layout/DashboardLayout'
 import Link from 'next/link'
 
 interface Document {
   id: string
-  name: string
-  type: 'will' | 'trust' | 'power-of-attorney' | 'healthcare' | 'insurance' | 'other'
-  size: string
-  uploadDate: string
-  lastModified: string
-  status: 'active' | 'draft' | 'archived'
-  notarized: boolean
-  shared: number
-  thumbnail?: string
+  filename: string
+  document_type: string
+  file_size: number
+  file_type: string
+  description?: string
+  tags: string[]
+  blockchain_verified: boolean
+  blockchain_hash?: string
+  uploaded_at: string
+  is_shared: boolean
 }
 
 export default function VaultPage() {
-  const [documents, setDocuments] = useState<Document[]>([
+  const { data: session } = useSession()
+  const [documents, setDocuments] = useState<Document[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchDocuments()
+  }, [session])
+
+  const fetchDocuments = async () => {
+    if (!session?.user?.email) {
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/documents/list?user_email=${encodeURIComponent(session.user.email)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setDocuments(data.documents || [])
+      } else {
+        setError('Failed to load documents')
+      }
+    } catch (err) {
+      setError('Error loading documents')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString()
+  }
     {
       id: '1',
       name: 'Last Will and Testament',

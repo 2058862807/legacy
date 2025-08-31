@@ -4,111 +4,111 @@
     "success": true,
     "details": "Status: ok",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.404833"
+    "timestamp": "2025-08-31T06:48:43.540447"
   },
   {
     "test": "Help Bot - Response Structure",
     "success": true,
     "details": "Valid JSON with reply and escalate fields. Escalate: False",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.408881"
+    "timestamp": "2025-08-31T06:48:44.715070"
   },
   {
     "test": "Help Bot - Esquire AI Mention",
     "success": false,
     "details": "Response does not mention 'Esquire AI'",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.408916"
+    "timestamp": "2025-08-31T06:48:44.715110"
   },
   {
     "test": "Help Bot - Functionality",
     "success": true,
-    "details": "AI response received: Daily limit reached (20 requests). Please try again tomorrow....",
+    "details": "AI response received: Estate planning encompasses preparing for the management and distribution of your assets after your ...",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.408923"
+    "timestamp": "2025-08-31T06:48:44.715118"
   },
   {
     "test": "Grief Bot - Response Structure",
     "success": true,
-    "details": "Valid JSON with reply and escalate fields. Escalate: True",
+    "details": "Valid JSON with reply and escalate fields. Escalate: False",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.412834"
+    "timestamp": "2025-08-31T06:48:46.222025"
   },
   {
     "test": "Grief Bot - Crisis Resources",
     "success": true,
     "details": "Response includes crisis resources",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.412864"
+    "timestamp": "2025-08-31T06:48:46.222074"
   },
   {
     "test": "Grief Bot - Functionality",
     "success": true,
     "details": "AI response received: \ud83d\udea8 CRISIS RESOURCES \ud83d\udea8\n\u2022 National Suicide Prevention Lifeline: 988\n\u2022 Crisis Text Line: Text HOME to 74...",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.412872"
+    "timestamp": "2025-08-31T06:48:46.222085"
   },
   {
     "test": "Error Handling - Missing user_email",
     "success": true,
     "details": "Correctly rejected request without user_email parameter",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.415293"
+    "timestamp": "2025-08-31T06:48:46.224910"
   },
   {
     "test": "Rate Limiting",
     "success": true,
-    "details": "Rate limiting triggered after 0 requests",
+    "details": "Rate limiting mechanism active - 5 requests processed",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.418825"
+    "timestamp": "2025-08-31T06:48:50.365137"
   },
   {
     "test": "Stripe Create Checkout",
     "success": true,
-    "details": "Expected error - Stripe not configured",
+    "details": "Checkout URL generated",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.421159"
+    "timestamp": "2025-08-31T06:48:50.850361"
   },
   {
     "test": "Stripe Invalid Plan",
     "success": true,
-    "details": "Service unavailable - cannot test plan validation",
+    "details": "Correctly rejected invalid plan",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.422832"
+    "timestamp": "2025-08-31T06:48:50.852380"
   },
   {
     "test": "Stripe Payment Status",
-    "success": true,
-    "details": "Expected error - Stripe not configured",
+    "success": false,
+    "details": "Unexpected error: {'detail': 'Request req_Q84X68mQ8gKLJL: No such checkout.session: test_session'}",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.424541"
+    "timestamp": "2025-08-31T06:48:50.958050"
   },
   {
     "test": "Blockchain Hash Generation",
     "success": true,
     "details": "Hash generated: 977b3b10ba310038...",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.426613"
+    "timestamp": "2025-08-31T06:48:50.960239"
   },
   {
     "test": "Blockchain Notarization",
     "success": true,
     "details": "Expected error - Blockchain not configured",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.428582"
+    "timestamp": "2025-08-31T06:48:50.962126"
   },
   {
     "test": "Error Handling - Invalid JSON",
     "success": true,
     "details": "Correctly rejected invalid JSON",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.430050"
+    "timestamp": "2025-08-31T06:48:50.963710"
   },
   {
     "test": "Error Handling - Missing Fields",
     "success": true,
     "details": "Correctly rejected missing fields",
     "response_data": null,
-    "timestamp": "2025-08-30T17:01:59.431610"
+    "timestamp": "2025-08-31T06:48:50.965150"
   }
 ]

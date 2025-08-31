@@ -34,8 +34,13 @@ export default function ComplianceBadge({ userState = 'CA' }: ComplianceBadgePro
         const ruleResponse = await apiFetch<ComplianceRule>(
           `/api/compliance/rules?state=${userState}&doc_type=will`
         )
-        setRule(ruleResponse)
-        setComplianceEnabled(true)
+        
+        if (ruleResponse && ruleResponse.state) {
+          setRule(ruleResponse)
+          setComplianceEnabled(true)
+        } else {
+          throw new Error('Invalid compliance response')
+        }
         
       } catch (err) {
         console.error('Failed to fetch compliance data:', err)

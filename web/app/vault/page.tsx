@@ -35,7 +35,7 @@ export default function VaultPage() {
     }
 
     try {
-      const response = await fetch(`/api/documents/list?user_email=${encodeURIComponent(session.user.email)}`)
+      const response = await fetch(`/api/documents/list?user_email=${encodeURIComponent(session.user.email!)}`)
       if (response.ok) {
         const data = await response.json()
         setDocuments(data.documents || [])

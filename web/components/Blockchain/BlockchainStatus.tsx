@@ -1,10 +1,43 @@
+'use client'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+
 export default function BlockchainStatus() {
+  const { data: session } = useSession()
+  const [notarizedCount, setNotarizedCount] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchBlockchainData = async () => {
+      if (!session?.user?.email) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        // Fetch user's documents to count blockchain notarized ones
+        const response = await fetch(`/api/documents/list?user_email=${encodeURIComponent(session.user.email)}`)
+        if (response.ok) {
+          const data = await response.json()
+          const notarizedDocs = data.documents?.filter((doc: any) => doc.blockchain_verified) || []
+          setNotarizedCount(notarizedDocs.length)
+        }
+      } catch (error) {
+        console.error('Failed to fetch blockchain data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBlockchainData()
+  }, [session])
+
   const blockchainData = {
     network: 'Polygon Amoy Testnet',
     status: 'Connected',
     lastBlock: '47,892,156',
     gasPrice: '1.2 GWEI',
-    documentsNotarized: 7
+    documentsNotarized: notarizedCount
   }
 
   return (
@@ -40,7 +73,7 @@ export default function BlockchainStatus() {
         <div className="col-span-2">
           <div className="text-gray-600">Your Notarized Documents</div>
           <div className="font-medium text-lg text-blue-600">
-            {blockchainData.documentsNotarized}
+            {loading ? '...' : blockchainData.documentsNotarized}
           </div>
         </div>
       </div>

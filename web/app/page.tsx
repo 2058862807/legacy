@@ -82,7 +82,7 @@ export default function Home() {
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Start Your Estate Plan Today</h2>
           <p className="text-lg text-gray-600 mb-6">
-            Join thousands of families who have secured their legacy with NexteraEstate
+            Join thousands of families who have secured their legacy with NexteraEstate™
           </p>
           <Link href="/login" className="btn-primary text-lg px-8 py-3">
             Sign Up Free

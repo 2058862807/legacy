@@ -379,6 +379,39 @@ The NexteraEstate backend remains **fully operational and stable** after the rec
 - ⚠️ **MINOR BUG IDENTIFIED:** Rate limiting function returns False for non-existent users, preventing new users from accessing bot services until they're created via `/api/users` endpoint
 - 🎯 **RECOMMENDATION:** AI bot endpoints are fully functional - minor rate limiting bug should be addressed for better user experience
 
+### Railway Deployment Fix (August 31, 2025):
+
+**✅ RAILWAY HEXBYTES ERROR RESOLVED**
+
+**Issue:** Railway backend crashed with hexbytes validation error:
+```
+binascii.Error: Non-hexadecimal digit found
+```
+
+**Root Cause:** Invalid or malformed hex data being processed in blockchain hash operations without proper validation.
+
+**Solution Applied:**
+1. **Enhanced Hash Generation** (`/api/notary/hash`):
+   - Added input validation for empty/missing content
+   - Added output validation for generated hashes
+   - Improved error handling with proper HTTP status codes
+
+2. **Enhanced Notarization** (`/api/notary/create`):
+   - Added hash format validation (must be valid hexadecimal)
+   - Added hash length validation (must be 64 characters for SHA256)
+   - Clean hash input processing (remove 0x prefix, lowercase)
+   - Comprehensive error messages for different validation failures
+
+3. **Added Logging**:
+   - Implemented proper logging for debugging blockchain operations
+   - Better error tracking for production deployment
+
+**Result:**
+- ✅ Backend services running smoothly 
+- ✅ Hash generation working with validation
+- ✅ Railway deployment errors resolved
+- ✅ Production-ready blockchain endpoints
+
 ### Final Corrections (August 31, 2025):
 
 **✅ ALL CRITICAL ISSUES RESOLVED**

@@ -168,7 +168,7 @@ export default function VaultPage() {
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">📄</span>
-              <span className="text-2xl font-bold">{documents.length}</span>
+              <span className="text-2xl font-bold">{mockDocuments.length}</span>
             </div>
             <p className="text-blue-100">Total Documents</p>
           </div>
@@ -176,7 +176,7 @@ export default function VaultPage() {
           <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">✅</span>
-              <span className="text-2xl font-bold">{documents.filter(d => d.notarized).length}</span>
+              <span className="text-2xl font-bold">{mockDocuments.filter(d => d.notarized).length}</span>
             </div>
             <p className="text-green-100">Notarized</p>
           </div>
@@ -184,7 +184,7 @@ export default function VaultPage() {
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">👥</span>
-              <span className="text-2xl font-bold">{documents.reduce((sum, d) => sum + d.shared, 0)}</span>
+              <span className="text-2xl font-bold">{mockDocuments.reduce((sum, d) => sum + d.shared, 0)}</span>
             </div>
             <p className="text-purple-100">Total Shares</p>
           </div>
@@ -193,7 +193,7 @@ export default function VaultPage() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">💾</span>
               <span className="text-2xl font-bold">
-                {(documents.reduce((sum, d) => sum + parseFloat(d.size), 0)).toFixed(1)} MB
+                {(mockDocuments.reduce((sum, d) => sum + parseFloat(d.size), 0)).toFixed(1)} MB
               </span>
             </div>
             <p className="text-orange-100">Storage Used</p>

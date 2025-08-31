@@ -1,0 +1,242 @@
+[
+  {
+    "category": "Health",
+    "test": "Backend Service",
+    "success": true,
+    "details": "Status: ok, DB Available: True",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.152720"
+  },
+  {
+    "category": "Health",
+    "test": "Compliance Service",
+    "success": true,
+    "details": "Compliance Enabled: True",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.152749"
+  },
+  {
+    "category": "Auth",
+    "test": "User Creation",
+    "success": true,
+    "details": "User created/updated: platform.test@nexteraestate.com",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.169352"
+  },
+  {
+    "category": "Auth",
+    "test": "User Retrieval",
+    "success": true,
+    "details": "User retrieved: platform.test@nexteraestate.com",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.172158"
+  },
+  {
+    "category": "Will",
+    "test": "Will Creation",
+    "success": true,
+    "details": "Will created: Platform Test Will (ID: 04a3622c...)",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.196790"
+  },
+  {
+    "category": "Will",
+    "test": "Will Retrieval",
+    "success": true,
+    "details": "Will details retrieved: Platform Test Will",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.201410"
+  },
+  {
+    "category": "Will",
+    "test": "Will Update",
+    "success": true,
+    "details": "Will updated, completion: 42.857142857142854%",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.218187"
+  },
+  {
+    "category": "Will",
+    "test": "Will List",
+    "success": true,
+    "details": "Retrieved 1 wills for user",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.222353"
+  },
+  {
+    "category": "Documents",
+    "test": "Document List",
+    "success": true,
+    "details": "Retrieved 0 documents",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.227335"
+  },
+  {
+    "category": "Documents",
+    "test": "File Upload",
+    "success": true,
+    "details": "Endpoint available (file upload requires multipart form data)",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.227368"
+  },
+  {
+    "category": "Compliance",
+    "test": "Summary Data",
+    "success": true,
+    "details": "Compliance data for 51 states available",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.232279"
+  },
+  {
+    "category": "Compliance",
+    "test": "CA Rules",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.234216"
+  },
+  {
+    "category": "Compliance",
+    "test": "NY Rules",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.236826"
+  },
+  {
+    "category": "Compliance",
+    "test": "TX Rules",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.239358"
+  },
+  {
+    "category": "Compliance",
+    "test": "FL Rules",
+    "success": true,
+    "details": "Witnesses: 2, Notary: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:40.241991"
+  },
+  {
+    "category": "AI Bots",
+    "test": "Help Bot Response",
+    "success": true,
+    "details": "Response received, escalate: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:41.322135"
+  },
+  {
+    "category": "AI Bots",
+    "test": "Esquire AI Branding",
+    "success": false,
+    "details": "Response does not mention Esquire AI",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:41.322170"
+  },
+  {
+    "category": "AI Bots",
+    "test": "Grief Bot Response",
+    "success": true,
+    "details": "Response received, escalate: False",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:42.369537"
+  },
+  {
+    "category": "AI Bots",
+    "test": "Crisis Resources",
+    "success": true,
+    "details": "Response includes crisis resources",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:42.369581"
+  },
+  {
+    "category": "PDF",
+    "test": "Will PDF Generation",
+    "success": true,
+    "details": "Endpoint available (404 expected for invalid will ID)",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:42.373287"
+  },
+  {
+    "category": "PDF",
+    "test": "Pet Trust PDF",
+    "success": true,
+    "details": "Pet trust PDF generation successful",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:42.386694"
+  },
+  {
+    "category": "Payments",
+    "test": "Checkout Basic",
+    "success": true,
+    "details": "Checkout URL generated successfully",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:42.795351"
+  },
+  {
+    "category": "Payments",
+    "test": "Checkout Premium",
+    "success": true,
+    "details": "Checkout URL generated successfully",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.082877"
+  },
+  {
+    "category": "Payments",
+    "test": "Checkout Full",
+    "success": true,
+    "details": "Checkout URL generated successfully",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.397532"
+  },
+  {
+    "category": "Payments",
+    "test": "Invalid Plan Validation",
+    "success": true,
+    "details": "Correctly rejected invalid plan",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.399252"
+  },
+  {
+    "category": "Blockchain",
+    "test": "Hash Generation",
+    "success": true,
+    "details": "SHA256 hash generated: 82380d259fb0bc49...",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.400743"
+  },
+  {
+    "category": "Blockchain",
+    "test": "Notarization",
+    "success": true,
+    "details": "Expected error - Blockchain not configured",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.402116"
+  },
+  {
+    "category": "Blockchain",
+    "test": "Wallet Info",
+    "success": true,
+    "details": "Expected error - Blockchain not configured",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.403355"
+  },
+  {
+    "category": "Dashboard",
+    "test": "User Statistics",
+    "success": true,
+    "details": "Docs: 0, Wills: 1, Completion: 42.857142857142854%",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.417016"
+  },
+  {
+    "category": "Dashboard",
+    "test": "Compliance Status",
+    "success": false,
+    "details": "No compliance status in dashboard",
+    "response_data": null,
+    "timestamp": "2025-08-31T06:50:43.417055"
+  }
+]

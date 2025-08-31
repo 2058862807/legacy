@@ -108,11 +108,14 @@ export default function CompliancePage() {
       setError('')
       
       try {
+        console.log(`Fetching compliance data for ${selectedState} - ${selectedDocType}`)
         const response = await apiFetch<ComplianceRule>(
           `/api/compliance/rules?state=${selectedState}&doc_type=${selectedDocType}`
         )
+        console.log('Compliance data received:', response)
         setRule(response)
       } catch (err: any) {
+        console.error('Compliance fetch error:', err)
         setError(err.message || 'Failed to fetch compliance data')
         setRule(null)
       } finally {

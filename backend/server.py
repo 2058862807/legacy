@@ -10,6 +10,7 @@ import json
 import secrets
 import uuid
 import shutil
+import logging
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException, Depends, Query, Request, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware

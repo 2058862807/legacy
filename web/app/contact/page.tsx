@@ -7,13 +7,24 @@ import LegalDisclaimer from '../../components/Legal/LegalDisclaimer'
 export default function ContactPage() {
   const { data: session } = useSession()
   const [formData, setFormData] = useState({
-    name: session?.user?.name || '',
-    email: session?.user?.email || '',
+    name: '',
+    email: '',
     subject: '',
     category: 'general',
     priority: 'normal',
     message: ''
   })
+
+  // Update form data when session loads
+  React.useEffect(() => {
+    if (session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        name: session.user.name || '',
+        email: session.user.email || ''
+      }))
+    }
+  }, [session])
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)

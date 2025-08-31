@@ -100,7 +100,7 @@ export default function WillBuilderPage() {
     try {
       if (!session?.user?.email) return
       
-      const response = await fetch(`/api/wills/${willId}?user_email=${encodeURIComponent(session.user.email)}`, {
+      const response = await fetch(`/api/wills/${willId}?user_email=${encodeURIComponent(session.user.email!)}`, {
         headers: { 'Content-Type': 'application/json' },
       })
       

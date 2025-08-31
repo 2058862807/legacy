@@ -2,7 +2,7 @@
 import { useState } from 'react'
 
 interface LegalDisclaimerProps {
-  type?: 'ai' | 'will' | 'general' | 'notary'
+  type?: 'ai' | 'will' | 'general' | 'notary' | 'pet-trust'
   className?: string
 }
 

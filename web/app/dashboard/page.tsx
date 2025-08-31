@@ -1,243 +1,239 @@
-'use client';
+'use client'
+import React, { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import DashboardLayout from '../../components/Layout/DashboardLayout'
+import ComplianceBadge from '../../components/Compliance/ComplianceBadge'
+import BlockchainStatus from '../../components/Blockchain/BlockchainStatus'
+import DocumentList from '../../components/Documents/DocumentList'
 
-import { useEffect, useState } from 'react';
-import { useSession, signIn } from 'next-auth/react';
-import DashboardLayout from '../../components/Layout/DashboardLayout';
-import DocumentList from '../../components/Documents/DocumentList';
-import ComplianceStatus from '../../components/Compliance/ComplianceStatus';
-import ComplianceBadge from '../../components/Compliance/ComplianceBadge';
-import AIChatAssistant from '../../components/AI/AIChatAssistant';
-import BlockchainStatus from '../../components/Blockchain/BlockchainStatus';
+interface DashboardStats {
+  totalDocuments: number
+  completedWills: number
+  complianceScore: number
+  lastActivity: string
+}
 
-type Tab = 'overview' | 'documents' | 'assistant';
-
-type RecentItem = {
-  action: string;
-  details?: string;
-  timestamp?: string | number;
-};
-
-type DashboardStats = {
-  documents?: any[];
-  heirs?: number;
-  willCompletion?: number;
-  state?: string;
-  compliance?: any;
-  recentActivity?: RecentItem[];
-};
-
-export default function Dashboard() {
-  const { data: session, status } = useSession();
-  const [userData, setUserData] = useState<DashboardStats | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>('overview');
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+export default function DashboardPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (status === 'unauthenticated') signIn('google');
-  }, [status]);
+    if (status === 'loading') return
 
-  useEffect(() => {
-    if (status === 'authenticated') fetchUserData();
-  }, [status]);
-
-  async function fetchUserData() {
-    try {
-      setLoading(true);
-      setError('');
-      
-      if (!session?.user?.email) {
-        throw new Error('User email not available - please sign in again');
-      }
-      
-      // Use Next.js API route instead of direct backend call
-      const url = `/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
-      console.log('Fetching dashboard data from:', url);
-      
-      const res = await fetch(url, { 
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log('Dashboard API response status:', res.status);
-      
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
-        console.error('Dashboard API error:', errorData);
-        if (res.status === 404) {
-          throw new Error('User not found. Please sign in again.');
-        }
-        throw new Error(errorData.error || `API Error ${res.status}`);
-      }
-      
-      const data = await res.json();
-      console.log('Dashboard data received:', data);
-      setUserData(data);
-    } catch (e: any) {
-      console.error('Dashboard fetch error:', e);
-      setError(e?.message || 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
+    if (!session) {
+      router.push('/login')
+      return
     }
-  }
 
-  if (status === 'loading') return <div className="p-8">Loading...</div>;
+    const fetchDashboardStats = async () => {
+      if (!session?.user?.email) {
+        setLoading(false)
+        return
+      }
 
-  return (
-    <DashboardLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">
-              Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}
-            </h1>
-            <p className="text-gray-600">Here is your estate planning overview.</p>
-          </div>
-          <button
-            onClick={fetchUserData}
-            className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
-          >
-            Refresh
-          </button>
-        </div>
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const url = `/api/user/dashboard-stats?user_email=${encodeURIComponent(session.user.email)}`;
+        console.log('Fetching dashboard stats from:', url)
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store'
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        }
+        
+        const data = await response.json()
+        console.log('Dashboard stats response:', data)
+        setStats(data)
+      } catch (err: any) {
+        console.error('Dashboard stats error:', err)
+        setError(err.message || 'Failed to load dashboard data')
+        
+        // Set fallback data
+        setStats({
+          totalDocuments: 0,
+          completedWills: 0,
+          complianceScore: 0,
+          lastActivity: new Date().toISOString()
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
 
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
-            {error}
-          </div>
-        )}
+    fetchDashboardStats()
+  }, [session, status, router])
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-1">
-            <ComplianceBadge userState={userData?.state} />
-            <BlockchainStatus />
-          </div>
-
-          <div className="lg:col-span-2">
-            <div className="mb-6 rounded-xl bg-white p-6 shadow-md">
-              <div className="flex border-b">
-                <button
-                  className={`py-2 px-4 ${
-                    activeTab === 'overview'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-500'
-                  }`}
-                  onClick={() => setActiveTab('overview')}
-                >
-                  Overview
-                </button>
-                <button
-                  className={`py-2 px-4 ${
-                    activeTab === 'documents'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-500'
-                  }`}
-                  onClick={() => setActiveTab('documents')}
-                >
-                  Documents
-                </button>
-                <button
-                  className={`py-2 px-4 ${
-                    activeTab === 'assistant'
-                      ? 'border-b-2 border-blue-500 text-blue-600'
-                      : 'text-gray-500'
-                  }`}
-                  onClick={() => setActiveTab('assistant')}
-                >
-                  AI Assistant
-                </button>
-              </div>
-
-              <div className="mt-4">
-                {loading && <div>Loading...</div>}
-
-                {!loading && activeTab === 'overview' && (
-                  <div>
-                    <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <a
-                        href="/will"
-                        className="rounded-lg bg-blue-600 px-4 py-3 text-left text-white hover:bg-blue-700"
-                      >
-                        Continue Will Builder
-                      </a>
-                      <a
-                        href="/vault"
-                        className="rounded-lg bg-green-600 px-4 py-3 text-left text-white hover:bg-green-700"
-                      >
-                        Add Trust Document
-                      </a>
-                      <a
-                        href="/notary"
-                        className="rounded-lg bg-purple-600 px-4 py-3 text-left text-white hover:bg-purple-700"
-                      >
-                        Request Notarization
-                      </a>
-                      <a
-                        href="/compliance"
-                        className="rounded-lg bg-orange-600 px-4 py-3 text-left text-white hover:bg-orange-700"
-                      >
-                        Check Compliance
-                      </a>
-                    </div>
-
-                    <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="rounded-lg border p-4">
-                        <p className="text-sm text-gray-500">Documents Stored</p>
-                        <p className="text-2xl font-semibold">
-                          {Array.isArray(userData?.documents) ? userData?.documents?.length : 0}
-                        </p>
-                      </div>
-                      <div className="rounded-lg border p-4">
-                        <p className="text-sm text-gray-500">Will Completion</p>
-                        <p className="text-2xl font-semibold">
-                          {userData?.willCompletion ?? 0}%
-                        </p>
-                      </div>
-                      <div className="rounded-lg border p-4">
-                        <p className="text-sm text-gray-500">Heirs Configured</p>
-                        <p className="text-2xl font-semibold">{userData?.heirs ?? 0}</p>
-                      </div>
-                      <div className="rounded-lg border p-4">
-                        <p className="text-sm text-gray-500">State Compliance</p>
-                        <p className="text-2xl font-semibold">{userData?.state ?? 'NA'}</p>
-                      </div>
-                    </div>
-
-                    <h2 className="mb-4 mt-8 text-xl font-semibold">Recent Activity</h2>
-                    <div className="space-y-3">
-                      {(userData?.recentActivity || []).map((a: RecentItem, i: number) => (
-                        <div key={i} className="flex items-start rounded-lg bg-gray-50 p-3">
-                          <div className="mr-3 rounded-full bg-blue-100 p-2">
-                            <span className="text-blue-600">✓</span>
-                          </div>
-                          <div>
-                            <p className="font-medium">{a.action}</p>
-                            {a.details && <p className="text-sm text-gray-600">{a.details}</p>}
-                            {a.timestamp && (
-                              <p className="text-xs text-gray-500">
-                                {new Date(a.timestamp).toLocaleString()}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {!loading && activeTab === 'documents' && (
-                  <DocumentList />
-                )}
-
-                {!loading && activeTab === 'assistant' && <AIChatAssistant />}
-              </div>
+  if (status === 'loading' || loading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-200 p-6">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (!session) {
+    return null // Will redirect
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome back{session?.user?.name ? `, ${session.user.name}` : ''}
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Here's an overview of your estate planning progress
+            </p>
+          </div>
+          <ComplianceBadge />
+        </div>
+
+        {/* Stats Cards */}
+        {error && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-yellow-600">⚠️</span>
+              <p className="text-yellow-800 text-sm">
+                {error} - Showing default values.
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Documents</p>
+                <p className="text-3xl font-bold text-gray-900">{stats?.totalDocuments || 0}</p>
+              </div>
+              <div className="text-4xl">📄</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Completed Wills</p>
+                <p className="text-3xl font-bold text-blue-600">{stats?.completedWills || 0}</p>
+              </div>
+              <div className="text-4xl">📋</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Compliance Score</p>
+                <p className="text-3xl font-bold text-green-600">{stats?.complianceScore || 0}%</p>
+              </div>
+              <div className="text-4xl">⚖️</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Last Activity</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {stats?.lastActivity 
+                    ? new Date(stats.lastActivity).toLocaleDateString()
+                    : 'Today'
+                  }
+                </p>
+              </div>
+              <div className="text-4xl">🕐</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button 
+              onClick={() => router.push('/will')}
+              className="flex items-center space-x-3 p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors"
+            >
+              <div className="text-2xl">📋</div>
+              <div className="text-left">
+                <div className="font-semibold text-blue-900">Create Will</div>
+                <div className="text-sm text-blue-700">Start building your will</div>
+              </div>
+            </button>
+
+            <button 
+              onClick={() => router.push('/vault/upload')}
+              className="flex items-center space-x-3 p-4 bg-green-50 border border-green-200 rounded-xl hover:bg-green-100 transition-colors"
+            >
+              <div className="text-2xl">📤</div>
+              <div className="text-left">
+                <div className="font-semibold text-green-900">Upload Document</div>
+                <div className="text-sm text-green-700">Add to your vault</div>
+              </div>
+            </button>
+
+            <button 
+              onClick={() => router.push('/compliance')}
+              className="flex items-center space-x-3 p-4 bg-purple-50 border border-purple-200 rounded-xl hover:bg-purple-100 transition-colors"
+            >
+              <div className="text-2xl">⚖️</div>
+              <div className="text-left">
+                <div className="font-semibold text-purple-900">Check Compliance</div>
+                <div className="text-sm text-purple-700">View state requirements</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Recent Documents */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Recent Documents</h2>
+            <button 
+              onClick={() => router.push('/vault')}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              View All →
+            </button>
+          </div>
+          <DocumentList />
+        </div>
+
+        {/* Blockchain Status */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Blockchain Security</h2>
+          <BlockchainStatus />
+        </div>
       </div>
     </DashboardLayout>
-  );
+  )
 }

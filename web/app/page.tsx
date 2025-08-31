@@ -97,7 +97,7 @@ export default function Home() {
             {/* Company Info */}
             <div className="md:col-span-2">
               <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-                NexteraEstate
+                NexteraEstate™
               </h3>
               <p className="text-gray-300 mb-6 max-w-md">
                 Secure your family's future with cutting-edge estate planning technology, AI guidance, and blockchain security.

@@ -113,7 +113,7 @@ class BackendTester:
         
         for plan in plans:
             try:
-                checkout_data = {"planId": plan}
+                checkout_data = {"plan": plan}  # Changed from planId to plan
                 response = self.session.post(
                     f"{self.base_url}/api/payments/create-checkout",
                     json=checkout_data,
@@ -122,9 +122,9 @@ class BackendTester:
                 
                 if response.status_code == 200:
                     data = response.json()
-                    if 'url' in data and 'stripe.com' in data['url']:
+                    if 'checkout_url' in data and 'stripe.com' in data['checkout_url']:  # Changed from url to checkout_url
                         self.log_result(f"Stripe Checkout - {plan.title()}", True, 
-                                      f"Checkout URL generated: {data['url'][:50]}...")
+                                      f"Checkout URL generated: {data['checkout_url'][:50]}...")
                     else:
                         self.log_result(f"Stripe Checkout - {plan.title()}", False, "Invalid checkout URL", data)
                 elif response.status_code == 500:

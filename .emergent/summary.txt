@@ -1,156 +1,93 @@
 <analysis>
-The AI engineer successfully took the NexteraEstate application from an initial, partially broken state to a production-ready application. The primary challenge involved resolving persistent deployment issues across Vercel (frontend) and Railway (backend), specifically related to Next.js prerendering, module resolution, and backend dependency management.
-
-The engineer systematically refactored the codebase, modernized the UI for key pages (Login, Homepage, Will, Vault), and implemented critical features: NextAuth v5 (Google OAuth), Stripe payments, AI bots, and Polygon blockchain notarization. A major new feature, a 50-state real-time compliance system, was designed and implemented, including a PostgreSQL backend and a responsive frontend UI. The engineer meticulously addressed repeated user complaints about deployment failures and non-visible changes, providing detailed explanations and fixing port mismatches for local previews. The transition from server-side  to client-side MetaMask for blockchain interaction, and comprehensive backend dependency audits, highlight the engineer's robust problem-solving. The final phase involved a full audit and documentation for production readiness.
+The previous AI engineer demonstrated a persistent challenge in ensuring a consistent working state between the local development environment and the user's experience in preview/production. A recurring pattern involved fixing reported issues, only for the user to report similar or related failures, often due to environment variable precedence, NextAuth configuration, or incorrect URL routing for deployed applications. Significant effort was invested in refactoring frontend-backend communication via Next.js API routes, eliminating mock data, addressing TypeScript build errors, integrating a professional logo, and migrating AI services to the Emergent LLM. The trajectory culminated in a comprehensive production deployment guide and the initial architectural setup for a Live Estate Plan feature.
 </analysis>
 
 <product_requirements>
-The overarching goal was to deliver a stable, feature-rich NexteraEstate application, deployable on Vercel (frontend) and Railway (backend), with a custom domain  and  respectively.
-
-**Initial Phase Requirements:**
-1.  **Repository Cleanup:** Consolidate frontend to , removing root-level duplicates.
-2.  **Frontend Setup:** Implement Tailwind CSS, configure  for aliases (later removed), ensure  and  integration. Configure  for rewrites.
-3.  **Rebranding:** Replace FurEstate with NexteraEstate company-wide.
-4.  **Core Features:**
-    *   **Authentication:** NextAuth v5 with Google OAuth (including Google Cloud Console configuration).
-    *   **Payments:** Stripe integration for checkout (, ) with success/cancel pages.
-    *   **AI Bots:** Frontend widgets (, ) and backend endpoints (, ).
-    *   **Blockchain Notarization:** Initially Polygon Amoy testnet with , later shifted to client-side MetaMask integration for user wallet control.
-5.  **UI Modernization:** Transform basic pages (Login, Will Builder, Document Vault, Homepage) into modern, feature-rich experiences.
-6.  **Legal Pages:** Create and link Privacy Policy and Terms of Service pages.
-7.  **Deployment:** Configure Vercel (root directory, build commands, environment variables) and Railway (start command, environment variables, PostgreSQL).
-8.  **Quality Bar:**  must pass, Google login functional, Stripe checkout working, Notarization returning Polygonscan link, Lighthouse score 85+.
-
-**Mid-Phase Requirement (50-State Real-time Compliance):**
-1.  **Backend:** Implement a PostgreSQL database with  and  tables. Create a seed JSON (). Implement API endpoints: , ,  with 15-minute in-memory caching.
-2.  **Frontend:** Create ,  (with state selector, doc type tabs), and integrate a badge on .
-3.  **UX Rules:** Show citations, updated date, info banner if  is false, link to Notary page if .
-4.  **Deployment:** Configure  and  on Railway and Vercel.
-
-**Final Production Readiness Requirements:**
-Consolidate all previous requirements, add observability (Sentry, uptime), email integration (Resend/Postmark), security (HTTPS, secure cookies, rate limiting), SEO (robots.txt, sitemap.xml, meta tags, favicon), and DNS configuration (Namecheap). Ensure a clean repository structure (frontend only in ).
+The NexteraEstate application aims to provide a stable, feature-rich platform for estate planning, deployed on Vercel (frontend) and Railway (backend). Initial requirements included a monorepo, Tailwind CSS, NextAuth v5 (Google OAuth), Stripe payments, AI bots (Help, Grief), client-side MetaMask blockchain notarization, UI modernization for key pages, and creation of legal pages (Privacy, Terms). Subsequent requests focused on a 50-state real-time compliance system, rebranding the Help Bot to Esquire AI, fixing API 404s and coming soon placeholders, ensuring database saving, resolving Vercel/Railway crashes, adding social media logos, trademark, document upload/listing, PDF generation, a Pet Trust feature, and Contact Support. The user's ultimate intent is a 100% functional, personally testable, production-ready platform. The latest major request is for a Live Estate Plan feature to keep documents current as laws and life change, by watching rules and user triggers, proposing updates, and re-generating/notarizing.
 </product_requirements>
 
 <key_technical_concepts>
--   **Next.js 14 (React):** Frontend development, App Router.
--   **FastAPI (Python):** Backend API,  directory.
--   **PostgreSQL & MongoDB:** Databases.
--   **NextAuth v5 (Google OAuth):** Authentication system.
--   **Stripe:** Payment gateway.
--   **MetaMask (ethers.js):** Client-side blockchain interaction.
--   **OpenAI & Google Gemini Flash:** AI services.
--   **SQLAlchemy & Alembic:** ORM and migrations.
--   **Tailwind CSS:** UI styling.
--   **Vercel & Railway:** Deployment.
--   **TypeScript:** Frontend type safety.
--   **:** Environment variable management.
--   **:** HTTP client.
+-   **Next.js 14 (React)**: Frontend with App Router & TypeScript.
+-   **FastAPI (Python)**: Backend API.
+-   **SQLite**: Primary database.
+-   **NextAuth v5**: Authentication (Google OAuth).
+-   **Stripe**: Payment gateway.
+-   **MetaMask (ethers.js)**: Blockchain interaction (Polygon).
+-   **Emergent LLM Key**: Universal API for AI services.
+-   **SQLAlchemy**: ORM.
+-   **Tailwind CSS**: UI styling.
+-   **ReportLab/fpdf2**: PDF generation.
 </key_technical_concepts>
 
 <code_architecture>
-The application follows a monorepo structure, strictly enforcing frontend code in  and backend in .
 
 
-
-**Key Files and Changes Summary:**
-
-*   ****: The core FastAPI application.
-    *   **Summary:** This file orchestrates all backend API endpoints and service integrations.
-    *   **Changes:** Significantly modified to update AI bot endpoints from deprecated OpenAI syntax to new v1+ client, then migrated to Google Gemini Flash 1.5 with rate limiting (20 requests/day/user) and . New user management, will creation, and document handling API endpoints with associated Pydantic models were added.
-*   ****: Defines SQLAlchemy models and database connection.
-    *   **Summary:** Central for defining the database schema.
-    *   **Changes:** Extended to include  and  models, laying the foundation for real user data and will generation.
-*   ****: Manages Python dependencies.
-    *   **Summary:** Ensures all necessary backend libraries are installed.
-    *   **Changes:** usage: openai [-h] [-v] [-b API_BASE] [-k API_KEY] [-p PROXY [PROXY ...]]
-              [-o ORGANIZATION] [-t {openai,azure}]
-              [--api-version API_VERSION] [--azure-endpoint AZURE_ENDPOINT]
-              [--azure-ad-token AZURE_AD_TOKEN] [-V]
-              {api,tools,migrate,grit} ...
-
-positional arguments:
-  {api,tools,migrate,grit}
-    api                 Direct API calls
-    tools               Client side tools for convenience
-
-options:
-  -h, --help            show this help message and exit
-  -v, --verbose         Set verbosity.
-  -b API_BASE, --api-base API_BASE
-                        What API base url to use.
-  -k API_KEY, --api-key API_KEY
-                        What API key to use.
-  -p PROXY [PROXY ...], --proxy PROXY [PROXY ...]
-                        What proxy to use.
-  -o ORGANIZATION, --organization ORGANIZATION
-                        Which organization to run as (will use your default
-                        organization if not specified)
-  -t {openai,azure}, --api-type {openai,azure}
-                        The backend API to call, must be `openai` or `azure`
-  --api-version API_VERSION
-                        The Azure API version, e.g.
-                        'https://learn.microsoft.com/en-us/azure/ai-
-                        services/openai/reference#rest-api-versioning'
-  --azure-endpoint AZURE_ENDPOINT
-                        The Azure endpoint, e.g.
-                        'https://endpoint.openai.azure.com'
-  --azure-ad-token AZURE_AD_TOKEN
-                        A token from Azure Active Directory,
-                        https://www.microsoft.com/en-
-                        us/security/business/identity-access/microsoft-entra-
-                        id
-  -V, --version         show program's version number and exit was upgraded to  and  was constrained () to resolve dependency conflicts.  was added for Gemini integration.
-*   ****: Initial compliance rules data.
-    *   **Summary:** Provides the legal compliance data for various states.
-    *   **Changes:** Replaced with  to include a comprehensive 50-state + DC dataset.
-*   ****: The main homepage.
-    *   **Summary:** The primary entry point for users.
-    *   **Changes:** Feature cards were wrapped with  components to direct users to new, dedicated explanation pages.
-*   ****: New feature explanation pages.
-    *   **Summary:** Provides detailed information for core application features.
-    *   **Changes:** New directories and files created for , , and  to provide professional content for each feature.
-*   ****: User's personalized dashboard.
-    *   **Summary:** Displays user-specific progress and data.
-    *   **Changes:** Modified to fetch and display real user data, document counts, will counts, and completion percentages from new backend API endpoints.
-*   ****: The Will Builder interface.
-    *   **Summary:** Enables users to create and manage their wills.
-    *   **Changes:** Updated to interact with the new backend API to save actual will data and dynamically integrate state-specific compliance rules, replacing static placeholder content.
-*   ****: NextAuth authentication configuration.
-    *   **Summary:** Handles all authentication logic and provider setup.
-    *   **Changes:** A  callback was added to register users in the backend database automatically upon successful Google OAuth login.
-*   ****: Frontend TypeScript declarations.
-    *   **Summary:** Extends the global  interface for custom objects.
-    *   **Changes:** Added declarations for  and  to resolve TypeScript build errors, enabling direct access to bot functions from the global window object.
-*   ****: AI Bot UI component.
-    *   **Summary:** Provides the interactive chat assistant widgets.
-    *   **Changes:** Updated to ensure  functions of the bots are correctly exposed and typed via the global  object.
-*   ** & **: Frontend environment variables.
-    *   **Summary:** Stores critical configuration like API keys and URLs.
-    *   **Changes:**  and  were updated for both local and production environments.
+-   ****: Core FastAPI endpoints. Orchestrates AI, user, wills, documents, payments, compliance, blockchain, PDF. Now integrates  and uses Emergent LLM. Added  validation for blockchain.
+-   ****: SQLAlchemy models. Defines schema. Modified engine creation for SQLite fallback to prevent Railway crashes.
+-   ****: Python dependencies. Added .
+-   ****: Encapsulates PDF generation.
+-   ** (NEW)**: Foundational file for Live Estate Plan feature, handling dynamic document updates.
+-   ****: Homepage. Revamped with new , , , , ,  components.
+-   ****: Login page. Updated logo to , fixed CSS.
+-   ****: User dashboard. Improved error handling for unauthenticated users, updated logo usage.
+-   ****: Will Builder. Fixed TypeScript  undefined errors.
+-   ****: Compliance Center. Debugged rendering for real data.
+-   ****: Pricing page. Uses new  component.
+-   ****: Document vault. Fixed TypeScript  undefined errors.
+-   ****: Next.js API routes. Added  to prevent static generation issues.
+-   ** (NEW)**: New FAQ page for common questions.
+-   ****: Root layout. Cleaned duplicate metadata, added SEO tags, favicon, and ensured Tailwind CSS import.
+-   ****: AI chat. Switched to Emergent LLM.
+-   ****: AI bot UI. Integrated with Emergent LLM.
+-   ****: Blockchain status. Improved session checking.
+-   ****: Compliance badge. Fixed error handling and session checking.
+-   ****: Document list. Improved session checking, fixed TypeScript errors.
+-   ** (NEW/MODIFIED)**: Updated with professional layout, company address, and .
+-   ****: Dashboard layout. Integrated , fixed TypeScript errors.
+-   ** (NEW)**: Global navigation bar.
+-   ****: Added 'pet-trust' type and content.
+-   ** (NEW)**: Optimized  component for crisp logo rendering.
+-   **, , ,  (NEW)**: Homepage specific components for improved UI/UX.
+-   ** (NEW)**: Displays redesigned pricing plans.
+-   ** (NEW)**: Displays quick compliance status. Fixed TypeScript error.
+-   **, ,  (NEW)**: Frontend components for the new Live Estate Plan feature.
+-   ****: Frontend API helper. Confirmed correct usage of relative paths.
+-   ****: Public assets. Added , , , updated , .
+-   ****: Local environment. Updated  to internal IP for preview, removed .
+-   ****: Production environment. Updated  to internal IP for preview, intended to be  for production.
+-   ****: NextAuth config. Removed hardcoded , added .
+-   ****: Frontend scripts. Updated  script for IPv4 binding.
+-   ****: TypeScript config. Confirmed  and .
+-   ****: Vercel config. Added API rewrites.
+-   ** (NEW)**: Comprehensive Vercel/Railway deployment guide.
 </code_architecture>
 
 <pending_tasks>
--   Change the AI bot's fallback/escalation message from recommend consulting an attorney. to refer to an AI Lawyer chatbot called Esquire AI.
--   Implement Document Management System (file upload, storage, organization, version control, sharing).
--   Implement PDF Generation for wills.
--   Further AI enhancements (document analysis, smart recommendations).
--   Configure Stripe for real payment processing and subscription management.
--   Integrate real blockchain notarization and document verification.
+-   Complete the full implementation of the Live Estate Plan feature (Watchers, Engine, Actions, Proof).
+-   Implement a complete Email System (confirmations, resets, notifications).
+-   Implement full Subscription Management (for users to manage plans/billing).
+-   Implement Sentry for frontend and backend observability.
+-   Add uptime checks for site and API.
+-   Add screenshots of the dashboard and a How it works section on the homepage.
+-   Implement rate limits on public endpoints.
+-   Final testing on actual deployed production environment (Vercel/Railway) as the preview environment remains problematic.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was addressing the user's explicit request to rebrand instances of call our lawyers to an AI Lawyer chatbot named Esquire AI. The engineer had successfully identified the specific line in the  file (line 810) that contained the phrase recommend consulting an attorney, which is part of the AI bot's fallback or escalation response. The engineer was in the process of formulating the edit to update this text.
+Immediately before this summary request, the AI engineer was working on integrating a major new feature: the Live Estate Plan. This feature is designed to keep estate documents current with changing laws and personal life events. The system would monitor 50-state rules and user triggers, propose updates, then re-generate, sign, notarize, and re-hash documents on Polygon, maintaining an audit trail.
 
-This task follows a significant period of development where the application was transformed from a placeholder-heavy demo to a fully functional estate planning platform. This included:
-1.  **50-State Compliance System:** The compliance system was updated from a limited 4-state display to a comprehensive 50-state + DC system, utilizing a full  dataset and a refresh mechanism.
-2.  **Core User System:** A complete user management system was implemented, including database models (, , ), user registration via NextAuth callbacks, and API endpoints for user profiles and dashboard statistics.
-3.  **Will Builder:** The  was made functional to save actual will data to the backend, integrating with the state compliance rules.
-4.  **Dashboard:** The  was updated to display real user statistics (total wills, documents, completion percentage) and recent activity, instead of static data.
-5.  **AI Bot Migration & Enhancements:** The AI bots were migrated from OpenAI to Google Gemini Flash 1.5. This involved updating  with , changing the client initialization in , and refactoring the  and  endpoints to use the Gemini API. A hard rate limit of 20 requests per user per day and a  output constraint were also implemented.
+The AI engineer has completed the initial architectural setup for this feature:
+-   A new backend file, , was created to house the core logic for the dynamic updates.
+-   The main backend  was modified to integrate this new engine, likely setting up initial endpoints or services for it.
+-   Three new frontend components were created:
+    -   
+    -   
+    -   
+    These components are intended to provide the user interface for managing the live estate plan, displaying update notifications, and configuring related settings.
 
-The current state is a robust, production-ready application with a functional login, comprehensive compliance, a working will builder, and integrated Gemini AI bots, now being refined for specific branding requested by the user.
+This work followed extensive fixes to the application, including resolving numerous build errors, rectifying persistent connectivity issues (due to hardcoded URLs and  misconfigurations), integrating a professional logo with optimized rendering, migrating AI services to the cost-effective Emergent LLM key, and applying a significant styling/content overhaul to modernize the UI based on user feedback. The application is now positioned as having a professional design and all core features implemented, with a comprehensive deployment guide generated.
 </current_work>
 
 <optional_next_step>
-The next step is to modify  at line 810 to change recommend consulting an attorney. to refer to the Esquire AI chatbot.
+Integrate the newly created Live Estate Plan components and backend logic into the main application flow, starting with the dashboard.
 </optional_next_step>

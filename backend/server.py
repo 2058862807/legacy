@@ -566,38 +566,78 @@ async def create_checkout(payment: PaymentRequest):
         if not STRIPE_SECRET_KEY:
             raise HTTPException(status_code=500, detail="Stripe not configured")
         
-        # Plan pricing
+        # Enhanced plan pricing with annual options
         plan_prices = {
-            "basic": 2900,  # $29.00
-            "premium": 4900,  # $49.00 
-            "full": 9900  # $99.00
+            # Monthly prices
+            "core": 2900,      # $29.00
+            "plus": 4900,      # $49.00
+            "pro": 9900,       # $99.00
+            "enterprise": 29900, # $299.00
+            
+            # Annual prices (30-33% discount)
+            "core_yearly": 19900,     # $199.00 (30% off)
+            "plus_yearly": 34900,     # $349.00 (30% off)
+            "pro_yearly": 79900,      # $799.00 (33% off)
+            "enterprise_yearly": 239900, # $2399.00 (33% off)
+            
+            # Special offers
+            "founding": 12900,         # $129.00 one-time
+            "core_first_month": 900,   # $9.00 promotional first month
         }
         
-        if payment.plan.lower() not in plan_prices:
+        plan_key = payment.plan.lower()
+        billing_period = getattr(payment, 'billing_period', 'monthly')
+        
+        # Handle yearly billing
+        if billing_period == 'yearly' and plan_key in ['core', 'plus', 'pro', 'enterprise']:
+            plan_key = f"{plan_key}_yearly"
+        
+        if plan_key not in plan_prices:
             raise HTTPException(status_code=400, detail="Invalid plan selected")
         
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': f'NexteraEstate {payment.plan.title()} Plan',
-                        'description': f'Monthly subscription to {payment.plan.title()} plan'
-                    },
-                    'unit_amount': plan_prices[payment.plan.lower()],
-                    'recurring': {
-                        'interval': 'month'
-                    }
+        # Determine if this is a subscription or one-time payment
+        is_subscription = plan_key not in ['founding']
+        
+        # Create line item
+        line_item = {
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'name': f'NexteraEstate {payment.plan.title()} Plan',
+                    'description': f'Estate planning with AI guidance and blockchain security'
                 },
-                'quantity': 1,
-            }],
-            mode='subscription',
-            success_url=payment.success_url,
-            cancel_url=payment.cancel_url,
-        )
+                'unit_amount': plan_prices[plan_key],
+            },
+            'quantity': 1,
+        }
+        
+        # Add recurring info for subscriptions
+        if is_subscription:
+            interval = 'year' if billing_period == 'yearly' else 'month'
+            line_item['price_data']['recurring'] = {'interval': interval}
+        
+        # Create checkout session
+        session_params = {
+            'payment_method_types': ['card'],
+            'line_items': [line_item],
+            'mode': 'subscription' if is_subscription else 'payment',
+            'success_url': payment.success_url + '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url': payment.cancel_url,
+            'metadata': {
+                'plan': payment.plan,
+                'billing_period': billing_period
+            }
+        }
+        
+        # Add special features for certain plans
+        if plan_key == 'founding':
+            session_params['metadata']['founding_member'] = 'true'
+            session_params['metadata']['locked_renewal_price'] = '19900'  # $199/year locked
+        
+        checkout_session = stripe.checkout.Session.create(**session_params)
         
         return {"checkout_url": checkout_session.url}
+        
     except stripe.error.StripeError as e:
         logger.error(f"Stripe error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Payment error: {str(e)}")

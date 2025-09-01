@@ -140,7 +140,7 @@ class BackendTester:
         
         # Test invalid plan validation
         try:
-            invalid_data = {"planId": "invalid_plan"}
+            invalid_data = {"plan": "invalid_plan"}  # Changed from planId to plan
             response = self.session.post(
                 f"{self.base_url}/api/payments/create-checkout",
                 json=invalid_data,

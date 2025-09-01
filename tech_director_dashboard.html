@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexteraEstate Autonomous Tech Director</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            padding: 25px; 
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #1e3c72; margin-bottom: 15px; font-size: 1.3em; }
+        .status-indicator { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            margin-right: 8px; 
+        }
+        .status-healthy { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        .btn { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
+        .chat-container { 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-top: 20px; 
+        }
+        .chat-input { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid #e9ecef; 
+            border-radius: 10px; 
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .chat-response { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-top: 15px; 
+            border-left: 4px solid #28a745;
+        }
+        .token-display {
+            background: #2d3748;
+            color: #4FD1C7;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .log { 
+            background: #2d3748; 
+            color: #e2e8f0; 
+            font-family: 'Courier New', monospace; 
+            padding: 20px; 
+            border-radius: 10px; 
+            max-height: 300px; 
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .tab-container { border-bottom: 2px solid #e9ecef; margin-bottom: 20px; }
+        .tab { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .metric { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .metric-value { font-weight: bold; color: #1e3c72; }
+        .alert { 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin: 15px 0; 
+            border-left: 4px solid #28a745;
+        }
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-warning { background: #fff3cd; color: #856404; border-left-color: #ffc107; }
+        .alert-error { background: #f8d7da; color: #721c24; border-left-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 NexteraEstate Tech Director</h1>
+            <p>Your Autonomous AI Senior Developer - Always Watching, Always Learning</p>
+            <div style="margin-top: 15px; font-size: 0.9em;">
+                <span id="connectionStatus">🔴 Disconnected</span> | 
+                <span>Monitoring: NexteraEstate Platform</span> |
+                <span id="uptime">Uptime: Checking...</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- Admin Token Display -->
+            <div class="token-display">
+                🔑 <strong>Your Admin Token:</strong> nextera_admin_2024_secure_token
+                <br>
+                <small style="opacity: 0.8;">Keep this secret! Use it to authenticate with your Tech Director.</small>
+            </div>
+
+            <div class="tab-container">
+                <button class="tab active" onclick="showTab('dashboard')">🏠 Dashboard</button>
+                <button class="tab" onclick="showTab('chat')">💬 Chat</button>
+                <button class="tab" onclick="showTab('incidents')">🚨 Incidents</button>
+                <button class="tab" onclick="showTab('lessons')">🧠 Lessons</button>
+                <button class="tab" onclick="showTab('commands')">⚡ Commands</button>
+            </div>
+
+            <div id="dashboard" class="tab-content active">
+                <div class="alert alert-success" id="systemAlert" style="display: none;">
+                    <strong>✅ System Status:</strong> <span id="alertMessage">Checking...</span>
+                </div>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3>🏥 Platform Health</h3>
+                        <div id="healthStatus">
+                            <div class="metric">
+                                <span>Overall Status:</span>
+                                <span class="metric-value" id="overallStatus">🔄 Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span>NexteraEstate Site:</span>
+                                <span class="metric-value" id="frontendStatus">🔄 Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Backend API:</span>
+                                <span class="metric-value" id="backendStatus">🔄 Checking...</span>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="checkHealth()">🔍 Check Now</button>
+                        <button class="btn" onclick="runFullCheck()">🚀 Full Analysis</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>🤖 Agent Intelligence</h3>
+                        <div id="agentStats">
+                            <div class="metric">
+                                <span>Learning Mode:</span>
+                                <span class="metric-value" id="learningMode">🔄 Loading...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Auto-Fix Mode:</span>
+                                <span class="metric-value" id="autoFixMode">🔄 Loading...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Lessons Learned:</span>
+                                <span class="metric-value" id="totalLessons">🔄 Loading...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Agent Version:</span>
+                                <span class="metric-value" id="agentVersion">🔄 Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚠️ Recent Activity</h3>
+                        <div id="recentActivity">
+                            <div class="metric">
+                                <span>Incidents (Last Hour):</span>
+                                <span class="metric-value" id="recentIncidents">🔄 Loading...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Monitoring Since:</span>
+                                <span class="metric-value" id="monitoringSince">🔄 Loading...</span>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="loadIncidents()">📊 View All Incidents</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>💡 Latest AI Recommendation</h3>
+                    <div id="latestRecommendation" style="font-style: italic; color: #666; padding: 15px; background: white; border-radius: 8px;">
+                        🤖 Your Tech Director is analyzing your platform... recommendations will appear here.
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="tab-content">
+                <div class="chat-container">
+                    <h3>💬 Chat with Your Tech Director</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Ask anything about your NexteraEstate platform in plain language.</p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <button class="btn" onclick="askQuestion('How is NexteraEstate doing?')">How is my platform?</button>
+                        <button class="btn" onclick="askQuestion('What should I focus on fixing?')">What needs fixing?</button>
+                        <button class="btn" onclick="askQuestion('Are users having issues?')">Any user issues?</button>
+                    </div>
+                    
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask your agent: 'Why are users having login issues?' or 'What's the biggest problem right now?'" onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn" onclick="sendMessage()">💬 Send Message</button>
+                    
+                    <div id="chatHistory"></div>
+                </div>
+            </div>
+
+            <div id="incidents" class="tab-content">
+                <div class="card">
+                    <h3>🚨 Platform Incidents</h3>
+                    <p style="margin-bottom: 15px;">Your Tech Director automatically detects and logs issues.</p>
+                    <button class="btn" onclick="loadIncidents()">🔄 Refresh Incidents</button>
+                    <button class="btn" onclick="runFullCheck()">🔍 Trigger Check Now</button>
+                    <div id="incidentsList" style="margin-top: 20px;">
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            Click "Refresh Incidents" to load recent issues...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lessons" class="tab-content">
+                <div class="card">
+                    <h3>🧠 AI Learning Center</h3>
+                    <p style="margin-bottom: 15px;">Your Tech Director learns from every incident and your teachings.</p>
+                    
+                    <div style="margin: 20px 0; padding: 20px; background: white; border-radius: 10px;">
+                        <h4>🎓 Teach Your Agent</h4>
+                        <input type="text" id="newLesson" class="chat-input" placeholder="e.g., 'When users report login issues, check Google OAuth settings first'">
+                        <button class="btn" onclick="teachAgent()">📚 Teach Agent</button>
+                    </div>
+                    
+                    <button class="btn" onclick="loadLessons()">🔄 Load All Lessons</button>
+                    
+                    <div id="lessonsList" style="margin-top: 20px;">
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            Click "Load All Lessons" to see what your agent has learned...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="commands" class="tab-content">
+                <div class="grid">
+                    <div class="card">
+                        <h3>⚡ Quick Commands</h3>
+                        <button class="btn" onclick="checkHealth()">🏥 Health Check</button>
+                        <button class="btn" onclick="runFullCheck()">🚀 Full Analysis</button>
+                        <button class="btn" onclick="loadIncidents()">🚨 View Incidents</button>
+                        <button class="btn" onclick="loadLessons()">🧠 View Lessons</button>
+                        <button class="btn" onclick="askQuestion('Give me a status report')">📊 Status Report</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔧 API Endpoints</h3>
+                        <p style="margin-bottom: 15px; color: #666;">Direct API access for advanced users:</p>
+                        <div class="log" style="font-size: 12px;">
+🔗 Tech Director API: http://localhost:8787
+
+📊 Status: GET /agent/status
+💬 Chat: POST /agent/chat {"message": "your question"}
+🔍 Check: POST /agent/check  
+🚨 Incidents: GET /agent/incidents
+🧠 Lessons: GET /agent/lessons
+🎓 Teach: POST /agent/teach {"lesson": "your lesson"}
+
+🔑 Authorization: Bearer nextera_admin_2024_secure_token
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 Sample curl Commands</h3>
+                        <div class="log" style="font-size: 11px;">
+# Get comprehensive status
+curl -H "Authorization: Bearer nextera_admin_2024_secure_token" \
+  http://localhost:8787/agent/status
+
+# Chat with your agent  
+curl -X POST -H "Authorization: Bearer nextera_admin_2024_secure_token" \
+  -H "Content-Type: application/json" \
+  -d '{"message":"How is NexteraEstate performing?"}' \
+  http://localhost:8787/agent/chat
+
+# Run full platform analysis
+curl -X POST -H "Authorization: Bearer nextera_admin_2024_secure_token" \
+  http://localhost:8787/agent/check
+
+# Teach your agent
+curl -X POST -H "Authorization: Bearer nextera_admin_2024_secure_token" \
+  -H "Content-Type: application/json" \
+  -d '{"lesson":"When API is down, restart Railway first","category":"ops"}' \
+  http://localhost:8787/agent/teach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8787';
+        const ADMIN_TOKEN = 'nextera_admin_2024_secure_token';
+        let connected = false;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+                
+                if (response.ok) {
+                    connected = true;
+                    document.getElementById('connectionStatus').innerHTML = '🟢 Connected';
+                    loadDashboard();
+                    return true;
+                } else {
+                    throw new Error('Authentication failed');
+                }
+            } catch (error) {
+                connected = false;
+                document.getElementById('connectionStatus').innerHTML = '🔴 Connection Failed';
+                return false;
+            }
+        }
+
+        async function loadDashboard() {
+            if (!connected) {
+                await testConnection();
+                if (!connected) return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/agent/status`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+                
+                const data = await response.json();
+                
+                // Update health status
+                const health = data.health;
+                document.getElementById('overallStatus').textContent = 
+                    health.overall_status === 'healthy' ? '✅ Healthy' :
+                    health.overall_status === 'degraded' ? '⚠️ Degraded' : '❌ Issues';
+                    
+                document.getElementById('frontendStatus').textContent = 
+                    health.site?.home?.ok ? '✅ Online' : '❌ Issues';
+                document.getElementById('backendStatus').textContent = 
+                    health.api?.health?.ok ? '✅ Online' : '❌ Issues';
+
+                // Update agent stats
+                document.getElementById('learningMode').textContent = 
+                    data.learning_mode ? '✅ Enabled' : '❌ Disabled';
+                document.getElementById('autoFixMode').textContent = 
+                    data.auto_fix_mode ? '✅ Enabled' : '❌ Disabled';
+                document.getElementById('totalLessons').textContent = 
+                    data.total_lessons_learned || '0';
+                document.getElementById('recentIncidents').textContent = 
+                    data.incidents_last_hour || '0';
+                document.getElementById('agentVersion').textContent = 
+                    data.agent_version || 'Unknown';
+                document.getElementById('uptime').textContent = 
+                    `Uptime: ${data.uptime_hours || 0}h`;
+                document.getElementById('monitoringSince').textContent = 
+                    `${data.uptime_hours || 0} hours ago`;
+
+                // Update system alert
+                const alertDiv = document.getElementById('systemAlert');
+                const alertMsg = document.getElementById('alertMessage');
+                
+                if (health.overall_status === 'healthy') {
+                    alertDiv.className = 'alert alert-success';
+                    alertDiv.style.display = 'block';
+                    alertMsg.textContent = 'All systems operational. Your NexteraEstate platform is running smoothly.';
+                } else if (health.overall_status === 'degraded') {
+                    alertDiv.className = 'alert alert-warning';
+                    alertDiv.style.display = 'block';
+                    alertMsg.textContent = 'Some components experiencing issues. Your Tech Director is investigating.';
+                } else {
+                    alertDiv.className = 'alert alert-error';
+                    alertDiv.style.display = 'block';
+                    alertMsg.textContent = 'Critical issues detected. Immediate attention may be required.';
+                }
+                
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        async function checkHealth() {
+            document.getElementById('overallStatus').textContent = '🔄 Checking...';
+            await loadDashboard();
+        }
+
+        async function runFullCheck() {
+            if (!connected) return;
+            
+            document.getElementById('latestRecommendation').innerHTML = '🤖 Running full platform analysis...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/agent/check`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+                
+                const data = await response.json();
+                document.getElementById('latestRecommendation').innerHTML = 
+                    `<strong>🎯 Tech Director Analysis:</strong><br>${data.recommendation || 'Full analysis completed successfully.'}`;
+                
+                loadDashboard();
+            } catch (error) {
+                document.getElementById('latestRecommendation').innerHTML = 
+                    `<strong>❌ Analysis Failed:</strong><br>${error.message}`;
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            await askQuestion(message);
+            input.value = '';
+        }
+
+        async function askQuestion(question) {
+            if (!connected) return;
+            
+            const historyDiv = document.getElementById('chatHistory');
+            
+            // Add user message
+            historyDiv.innerHTML = `
+                <div class="chat-response" style="border-left-color: #667eea;">
+                    <strong>👤 You:</strong> ${question}
+                </div>
+                <div class="chat-response" style="border-left-color: #28a745;">
+                    <strong>🤖 Tech Director:</strong> <em>Thinking...</em>
+                </div>
+            ` + historyDiv.innerHTML;
+
+            try {
+                const response = await fetch(`${API_BASE}/agent/chat`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${ADMIN_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: question })
+                });
+                
+                const data = await response.json();
+                
+                // Update the response
+                const responses = historyDiv.querySelectorAll('.chat-response');
+                if (responses.length > 0) {
+                    responses[0].innerHTML = `<strong>🤖 Tech Director:</strong> ${data.response}`;
+                }
+                
+            } catch (error) {
+                const responses = historyDiv.querySelectorAll('.chat-response');
+                if (responses.length > 0) {
+                    responses[0].innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+                }
+            }
+        }
+
+        async function loadIncidents() {
+            if (!connected) return;
+
+            document.getElementById('incidentsList').innerHTML = 
+                '<div style="text-align: center; padding: 40px;">🔄 Loading incidents...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/agent/incidents`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+                
+                const data = await response.json();
+                const incidents = data.incidents || [];
+                let html = '';
+                
+                if (incidents.length === 0) {
+                    html = '<div class="alert alert-success">✅ <strong>No incidents detected!</strong><br>Your NexteraEstate platform is running smoothly with no reported issues.</div>';
+                } else {
+                    incidents.forEach((incident, index) => {
+                        const severity = incident.severity || 'medium';
+                        const alertClass = severity === 'critical' ? 'alert-error' : 
+                                         severity === 'high' ? 'alert-warning' : 'alert-success';
+                        
+                        html += `
+                            <div class="alert ${alertClass}">
+                                <strong>${incident.source.toUpperCase()} - ${incident.kind.toUpperCase()}</strong>
+                                <span style="font-size: 12px; margin-left: 10px;">${severity.toUpperCase()}</span>
+                                <br>
+                                <span style="font-size: 12px; opacity: 0.8;">${new Date(incident.timestamp).toLocaleString()}</span>
+                                <p style="margin: 10px 0;">${incident.message}</p>
+                                ${incident.resolved ? 
+                                    '<span style="color: green;">✅ Resolved</span>' : 
+                                    '<span style="color: orange;">⏳ Active</span>'
+                                }
+                            </div>
+                        `;
+                    });
+                }
+                
+                if (data.analysis) {
+                    html += `
+                        <div class="card" style="margin-top: 20px;">
+                            <h4>🧠 AI Analysis</h4>
+                            <p>${data.analysis}</p>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('incidentsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('incidentsList').innerHTML = 
+                    `<div class="alert alert-error">❌ Error loading incidents: ${error.message}</div>`;
+            }
+        }
+
+        async function loadLessons() {
+            if (!connected) return;
+
+            document.getElementById('lessonsList').innerHTML = 
+                '<div style="text-align: center; padding: 40px;">🔄 Loading lessons...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/agent/lessons`, {
+                    headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` }
+                });
+                
+                const data = await response.json();
+                const lessons = data.lessons || [];
+                let html = '';
+                
+                if (lessons.length === 0) {
+                    html = '<div class="alert alert-success">🎓 <strong>Ready to Learn!</strong><br>Your Tech Director hasn\'t learned any lessons yet. It will automatically learn from incidents, or you can teach it manually.</div>';
+                } else {
+                    lessons.forEach(lesson => {
+                        const confidence = Math.round(lesson.confidence * 100);
+                        html += `
+                            <div class="card" style="margin: 15px 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div style="flex: 1;">
+                                        <strong style="color: #667eea;">${lesson.category.toUpperCase()}</strong>
+                                        <span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 10px;">
+                                            ${confidence}% confidence
+                                        </span>
+                                        <br>
+                                        <span style="font-size: 12px; color: #666;">${new Date(lesson.timestamp).toLocaleString()}</span>
+                                        <p style="margin: 10px 0; color: #333;">${lesson.lesson}</p>
+                                        <small style="color: #666;">Applied ${lesson.applied_count} times</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                document.getElementById('lessonsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('lessonsList').innerHTML = 
+                    `<div class="alert alert-error">❌ Error loading lessons: ${error.message}</div>`;
+            }
+        }
+
+        async function teachAgent() {
+            const input = document.getElementById('newLesson');
+            const lesson = input.value.trim();
+            if (!lesson) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/agent/teach`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${ADMIN_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ lesson: lesson, category: 'user_teaching' })
+                });
+                
+                if (response.ok) {
+                    input.value = '';
+                    document.getElementById('lessonsList').innerHTML = 
+                        '<div class="alert alert-success">✅ <strong>Lesson taught successfully!</strong><br>Your Tech Director has learned: "' + lesson + '"</div>' +
+                        document.getElementById('lessonsList').innerHTML;
+                    
+                    // Refresh lessons
+                    setTimeout(loadLessons, 1000);
+                }
+            } catch (error) {
+                alert('Failed to teach lesson: ' + error.message);
+            }
+        }
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            if (connected) {
+                loadDashboard();
+            }
+        }, 30000);
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            testConnection();
+        });
+    </script>
+</body>
+</html>

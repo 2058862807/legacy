@@ -1,0 +1,110 @@
+{
+  "timestamp": "2025-09-01T12:11:10.447691",
+  "backend_url": "http://localhost:8001",
+  "test_user_email": "will.debug.test@nexteraestate.com",
+  "total_tests": 14,
+  "passed_tests": 14,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "will_creation_operational": true,
+  "test_results": [
+    {
+      "test": "API Health Check",
+      "success": true,
+      "details": "Backend is reachable - Status: ok",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.287195"
+    },
+    {
+      "test": "User Creation",
+      "success": true,
+      "details": "User created with ID: 039859fa-1ca2-4e93-86e3-c010f35b7487",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.327206"
+    },
+    {
+      "test": "User Lookup",
+      "success": true,
+      "details": "User lookup successful - ID: 039859fa-1ca2-4e93-86e3-c010f35b7487",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.331110"
+    },
+    {
+      "test": "Minimal Will Creation",
+      "success": true,
+      "details": "Will created - ID: 1ce92d7c-c662-4a21-98e4-e3100b4ffba5, Completion: 30.0%",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.346962"
+    },
+    {
+      "test": "Complete Will Creation",
+      "success": true,
+      "details": "Will created - ID: 3c588854-bdea-480c-a4e6-d5c69f712c5b, Completion: 100.0%",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.355130"
+    },
+    {
+      "test": "Will Retrieval by ID",
+      "success": true,
+      "details": "Will retrieved successfully - State: CA",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.359690"
+    },
+    {
+      "test": "Will Retrieval by User",
+      "success": true,
+      "details": "Will found in user's will list - Total wills: 5",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.365254"
+    },
+    {
+      "test": "JSON Field Handling",
+      "success": true,
+      "details": "Complex nested JSON data stored and retrieved correctly",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.377624"
+    },
+    {
+      "test": "PDF Generation",
+      "success": true,
+      "details": "PDF generated successfully - Size: 4265 bytes",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.408603"
+    },
+    {
+      "test": "Error Handling - Missing Fields",
+      "success": true,
+      "details": "Missing fields correctly rejected with validation error",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.411205"
+    },
+    {
+      "test": "Error Handling - Invalid User",
+      "success": true,
+      "details": "Invalid user email correctly rejected",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.414576"
+    },
+    {
+      "test": "Error Handling - Invalid JSON",
+      "success": true,
+      "details": "Invalid JSON correctly rejected",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.416082"
+    },
+    {
+      "test": "Schema Test - schema.test1@nexteraestate.com",
+      "success": true,
+      "details": "User-Will relationship correct: e3f3ba87-9d7a-4451-883a-d0a4e5c0d7ab",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.431864"
+    },
+    {
+      "test": "Schema Test - schema.test2@nexteraestate.com",
+      "success": true,
+      "details": "User-Will relationship correct: 017a2e67-42da-4622-b0ab-83e08794bd77",
+      "response_data": null,
+      "timestamp": "2025-09-01T12:11:10.447449"
+    }
+  ]
+}

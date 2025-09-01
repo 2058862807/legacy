@@ -28,7 +28,7 @@ from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse
 
 # Import existing modules
-from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, RateLimit
+from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, RateLimit, LiveEvent, PlanVersion, PlanAudit, UpdateProposal
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 from pdf_generator import WillPDFGenerator
 

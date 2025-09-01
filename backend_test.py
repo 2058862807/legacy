@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
-NexteraEstate Backend API Testing Suite - PRODUCTION LAUNCH VERIFICATION
-Final comprehensive system verification for NexteraEstate production launch.
-Tests all critical systems before user testing.
+NexteraEstate Backend API Testing Suite - PDF GENERATION & DOWNLOAD FLOW TESTING
+Critical Priority #3: Test PDF Generation & Download Flow
+Verify that users can successfully generate and download PDF documents for their wills after creation.
 """
 
 import requests
 import json
 import sys
 import os
+import io
 from datetime import datetime
 
 # Get backend URL from environment or use default
@@ -16,7 +17,7 @@ BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://localhost:8
 if not BACKEND_URL.startswith('http'):
     BACKEND_URL = f'http://{BACKEND_URL}'
 
-print(f"🚀 PRODUCTION LAUNCH VERIFICATION")
+print(f"🚀 PDF GENERATION & DOWNLOAD FLOW TESTING")
 print(f"Testing backend at: {BACKEND_URL}")
 print("=" * 80)
 

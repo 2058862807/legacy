@@ -851,6 +851,244 @@ class BackendTester:
         except Exception as e:
             self.log_result("Error Handling - Missing Fields", False, f"Request error: {str(e)}")
     
+    def test_live_estate_plan_mvp(self):
+        """Test Phase 1 Live Estate Plan MVP endpoints"""
+        print("\n🏠 Testing Phase 1 Live Estate Plan MVP...")
+        
+        test_user_email = "live.estate.test@nexteraestate.com"
+        
+        # Create test user first
+        try:
+            user_data = {
+                "email": test_user_email,
+                "name": "Live Estate Test User",
+                "provider": "google"
+            }
+            response = self.session.post(
+                f"{self.base_url}/api/users",
+                json=user_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_result("Live Estate User Creation", True, "Test user created for live estate testing")
+            else:
+                self.log_result("Live Estate User Creation", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Live Estate User Creation", False, f"Request error: {str(e)}")
+        
+        # Test 1: GET /api/live/status - Initial status should be "not_started"
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/live/status?user_email={test_user_email}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data:
+                    status = data['status']
+                    if status == "not_started":
+                        self.log_result("Live Status - Initial", True, f"Initial status correct: {status}")
+                    else:
+                        self.log_result("Live Status - Initial", True, f"Status retrieved: {status}")
+                else:
+                    self.log_result("Live Status - Initial", False, "Missing status field", data)
+            else:
+                self.log_result("Live Status - Initial", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Live Status - Initial", False, f"Request error: {str(e)}")
+        
+        # Test 2: POST /api/live/event - Test different life events
+        life_events = [
+            {
+                "event_type": "marriage",
+                "event_data": {
+                    "spouse_name": "Jane Smith",
+                    "marriage_date": "2024-06-15",
+                    "new_state": "CA"
+                }
+            },
+            {
+                "event_type": "child",
+                "event_data": {
+                    "child_name": "Baby Smith",
+                    "birth_date": "2024-08-01",
+                    "guardian_preferences": "Both parents"
+                }
+            },
+            {
+                "event_type": "move",
+                "event_data": {
+                    "old_state": "CA",
+                    "new_state": "NY",
+                    "move_date": "2024-09-01"
+                }
+            },
+            {
+                "event_type": "business",
+                "event_data": {
+                    "business_name": "Smith Consulting LLC",
+                    "business_type": "LLC",
+                    "ownership_percentage": 100
+                }
+            }
+        ]
+        
+        for event in life_events:
+            try:
+                response = self.session.post(
+                    f"{self.base_url}/api/live/event?user_email={test_user_email}",
+                    json=event,
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'status' in data and data['status'] == 'success':
+                        event_type = event['event_type']
+                        impact_level = data.get('impact_level', 'unknown')
+                        self.log_result(f"Life Event - {event_type.title()}", True, 
+                                      f"Event recorded with {impact_level} impact")
+                    else:
+                        self.log_result(f"Life Event - {event['event_type'].title()}", False, 
+                                      "Invalid response format", data)
+                else:
+                    self.log_result(f"Life Event - {event['event_type'].title()}", False, 
+                                  f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result(f"Life Event - {event['event_type'].title()}", False, 
+                              f"Request error: {str(e)}")
+        
+        # Test 3: POST /api/live/propose - Generate AI-powered proposals
+        try:
+            response = self.session.post(
+                f"{self.base_url}/api/live/propose?user_email={test_user_email}",
+                json={},
+                timeout=30  # AI generation might take longer
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data and data['status'] == 'success':
+                    proposals_created = data.get('proposals_created', 0)
+                    self.log_result("AI Proposal Generation", True, 
+                                  f"Generated {proposals_created} proposals from life events")
+                    
+                    # Store proposal IDs for acceptance test
+                    self.proposal_ids = []
+                    if 'proposals' in data:
+                        self.proposal_ids = [p['id'] for p in data['proposals']]
+                else:
+                    self.log_result("AI Proposal Generation", False, "Invalid response format", data)
+            else:
+                self.log_result("AI Proposal Generation", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("AI Proposal Generation", False, f"Request error: {str(e)}")
+        
+        # Test 4: Check status after proposals - should show pending proposals
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/live/status?user_email={test_user_email}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data and 'pending_proposals' in data:
+                    status = data['status']
+                    pending_count = data['pending_proposals']
+                    if pending_count > 0:
+                        self.log_result("Live Status - After Proposals", True, 
+                                      f"Status: {status}, Pending proposals: {pending_count}")
+                    else:
+                        self.log_result("Live Status - After Proposals", False, 
+                                      "No pending proposals found after generation")
+                else:
+                    self.log_result("Live Status - After Proposals", False, "Missing status fields", data)
+            else:
+                self.log_result("Live Status - After Proposals", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Live Status - After Proposals", False, f"Request error: {str(e)}")
+        
+        # Test 5: POST /api/live/accept - Test proposal acceptance
+        if hasattr(self, 'proposal_ids') and self.proposal_ids:
+            # Test accepting first proposal
+            try:
+                proposal_id = self.proposal_ids[0]
+                accept_data = {
+                    "proposal_id": proposal_id,
+                    "user_approval": True
+                }
+                response = self.session.post(
+                    f"{self.base_url}/api/live/accept?user_email={test_user_email}",
+                    json=accept_data,
+                    timeout=30  # PDF generation and blockchain might take time
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'status' in data and data['status'] == 'approved':
+                        version = data.get('version', 'unknown')
+                        tx_hash = data.get('transaction_hash', 'none')
+                        self.log_result("Proposal Acceptance", True, 
+                                      f"Proposal approved, version: {version}, tx: {tx_hash[:16]}...")
+                    else:
+                        self.log_result("Proposal Acceptance", False, "Invalid acceptance response", data)
+                else:
+                    self.log_result("Proposal Acceptance", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result("Proposal Acceptance", False, f"Request error: {str(e)}")
+            
+            # Test rejecting second proposal (if exists)
+            if len(self.proposal_ids) > 1:
+                try:
+                    proposal_id = self.proposal_ids[1]
+                    reject_data = {
+                        "proposal_id": proposal_id,
+                        "user_approval": False
+                    }
+                    response = self.session.post(
+                        f"{self.base_url}/api/live/accept?user_email={test_user_email}",
+                        json=reject_data,
+                        timeout=10
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        if 'status' in data and data['status'] == 'rejected':
+                            self.log_result("Proposal Rejection", True, "Proposal correctly rejected")
+                        else:
+                            self.log_result("Proposal Rejection", False, "Invalid rejection response", data)
+                    else:
+                        self.log_result("Proposal Rejection", False, f"HTTP {response.status_code}")
+                except Exception as e:
+                    self.log_result("Proposal Rejection", False, f"Request error: {str(e)}")
+        else:
+            self.log_result("Proposal Acceptance", False, "No proposals available for testing")
+        
+        # Test 6: Final status check - should show updated plan
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/live/status?user_email={test_user_email}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data:
+                    status = data['status']
+                    current_version = data.get('current_version', 'none')
+                    blockchain_hash = data.get('blockchain_hash', 'none')
+                    self.log_result("Live Status - Final", True, 
+                                  f"Final status: {status}, version: {current_version}")
+                else:
+                    self.log_result("Live Status - Final", False, "Missing status field", data)
+            else:
+                self.log_result("Live Status - Final", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Live Status - Final", False, f"Request error: {str(e)}")
+
     def run_comprehensive_production_tests(self):
         """Run comprehensive production launch verification tests"""
         print("🚀 NEXTERAESTATE PRODUCTION LAUNCH VERIFICATION")
@@ -880,6 +1118,9 @@ class BackendTester:
         
         print("\n👤 CRITICAL SYSTEM 6: Authentication & User Management")
         self.test_authentication_user_management()
+        
+        print("\n🏠 CRITICAL SYSTEM 7: Phase 1 Live Estate Plan MVP")
+        self.test_live_estate_plan_mvp()
         
         print("\n🔗 ADDITIONAL VERIFICATION: Blockchain Notarization")
         self.test_blockchain_endpoints()

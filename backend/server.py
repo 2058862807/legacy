@@ -1213,9 +1213,9 @@ async def generate_will_pdf(will_id: str, user_email: str = Query(...), db: Sess
         compliance_data = {}
         if compliance_rules:
             compliance_data = {
-                'witnesses_required': f"{compliance_rules[0].witnesses_required} witnesses" if compliance_rules else "2 witnesses",
-                'notarization_required': compliance_rules[0].notarization_required if compliance_rules else False,
-                'self_proving_allowed': compliance_rules[0].self_proving_allowed if compliance_rules else True
+                'witnesses_required': f"{compliance_rules.witnesses_required} witnesses",
+                'notarization_required': compliance_rules.notarization_required,
+                'self_proving_allowed': compliance_rules.esign_allowed
             }
         
         # Generate PDF

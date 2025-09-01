@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexteraEstate Autonomous Tech Director</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            padding: 25px; 
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #1e3c72; margin-bottom: 15px; font-size: 1.3em; }
+        .status-indicator { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            margin-right: 8px; 
+        }
+        .status-healthy { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        .btn { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
+        .chat-container { 
+            background: #f8f9fa; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-top: 20px; 
+        }
+        .chat-input { 
+            width: 100%; 
+            padding: 15px; 
+            border: 2px solid #e9ecef; 
+            border-radius: 10px; 
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .chat-response { 
+            background: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-top: 15px; 
+            border-left: 4px solid #28a745;
+        }
+        .token-input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e9ecef; 
+            border-radius: 8px; 
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+        .log { 
+            background: #2d3748; 
+            color: #e2e8f0; 
+            font-family: 'Courier New', monospace; 
+            padding: 20px; 
+            border-radius: 10px; 
+            max-height: 300px; 
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .tab-container { border-bottom: 2px solid #e9ecef; margin-bottom: 20px; }
+        .tab { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 16px;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active { color: #667eea; border-bottom-color: #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .metric { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+        .metric-value { font-weight: bold; color: #1e3c72; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Autonomous Tech Director</h1>
+            <p>Your personal AI senior developer monitoring NexteraEstate</p>
+        </div>
+        
+        <div class="content">
+            <div style="margin-bottom: 20px;">
+                <input type="password" id="adminToken" class="token-input" placeholder="Enter your admin token to connect">
+                <button class="btn" onclick="connect()">Connect to Agent</button>
+                <span id="connectionStatus" style="margin-left: 10px;"></span>
+            </div>
+
+            <div class="tab-container">
+                <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+                <button class="tab" onclick="showTab('chat')">Chat</button>
+                <button class="tab" onclick="showTab('incidents')">Incidents</button>
+                <button class="tab" onclick="showTab('lessons')">Lessons</button>
+                <button class="tab" onclick="showTab('controls')">Controls</button>
+            </div>
+
+            <div id="dashboard" class="tab-content active">
+                <div class="grid">
+                    <div class="card">
+                        <h3>🏥 Platform Health</h3>
+                        <div id="healthStatus">
+                            <div class="metric">
+                                <span>Overall Status:</span>
+                                <span class="metric-value" id="overallStatus">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Frontend:</span>
+                                <span class="metric-value" id="frontendStatus">Checking...</span>
+                            </div>
+                            <div class="metric">
+                                <span>Backend API:</span>
+                                <span class="metric-value" id="backendStatus">Checking...</span>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="checkHealth()">Check Now</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>🧠 Agent Intelligence</h3>
+                        <div id="agentStats">
+                            <div class="metric">
+                                <span>Learning Mode:</span>
+                                <span class="metric-value" id="learningMode">Unknown</span>
+                            </div>
+                            <div class="metric">
+                                <span>Auto-Fix Mode:</span>
+                                <span class="metric-value" id="autoFixMode">Unknown</span>
+                            </div>
+                            <div class="metric">
+                                <span>Lessons Learned:</span>
+                                <span class="metric-value" id="totalLessons">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚠️ Recent Activity</h3>
+                        <div id="recentActivity">
+                            <div class="metric">
+                                <span>Incidents (Last Hour):</span>
+                                <span class="metric-value" id="recentIncidents">0</span>
+                            </div>
+                            <div class="metric">
+                                <span>Agent Version:</span>
+                                <span class="metric-value" id="agentVersion">Unknown</span>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="runFullCheck()">Run Full Check</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Latest Recommendation</h3>
+                    <div id="latestRecommendation" style="font-style: italic; color: #666;">
+                        Connect to your agent to see recommendations...
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="tab-content">
+                <div class="chat-container">
+                    <h3>💬 Chat with Your Tech Director</h3>
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask your agent anything about your platform..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn" onclick="sendMessage()">Send Message</button>
+                    <div id="chatResponse" class="chat-response" style="display: none;">
+                        <strong>Agent Response:</strong>
+                        <div id="chatText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="incidents" class="tab-content">
+                <div class="card">
+                    <h3>🚨 Recent Incidents</h3>
+                    <button class="btn" onclick="loadIncidents()">Refresh Incidents</button>
+                    <div id="incidentsList" style="margin-top: 20px;">
+                        Click refresh to load incidents...
+                    </div>
+                </div>
+            </div>
+
+            <div id="lessons" class="tab-content">
+                <div class="card">
+                    <h3>🎓 Lessons Learned</h3>
+                    <button class="btn" onclick="loadLessons()">Load Lessons</button>
+                    <div style="margin: 20px 0;">
+                        <input type="text" id="newLesson" class="chat-input" placeholder="Teach your agent something new...">
+                        <button class="btn" onclick="teachAgent()">Teach Agent</button>
+                    </div>
+                    <div id="lessonsList" style="margin-top: 20px;">
+                        Click load to see what your agent has learned...
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls" class="tab-content">
+                <div class="grid">
+                    <div class="card">
+                        <h3>🎮 Agent Controls</h3>
+                        <button class="btn" onclick="runFullCheck()">Full Health Check</button>
+                        <button class="btn" onclick="checkHealth()">Quick Status</button>
+                        <button class="btn" onclick="loadIncidents()">View Incidents</button>
+                        <button class="btn" onclick="loadLessons()">View Lessons</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>📋 System Commands</h3>
+                        <p style="margin-bottom: 15px;">Use these curl commands in terminal:</p>
+                        <div class="log" id="commandExamples">
+# Get Status
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8787/agent/status
+
+# Chat with Agent  
+curl -X POST -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" \
+-d '{"message":"How is my platform doing?"}' http://localhost:8787/agent/chat
+
+# Run Full Check
+curl -X POST -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8787/agent/check
+
+# Teach Agent
+curl -X POST -H "Authorization: Bearer YOUR_TOKEN" -H "Content-Type: application/json" \
+-d '{"lesson":"When users report login issues, check Google OAuth settings first","category":"troubleshooting"}' \
+http://localhost:8787/agent/teach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8787';
+        let adminToken = '';
+        let connected = false;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function connect() {
+            adminToken = document.getElementById('adminToken').value;
+            if (!adminToken) {
+                alert('Please enter your admin token');
+                return;
+            }
+
+            // Test connection
+            fetch(`${API_BASE}/agent/status`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            })
+            .then(response => {
+                if (response.ok) {
+                    connected = true;
+                    document.getElementById('connectionStatus').innerHTML = 
+                        '<span style="color: green;">✅ Connected</span>';
+                    loadDashboard();
+                } else {
+                    throw new Error('Authentication failed');
+                }
+            })
+            .catch(error => {
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span style="color: red;">❌ Connection failed</span>';
+                alert('Connection failed: ' + error.message);
+            });
+        }
+
+        function loadDashboard() {
+            if (!connected) return;
+
+            fetch(`${API_BASE}/agent/status`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update health status
+                const health = data.health;
+                document.getElementById('overallStatus').textContent = health.overall_status || 'Unknown';
+                document.getElementById('frontendStatus').textContent = 
+                    health.site?.home?.ok ? 'Healthy' : 'Issues';
+                document.getElementById('backendStatus').textContent = 
+                    health.api?.health?.ok ? 'Healthy' : 'Issues';
+
+                // Update agent stats
+                document.getElementById('learningMode').textContent = 
+                    data.learning_mode ? 'Enabled' : 'Disabled';
+                document.getElementById('autoFixMode').textContent = 
+                    data.auto_fix_mode ? 'Enabled' : 'Disabled';
+                document.getElementById('totalLessons').textContent = 
+                    data.total_lessons_learned || '0';
+                document.getElementById('recentIncidents').textContent = 
+                    data.incidents_last_hour || '0';
+                document.getElementById('agentVersion').textContent = 
+                    data.agent_version || 'Unknown';
+            })
+            .catch(error => {
+                console.error('Failed to load dashboard:', error);
+            });
+        }
+
+        function checkHealth() {
+            if (!connected) { alert('Please connect first'); return; }
+            
+            document.getElementById('overallStatus').textContent = 'Checking...';
+            loadDashboard();
+        }
+
+        function runFullCheck() {
+            if (!connected) { alert('Please connect first'); return; }
+
+            fetch(`${API_BASE}/agent/check`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('latestRecommendation').textContent = 
+                    data.recommendation || 'Full check completed successfully';
+                loadDashboard();
+            })
+            .catch(error => {
+                document.getElementById('latestRecommendation').textContent = 
+                    'Failed to run full check: ' + error.message;
+            });
+        }
+
+        function sendMessage() {
+            if (!connected) { alert('Please connect first'); return; }
+
+            const message = document.getElementById('chatInput').value;
+            if (!message) return;
+
+            fetch(`${API_BASE}/agent/chat`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${adminToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('chatText').textContent = data.response;
+                document.getElementById('chatResponse').style.display = 'block';
+                document.getElementById('chatInput').value = '';
+            })
+            .catch(error => {
+                document.getElementById('chatText').textContent = 'Error: ' + error.message;
+                document.getElementById('chatResponse').style.display = 'block';
+            });
+        }
+
+        function loadIncidents() {
+            if (!connected) { alert('Please connect first'); return; }
+
+            fetch(`${API_BASE}/agent/incidents`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const incidents = data.incidents || [];
+                let html = '';
+                
+                if (incidents.length === 0) {
+                    html = '<p style="color: green;">✅ No recent incidents - your platform is running smoothly!</p>';
+                } else {
+                    incidents.forEach(incident => {
+                        const severity = incident.severity || 'medium';
+                        const color = severity === 'critical' ? '#dc3545' : 
+                                    severity === 'high' ? '#fd7e14' : '#ffc107';
+                        
+                        html += `
+                            <div style="border-left: 4px solid ${color}; padding: 15px; margin: 10px 0; background: #f8f9fa; border-radius: 5px;">
+                                <strong>${incident.source} - ${incident.kind}</strong>
+                                <span style="color: ${color}; font-size: 12px; margin-left: 10px;">${severity.toUpperCase()}</span>
+                                <br>
+                                <span style="color: #666; font-size: 12px;">${new Date(incident.timestamp).toLocaleString()}</span>
+                                <p style="margin: 10px 0;">${incident.message}</p>
+                                ${incident.resolved ? '<span style="color: green;">✅ Resolved</span>' : '<span style="color: orange;">⏳ Open</span>'}
+                            </div>
+                        `;
+                    });
+                }
+                
+                document.getElementById('incidentsList').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('incidentsList').innerHTML = 'Error loading incidents: ' + error.message;
+            });
+        }
+
+        function loadLessons() {
+            if (!connected) { alert('Please connect first'); return; }
+
+            fetch(`${API_BASE}/agent/lessons`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const lessons = data.lessons || [];
+                let html = '';
+                
+                if (lessons.length === 0) {
+                    html = '<p>No lessons learned yet. Your agent will learn from incidents and your teachings.</p>';
+                } else {
+                    lessons.forEach(lesson => {
+                        const confidence = Math.round(lesson.confidence * 100);
+                        html += `
+                            <div style="border: 1px solid #e9ecef; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                                <strong>${lesson.category}</strong>
+                                <span style="color: #28a745; font-size: 12px; margin-left: 10px;">${confidence}% confidence</span>
+                                <br>
+                                <span style="color: #666; font-size: 12px;">${new Date(lesson.timestamp).toLocaleString()}</span>
+                                <p style="margin: 10px 0;">${lesson.lesson}</p>
+                                <small style="color: #666;">Applied ${lesson.applied_count} times</small>
+                            </div>
+                        `;
+                    });
+                }
+                
+                document.getElementById('lessonsList').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('lessonsList').innerHTML = 'Error loading lessons: ' + error.message;
+            });
+        }
+
+        function teachAgent() {
+            if (!connected) { alert('Please connect first'); return; }
+
+            const lesson = document.getElementById('newLesson').value;
+            if (!lesson) return;
+
+            fetch(`${API_BASE}/agent/teach`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${adminToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ lesson: lesson, category: 'user_teaching' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Lesson taught successfully!');
+                document.getElementById('newLesson').value = '';
+                loadLessons();
+            })
+            .catch(error => {
+                alert('Failed to teach lesson: ' + error.message);
+            });
+        }
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            if (connected) {
+                loadDashboard();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

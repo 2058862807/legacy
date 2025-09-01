@@ -688,7 +688,7 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
     """Esquire AI help bot endpoint with RAG-powered legal guidance"""
     try:
         # Check rate limit
-        if not check_rate_limit(user_email, db):
+        if not check_rate_limit(user_email, db, "help_bot"):
             raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
         
         logger.info(f"Esquire AI RAG query from {user_email}: {request.message[:50]}...")

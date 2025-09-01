@@ -6,6 +6,7 @@ import DashboardLayout from '../../components/Layout/DashboardLayout'
 import ComplianceBadge from '../../components/Compliance/ComplianceBadge'
 import BlockchainStatus from '../../components/Blockchain/BlockchainStatus'
 import DocumentList from '../../components/Documents/DocumentList'
+import LiveEstateBanner from '../../components/LiveEstate/LiveEstateBanner'
 
 interface DashboardStats {
   totalDocuments: number

@@ -289,8 +289,8 @@ class BackendTester:
                 },
                 "beneficiaries": [],
                 "assets": [],
-                "witnesses": [],
-                "executor": {}
+                "executors": [],  # Changed from executor to executors
+                "bequests": []    # Added bequests field
             }
             response = self.session.post(
                 f"{self.base_url}/api/wills?user_email={test_user_email}",

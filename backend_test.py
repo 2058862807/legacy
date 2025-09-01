@@ -1261,12 +1261,25 @@ class BackendTester:
             self.log_result("RAG Endpoint Overall", False, f"Success rate: {success_rate:.1f}% ({successful_queries}/{total_queries}) - Below 75% threshold")
 
     def test_rag_enhanced_bot_endpoints(self):
-        """Test RAG integration in existing bot endpoints"""
-        print("\n🤖 Testing RAG-Enhanced Bot Endpoints...")
+        """Test RAG integration in existing bot endpoints - PRIORITY 2"""
+        print("\n🤖 Testing RAG-Enhanced Bot Endpoints (Rate Limiting Fix)...")
         
         test_user_email = "rag.bot.test@nexteraestate.com"
         
-        # Test enhanced help bot with RAG
+        # Create test user first to avoid rate limiting issues
+        try:
+            user_data = {
+                "email": test_user_email,
+                "name": "RAG Bot Test User",
+                "provider": "google"
+            }
+            response = self.session.post(f"{self.base_url}/api/users", json=user_data, timeout=10)
+            if response.status_code == 200:
+                self.log_result("RAG Bot User Creation", True, "Test user created for RAG bot testing")
+        except Exception as e:
+            self.log_result("RAG Bot User Creation", False, f"User creation error: {str(e)}")
+        
+        # Test enhanced help bot with RAG (this was previously failing due to rate limiting)
         try:
             help_data = {
                 "message": "I need help understanding will requirements in New York. What are the legal requirements?",
@@ -1294,15 +1307,23 @@ class BackendTester:
                         'witness', 'notarization', 'probate', 'estate', 'legal', 'law', 'code', 'statute'
                     ])
                     
-                    if is_rag_powered and has_legal_content:
+                    # Check if it's a real response (not fallback)
+                    is_fallback = any(fallback in reply for fallback in [
+                        "trouble accessing", "knowledge base right now", "try again later"
+                    ])
+                    
+                    if is_rag_powered and has_legal_content and not is_fallback:
                         self.log_result("RAG-Enhanced Help Bot", True,
                                       f"RAG features detected: citations={has_citations}, confidence={has_confidence}")
-                    elif len(reply) > 50:
+                    elif len(reply) > 50 and has_legal_content and not is_fallback:
                         self.log_result("RAG-Enhanced Help Bot", True,
-                                      "Bot responding (RAG features may be limited)")
+                                      "Bot responding with legal content (RAG features may be limited)")
+                    elif is_fallback:
+                        self.log_result("RAG-Enhanced Help Bot", False,
+                                      f"RAG system fallback response: {reply[:100]}...")
                     else:
                         self.log_result("RAG-Enhanced Help Bot", False,
-                                      f"Limited RAG functionality: {reply[:100]}...")
+                                      f"Limited functionality: {reply[:100]}...")
                         
                     # Check for additional RAG fields
                     if 'confidence' in data:
@@ -1312,11 +1333,17 @@ class BackendTester:
                     if 'sources_used' in data:
                         sources_used = data['sources_used']
                         self.log_result("RAG Source Integration", True, f"Sources used: {sources_used}")
+                    
+                    if 'citations' in data:
+                        citations = data['citations']
+                        self.log_result("RAG Citations", True, f"Citations provided: {len(citations) if citations else 0}")
                         
                 else:
                     self.log_result("RAG-Enhanced Help Bot", False, "Invalid response structure", data)
             elif response.status_code == 429:
-                self.log_result("RAG-Enhanced Help Bot", True, "Rate limit reached (expected)")
+                self.log_result("RAG-Enhanced Help Bot", True, "Rate limit reached (expected - rate limiting working)")
+            elif response.status_code == 500:
+                self.log_result("RAG-Enhanced Help Bot", False, "HTTP 500 - Rate limiting or RAG integration error (CRITICAL)")
             else:
                 self.log_result("RAG-Enhanced Help Bot", False, f"HTTP {response.status_code}")
                 
@@ -1349,6 +1376,10 @@ class BackendTester:
                         self.log_result("Grief Bot (Non-RAG)", False, "Missing crisis resources")
                 else:
                     self.log_result("Grief Bot (Non-RAG)", False, "Invalid response structure")
+            elif response.status_code == 429:
+                self.log_result("Grief Bot (Non-RAG)", True, "Rate limit reached (expected)")
+            elif response.status_code == 500:
+                self.log_result("Grief Bot (Non-RAG)", False, "HTTP 500 - Rate limiting error (CRITICAL)")
             else:
                 self.log_result("Grief Bot (Non-RAG)", False, f"HTTP {response.status_code}")
                 

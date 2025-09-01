@@ -1146,10 +1146,11 @@ class BackendTester:
         critical_systems = {
             'Compliance': [r for r in self.results if 'Compliance' in r['test']],
             'Payment': [r for r in self.results if 'Stripe' in r['test'] or 'Payment' in r['test']],
-            'AI Bot': [r for r in self.results if 'Bot' in r['test'] or 'AI' in r['test']],
+            'AI Bot': [r for r in self.results if 'Bot' in r['test'] or 'AI' in r['test'] and 'Live' not in r['test']],
             'Estate Planning': [r for r in self.results if 'Will' in r['test'] or 'PDF' in r['test'] or 'Pet Trust' in r['test']],
             'Document Management': [r for r in self.results if 'Document' in r['test']],
-            'Authentication': [r for r in self.results if 'User' in r['test'] or 'Dashboard' in r['test']]
+            'Authentication': [r for r in self.results if 'User' in r['test'] or 'Dashboard' in r['test']],
+            'Live Estate Plan MVP': [r for r in self.results if 'Live' in r['test'] or 'Proposal' in r['test'] or 'Life Event' in r['test']]
         }
         
         print(f"\n🔍 CRITICAL SYSTEMS STATUS:")

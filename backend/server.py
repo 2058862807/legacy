@@ -827,7 +827,7 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
             escalate=False
         )
     
-    if not gemini_client and not openai_client:
+    if not emergent_chat and not gemini_client and not openai_client:
         return BotResponse(
             reply="AI services currently unavailable. Please contact support.",
             escalate=False
@@ -850,20 +850,7 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         # Generate session ID if not provided
         session_id = request.session_id or str(uuid.uuid4())
         
-        # Get conversation history from database
-        chat_history = db.query(ChatHistory).filter(
-            ChatHistory.user_id == user.id,
-            ChatHistory.bot_type == "help",
-            ChatHistory.session_id == session_id
-        ).order_by(ChatHistory.timestamp).all()
-        
-        # Build conversation context
-        conversation_context = ""
-        for chat in chat_history[-10:]:  # Last 10 messages for context
-            role = "User" if chat.message_type == "user" else "Assistant"
-            conversation_context += f"{role}: {chat.message}\n"
-        
-        system_prompt = "You are Esquire AI, a helpful estate planning assistant. Provide concise, accurate information about wills, trusts, and estate planning. Keep responses under 256 tokens. Remember the conversation context and provide personalized advice based on previous messages."
+        system_prompt = "You are Esquire AI, a helpful estate planning assistant. Provide concise, accurate information about wills, trusts, and estate planning. Keep responses under 256 tokens. Provide practical, actionable legal guidance while reminding users to consult with qualified attorneys for their specific situations."
         
         # Save user message to database
         user_chat = ChatHistory(
@@ -875,8 +862,18 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         )
         db.add(user_chat)
         
-        if gemini_client:
-            prompt = f"{system_prompt}\n\nConversation History:\n{conversation_context}\nUser: {request.message}"
+        if emergent_chat:
+            # Create a new chat instance for this conversation
+            chat = LlmChat(
+                api_key=EMERGENT_LLM_KEY,
+                session_id=session_id,
+                system_message=system_prompt
+            ).with_model("openai", "gpt-4o-mini")
+            
+            user_message = UserMessage(text=request.message)
+            reply = await chat.send_message(user_message)
+        elif gemini_client:
+            prompt = f"{system_prompt}\n\nUser: {request.message}"
             response = gemini_client.generate_content(
                 prompt,
                 generation_config=genai.types.GenerationConfig(
@@ -912,11 +909,18 @@ async def help_bot(request: BotRequest, user_email: str = Query(...), db: Sessio
         db.add(bot_chat)
         db.commit()
         
-        return BotResponse(reply=reply, escalate=escalate)
+        log_activity(db, user.id, "used_help_bot", {"session_id": session_id})
+        
+        return BotResponse(
+            reply=reply,
+            escalate=escalate,
+            session_id=session_id
+        )
         
     except Exception as e:
+        logger.error(f"Help bot error: {str(e)}")
         return BotResponse(
-            reply="I'm having trouble processing your request. Please try again or contact support.",
+            reply="I'm having trouble processing your request. Please try again.",
             escalate=False
         )
 

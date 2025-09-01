@@ -339,9 +339,8 @@ async def create_will(will: WillCreate, user_email: str = Query(...), db: Sessio
             state=will.state,
             personal_info=will.personal_info,
             beneficiaries=will.beneficiaries,
-            assets=will.assets,
-            witnesses=will.witnesses,
-            executor=will.executor
+            assets=will.assets
+            # Note: witnesses and executor are stored in executors field in database
         )
         db.add(new_will)
         db.commit()

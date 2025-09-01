@@ -371,8 +371,8 @@ class BackendTester:
             
             if response.status_code == 200:
                 data = response.json()
-                if 'documents' in data:
-                    doc_count = len(data['documents'])
+                if isinstance(data, list):  # API returns list directly, not wrapped in documents key
+                    doc_count = len(data)
                     self.log_result("Document Listing", True, f"Document list retrieved: {doc_count} documents")
                 else:
                     self.log_result("Document Listing", False, "Invalid document list format", data)

@@ -1,0 +1,222 @@
+{
+  "timestamp": "2025-09-01T22:52:01.305511",
+  "backend_url": "http://localhost:8001",
+  "test_type": "RAG_SYSTEM_TESTING",
+  "total_tests": 30,
+  "passed_tests": 18,
+  "failed_tests": 12,
+  "success_rate": 60.0,
+  "rag_system_ready": false,
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: ok",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:51:59.759426"
+    },
+    {
+      "test": "RAG System Health",
+      "success": true,
+      "details": "Status: operational, Legal docs: 10, Model: all-MiniLM-L6-v2",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.193512"
+    },
+    {
+      "test": "RAG Vector Database",
+      "success": true,
+      "details": "Database health: healthy",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.193547"
+    },
+    {
+      "test": "RAG Legal Document Types",
+      "success": true,
+      "details": "Document types loaded: {'precedent': 4, 'regulation': 2, 'statute': 4}",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.193557"
+    },
+    {
+      "test": "Backend RAG Integration",
+      "success": true,
+      "details": "Backend service running with RAG support",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.195304"
+    },
+    {
+      "test": "RAG Embedding Model",
+      "success": true,
+      "details": "Sentence-transformers model loaded: all-MiniLM-L6-v2",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.197472"
+    },
+    {
+      "test": "RAG Gemini Integration",
+      "success": true,
+      "details": "Gemini AI available for RAG responses",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.197499"
+    },
+    {
+      "test": "RAG Legal APIs",
+      "success": false,
+      "details": "Legal APIs configured: 0/3",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.197512"
+    },
+    {
+      "test": "RAG User Creation",
+      "success": true,
+      "details": "Test user created for RAG testing",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.243618"
+    },
+    {
+      "test": "RAG Legal Analysis - CA",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.247301"
+    },
+    {
+      "test": "RAG Legal Analysis - TX",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.249797"
+    },
+    {
+      "test": "RAG Legal Analysis - federal",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.252398"
+    },
+    {
+      "test": "RAG Legal Analysis - general",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.254973"
+    },
+    {
+      "test": "RAG-Enhanced Help Bot",
+      "success": true,
+      "details": "Bot responding (RAG features may be limited)",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.257343"
+    },
+    {
+      "test": "Grief Bot (Non-RAG)",
+      "success": true,
+      "details": "Crisis resources included, functioning normally",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.259672"
+    },
+    {
+      "test": "RAG Quality - California Will Requirements",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.261972"
+    },
+    {
+      "test": "RAG Quality - Estate Tax Exemption",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.264423"
+    },
+    {
+      "test": "RAG Quality - Executor Responsibilities",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.266749"
+    },
+    {
+      "test": "RAG Vector Search - Exact Legal Term Match",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.269110"
+    },
+    {
+      "test": "RAG Vector Search - Semantic Legal Query",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.271527"
+    },
+    {
+      "test": "RAG Vector Search - Complex Estate Planning",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.273789"
+    },
+    {
+      "test": "RAG Vector Search - Irrelevant Query",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.276068"
+    },
+    {
+      "test": "Compliance Rules - AL",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.281827"
+    },
+    {
+      "test": "Compliance Rules - CA",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.285042"
+    },
+    {
+      "test": "Compliance Rules - NY",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.288189"
+    },
+    {
+      "test": "Compliance Rules - TX",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.291300"
+    },
+    {
+      "test": "Compliance Rules - FL",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.294590"
+    },
+    {
+      "test": "Compliance Summary",
+      "success": true,
+      "details": "50-state data loaded: 51 states available",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.300486"
+    },
+    {
+      "test": "Esquire AI Bot",
+      "success": true,
+      "details": "AI responding correctly: I apologize, but I'm having trouble processing your request right now. For immediate assistance with...",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.302886"
+    },
+    {
+      "test": "Grief Bot",
+      "success": true,
+      "details": "Crisis resources included in response",
+      "response_data": null,
+      "timestamp": "2025-09-01T22:52:01.305169"
+    }
+  ]
+}

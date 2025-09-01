@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-NexteraEstate Backend API Testing Suite
-Tests all backend endpoints for functionality and integration
+NexteraEstate Backend API Testing Suite - PRODUCTION LAUNCH VERIFICATION
+Final comprehensive system verification for NexteraEstate production launch.
+Tests all critical systems before user testing.
 """
 
 import requests
@@ -11,11 +12,13 @@ import os
 from datetime import datetime
 
 # Get backend URL from environment or use default
-BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://localhost:8001')
+BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://10.219.10.95:8001')
 if not BACKEND_URL.startswith('http'):
     BACKEND_URL = f'http://{BACKEND_URL}'
 
+print(f"🚀 PRODUCTION LAUNCH VERIFICATION")
 print(f"Testing backend at: {BACKEND_URL}")
+print("=" * 80)
 
 class BackendTester:
     def __init__(self, base_url):

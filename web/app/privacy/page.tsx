@@ -116,8 +116,8 @@ export default function Privacy() {
             </p>
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-gray-700"><strong>NexteraEstate LLC</strong></p>
-              <p className="text-gray-700">4105 D.T. James Parkway</p>
-              <p className="text-gray-700">Tuscaloosa, Alabama 35404</p>
+              <p className="text-gray-700">4105 41st Ave.</p>
+              <p className="text-gray-700">Northport, Alabama 35473</p>
               <p className="text-gray-700">Email: <a href="mailto:support@nexteraestate.com" className="text-blue-600 hover:text-blue-800">support@nexteraestate.com</a></p>
             </div>
           </section>

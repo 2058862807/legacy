@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-09-01T09:53:59.022705",
+  "backend_url": "http://10.219.10.95:8001",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "success_rate": 0.0,
+  "production_ready": false,
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": false,
+      "details": "Connection error: HTTPConnectionPool(host='10.219.10.95', port=8001): Max retries exceeded with url: /api/health (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0xfce03b571050>, 'Connection to 10.219.10.95 timed out. (connect timeout=10)'))",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:53:59.022518"
+    }
+  ]
+}

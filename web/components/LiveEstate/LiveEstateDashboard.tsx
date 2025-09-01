@@ -128,15 +128,27 @@ export default function LiveEstateDashboard() {
               <span className="mr-3">🔄</span>
               Live Estate Plan
             </h2>
-            <p className="text-gray-600">Your documents stay current as laws and life change</p>
+            <p className="text-gray-600">{liveStatus?.message || 'Your documents stay current as laws and life change'}</p>
           </div>
           <div className="text-right">
             <div className="flex items-center space-x-2 mb-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-700 font-semibold">Monitoring Active</span>
+              <div className={`w-3 h-3 rounded-full ${
+                liveStatus?.status === 'current' ? 'bg-green-500 animate-pulse' :
+                liveStatus?.status === 'action_needed' ? 'bg-yellow-500 animate-pulse' :
+                'bg-gray-400'
+              }`}></div>
+              <span className={`font-semibold ${
+                liveStatus?.status === 'current' ? 'text-green-700' :
+                liveStatus?.status === 'action_needed' ? 'text-yellow-700' :
+                'text-gray-600'
+              }`}>
+                {liveStatus?.status === 'current' ? 'Current' :
+                 liveStatus?.status === 'action_needed' ? 'Action Needed' :
+                 liveStatus?.status === 'not_started' ? 'Not Started' : 'Unknown'}
+              </span>
             </div>
             <p className="text-sm text-gray-600">
-              Watching {auditTrail?.legal_changes_tracked || 0} legal changes
+              {liveStatus?.current_version ? `Version ${liveStatus.current_version}` : 'No version yet'}
             </p>
           </div>
         </div>

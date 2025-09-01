@@ -32,8 +32,8 @@ from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, 
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary
 from pdf_generator import WillPDFGenerator
 
-# Import new Live Estate Engine
-from live_estate_engine import LiveEstateEngine, UpdateTrigger, UpdateSeverity
+# Import RAG engine
+from rag_engine import get_rag_engine, generate_legal_guidance
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

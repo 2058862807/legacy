@@ -168,23 +168,38 @@ class ApproveUpdateRequest(BaseModel):
     user_approval: bool
 
 # Rate limiting helper
-def check_rate_limit(user_email: str, db: Session) -> bool:
+def check_rate_limit(user_email: str, db: Session, endpoint: str = "bot") -> bool:
+    # Get user first
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        # If user doesn't exist, allow the request and let the endpoint handle user creation
+        return True
+    
     today = datetime.now(timezone.utc).date()
+    today_start = datetime.combine(today, datetime.min.time()).replace(tzinfo=timezone.utc)
+    
+    # Check rate limit for this user and endpoint
     rate_limit = db.query(RateLimit).filter(
-        RateLimit.user_email == user_email,
-        RateLimit.date == today
+        RateLimit.user_id == user.id,
+        RateLimit.endpoint == endpoint,
+        RateLimit.reset_date >= today_start
     ).first()
     
     if not rate_limit:
         # Create new rate limit record
-        rate_limit = RateLimit(user_email=user_email, date=today, count=0)
+        rate_limit = RateLimit(
+            user_id=user.id,
+            endpoint=endpoint,
+            requests_count=0,
+            reset_date=datetime.now(timezone.utc) + timedelta(days=1)
+        )
         db.add(rate_limit)
         db.commit()
     
-    if rate_limit.count >= 20:  # 20 requests per day limit
+    if rate_limit.requests_count >= 20:  # 20 requests per day limit
         return False
     
-    rate_limit.count += 1
+    rate_limit.requests_count += 1
     db.commit()
     return True
 

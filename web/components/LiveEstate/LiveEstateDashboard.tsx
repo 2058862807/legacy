@@ -297,15 +297,25 @@ export default function LiveEstateDashboard() {
       </div>
 
       {/* Next Review */}
-      {auditTrail?.next_scheduled_review && (
+      {liveStatus?.last_updated && (
         <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
           <div className="flex items-center space-x-3">
             <span className="text-2xl">📅</span>
             <div>
-              <h3 className="font-semibold text-blue-900">Next Scheduled Review</h3>
+              <h3 className="font-semibold text-blue-900">Last Updated</h3>
               <p className="text-blue-700">
-                {new Date(auditTrail.next_scheduled_review).toLocaleDateString()} - Annual estate plan review
+                {new Date(liveStatus.last_updated).toLocaleDateString()} - Estate plan version {liveStatus.current_version}
               </p>
+              {liveStatus.blockchain_url && (
+                <a 
+                  href={liveStatus.blockchain_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-600 hover:text-blue-800 text-sm"
+                >
+                  View on Blockchain →
+                </a>
+              )}
             </div>
           </div>
         </div>

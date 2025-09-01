@@ -181,6 +181,84 @@ def get_db():
     finally:
         db.close()
 
+# Live Estate Plan Models
+class LiveEvent(Base):
+    __tablename__ = "live_events"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    event_type = Column(String, nullable=False)  # marriage, divorce, child, move, home, business
+    event_data = Column(JSON, default=dict)  # Additional event details
+    state_change = Column(String, nullable=True)  # If move, new state
+    impact_level = Column(String, default="medium")  # low, medium, high
+    status = Column(String, default="pending")  # pending, processed, ignored
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    processed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    user = relationship("User")
+
+class PlanVersion(Base):
+    __tablename__ = "plan_versions"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    version_number = Column(String, nullable=False)  # "1.0", "1.1", "2.0"
+    will_id = Column(String, ForeignKey("wills.id"), nullable=True)
+    document_hash = Column(String, nullable=False)  # SHA256 hash of documents
+    blockchain_tx_hash = Column(String, nullable=True)  # Polygon transaction hash
+    blockchain_url = Column(String, nullable=True)  # Polygonscan URL
+    status = Column(String, default="draft")  # draft, signed, notarized, current
+    trigger_event_id = Column(String, ForeignKey("live_events.id"), nullable=True)
+    pdf_path = Column(String, nullable=True)  # Path to generated PDF
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    activated_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    user = relationship("User")
+    will = relationship("Will")
+    trigger_event = relationship("LiveEvent")
+
+class PlanAudit(Base):
+    __tablename__ = "plan_audit"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    plan_version_id = Column(String, ForeignKey("plan_versions.id"), nullable=True)
+    action_type = Column(String, nullable=False)  # created, updated, signed, notarized, activated
+    trigger_type = Column(String, nullable=True)  # state_law_change, life_event, manual
+    trigger_details = Column(JSON, default=dict)  # Details about what triggered the change
+    legal_citations = Column(JSON, default=list)  # Array of legal references
+    changes_summary = Column(Text, nullable=True)  # AI-generated summary of changes
+    blockchain_tx_hash = Column(String, nullable=True)
+    blockchain_url = Column(String, nullable=True)
+    timestamp = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    
+    # Relationships
+    user = relationship("User")
+    plan_version = relationship("PlanVersion")
+
+class UpdateProposal(Base):
+    __tablename__ = "update_proposals"
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    trigger_type = Column(String, nullable=False)  # state_law_change, life_event
+    trigger_id = Column(String, nullable=True)  # Reference to live_event or compliance rule change
+    severity = Column(String, default="medium")  # low, medium, high, critical
+    title = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    affected_documents = Column(JSON, default=list)  # Array of document types affected
+    legal_basis = Column(JSON, default=list)  # Array of legal citations
+    estimated_time = Column(String, default="15 minutes")
+    deadline = Column(DateTime(timezone=True), nullable=True)
+    status = Column(String, default="pending")  # pending, approved, rejected, expired
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    processed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Relationships
+    user = relationship("User")
+
 # Check if database is available
 def is_database_available() -> bool:
     """Check if database connection is available"""

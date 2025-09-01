@@ -2,6 +2,7 @@ import os
 import hashlib
 import logging
 import secrets
+import sqlite3
 import uuid
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any, Optional

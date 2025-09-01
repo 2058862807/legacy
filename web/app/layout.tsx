@@ -6,23 +6,46 @@ import { MetaMaskProvider } from '../components/Wallet/MetaMaskProvider'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'NexteraEstate - Secure Estate Planning with AI & Blockchain',
-  description: 'Professional estate planning platform with 50-state compliance, AI assistance, blockchain notarization, and secure document management.',
-  keywords: 'estate planning, will, trust, legal documents, blockchain, AI assistant, compliance, notarization',
-  authors: [{ name: 'NexteraEstate' }],
-  creator: 'NexteraEstate',
-  publisher: 'NexteraEstate',
+  title: 'NexteraEstate - Estate Planning Made Simple | AI & Blockchain Powered',
+  description: 'Create your estate plan, notarize on Polygon, meet your state rules. Professional estate planning with 50-state compliance, AI assistance, and blockchain security.',
+  keywords: 'estate planning, will, trust, legal documents, blockchain notarization, AI assistant, compliance, NexteraEstate, Polygon, Stripe payments',
+  authors: [{ name: 'NexteraEstate LLC' }],
+  creator: 'NexteraEstate LLC',
+  publisher: 'NexteraEstate LLC',
   robots: 'index, follow',
+  metadataBase: new URL('https://nexteraestate.com'),
+  alternates: {
+    canonical: 'https://nexteraestate.com',
+  },
   openGraph: {
-    title: 'NexteraEstate - Secure Estate Planning',
-    description: 'Professional estate planning with AI, blockchain security, and 50-state legal compliance.',
+    title: 'NexteraEstate - Estate Planning Made Simple',
+    description: 'Create your plan, notarize on Polygon, meet your state rules. Professional estate planning with AI guidance and blockchain security.',
     url: 'https://nexteraestate.com',
     siteName: 'NexteraEstate',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/logo.svg',
+        width: 1200,
+        height: 630,
+        alt: 'NexteraEstate - Estate Planning Platform',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
+    title: 'NexteraEstate - Estate Planning Made Simple',
+    description: 'Create your plan, notarize on Polygon, meet your state rules.',
+    images: ['/logo.svg'],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/logo.svg',
+  },
+  manifest: '/manifest.json',
+}
     title: 'NexteraEstate - Secure Estate Planning',
     description: 'Professional estate planning with AI, blockchain security, and 50-state legal compliance.',
   },

@@ -1199,7 +1199,7 @@ async def generate_will_pdf(will_id: str, user_email: str = Query(...), db: Sess
             'bequests': will.bequests or [], 
             'guardians': will.guardians or [],
             'special_instructions': will.special_instructions or '',
-            'pet_provisions': will.pet_provisions or {}
+            'pet_provisions': {}  # Default empty dict since this field doesn't exist in the model
         }
         
         # Prepare user data

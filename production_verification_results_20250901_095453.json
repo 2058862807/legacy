@@ -1,0 +1,200 @@
+{
+  "timestamp": "2025-09-01T09:54:53.908515",
+  "backend_url": "http://localhost:8001",
+  "total_tests": 27,
+  "passed_tests": 26,
+  "failed_tests": 1,
+  "success_rate": 96.29629629629629,
+  "production_ready": false,
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: ok",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.726825"
+    },
+    {
+      "test": "Compliance Rules - AL",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.729362"
+    },
+    {
+      "test": "Compliance Rules - CA",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.731631"
+    },
+    {
+      "test": "Compliance Rules - NY",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.733701"
+    },
+    {
+      "test": "Compliance Rules - TX",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.735735"
+    },
+    {
+      "test": "Compliance Rules - FL",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.737696"
+    },
+    {
+      "test": "Compliance Summary",
+      "success": true,
+      "details": "50-state data loaded: 51 states available",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:49.739675"
+    },
+    {
+      "test": "Stripe Checkout - Basic",
+      "success": true,
+      "details": "Checkout URL generated: https://checkout.stripe.com/c/pay/cs_live_a1uA6kG6...",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:50.053074"
+    },
+    {
+      "test": "Stripe Checkout - Premium",
+      "success": true,
+      "details": "Checkout URL generated: https://checkout.stripe.com/c/pay/cs_live_a1DFLBGW...",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:50.352844"
+    },
+    {
+      "test": "Stripe Checkout - Full",
+      "success": true,
+      "details": "Checkout URL generated: https://checkout.stripe.com/c/pay/cs_live_a1to261G...",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:50.629967"
+    },
+    {
+      "test": "Payment Validation",
+      "success": true,
+      "details": "Invalid plan correctly rejected",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:50.631816"
+    },
+    {
+      "test": "Payment Status",
+      "success": true,
+      "details": "Payment status endpoint accessible",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:50.744091"
+    },
+    {
+      "test": "Esquire AI Bot",
+      "success": true,
+      "details": "AI responding correctly: California requires your will to be in writing, signed by you (or someone in your presence at your d...",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:51.955954"
+    },
+    {
+      "test": "Grief Bot",
+      "success": true,
+      "details": "Crisis resources included in response",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.505825"
+    },
+    {
+      "test": "User Creation",
+      "success": true,
+      "details": "Test user created successfully",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.515231"
+    },
+    {
+      "test": "Will Creation",
+      "success": true,
+      "details": "Will created with ID: 5094cc7b-ea7a-4539-98ca-b8e4a2c3acaf",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.706750"
+    },
+    {
+      "test": "Will PDF Generation",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.711456"
+    },
+    {
+      "test": "Pet Trust PDF",
+      "success": true,
+      "details": "Pet trust PDF generated successfully",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.805613"
+    },
+    {
+      "test": "Document Listing",
+      "success": true,
+      "details": "Document list retrieved: 0 documents",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.809466"
+    },
+    {
+      "test": "Document Upload Endpoint",
+      "success": true,
+      "details": "Upload endpoint available (multipart testing skipped)",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.809511"
+    },
+    {
+      "test": "User Management",
+      "success": true,
+      "details": "User created/updated: d8cf59b5-5ae4-4846-9a1d-fca4810b75e8",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.818485"
+    },
+    {
+      "test": "User Retrieval",
+      "success": true,
+      "details": "User retrieved successfully",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.821549"
+    },
+    {
+      "test": "Dashboard Stats",
+      "success": true,
+      "details": "Stats: 0 docs, 0 wills",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.894339"
+    },
+    {
+      "test": "Blockchain Hash Generation",
+      "success": true,
+      "details": "Hash generated: 82380d259fb0bc49...",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.896919"
+    },
+    {
+      "test": "Blockchain Notarization",
+      "success": true,
+      "details": "Expected error - Blockchain not configured",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.899165"
+    },
+    {
+      "test": "Error Handling - Invalid JSON",
+      "success": true,
+      "details": "Correctly rejected invalid JSON",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.905187"
+    },
+    {
+      "test": "Error Handling - Missing Fields",
+      "success": true,
+      "details": "Correctly rejected missing fields",
+      "response_data": null,
+      "timestamp": "2025-09-01T09:54:53.908220"
+    }
+  ]
+}

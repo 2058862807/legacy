@@ -1097,8 +1097,8 @@ class BackendTester:
             self.log_result("Live Status - Final", False, f"Request error: {str(e)}")
 
     def test_rag_system_health(self):
-        """Test RAG system health and status"""
-        print("\n🧠 Testing RAG System Health...")
+        """Test RAG system health and status - PRIORITY 1"""
+        print("\n🧠 Testing RAG System Health and Dependencies...")
         
         try:
             response = self.session.get(f"{self.base_url}/api/rag/status", timeout=15)
@@ -1108,22 +1108,35 @@ class BackendTester:
                 if 'status' in data and data['status'] == 'operational':
                     legal_docs = data.get('legal_documents_loaded', 0)
                     embedding_model = data.get('embedding_model', 'unknown')
+                    vector_health = data.get('vector_database_health', 'unknown')
+                    gemini_available = data.get('gemini_available', False)
+                    
                     self.log_result("RAG System Health", True, 
                                   f"Status: {data['status']}, Legal docs: {legal_docs}, Model: {embedding_model}")
                     
                     # Check vector database health
-                    if 'vector_database_health' in data:
-                        db_health = data['vector_database_health']
-                        self.log_result("RAG Vector Database", True, f"Database health: {db_health}")
+                    if vector_health == 'healthy':
+                        self.log_result("RAG Vector Database", True, f"Database health: {vector_health}")
+                    else:
+                        self.log_result("RAG Vector Database", False, f"Database health: {vector_health}")
+                    
+                    # Check Gemini integration
+                    if gemini_available:
+                        self.log_result("RAG Gemini Integration", True, "Gemini AI available for response generation")
+                    else:
+                        self.log_result("RAG Gemini Integration", False, "Gemini AI not available")
                     
                     # Check document types loaded
                     if 'document_types' in data:
                         doc_types = data['document_types']
-                        self.log_result("RAG Legal Document Types", True, f"Document types loaded: {doc_types}")
+                        total_docs = sum(doc_types.values()) if isinstance(doc_types, dict) else len(doc_types)
+                        self.log_result("RAG Legal Document Types", True, f"Document types loaded: {doc_types}, Total: {total_docs}")
                     
                     return True
                 else:
                     self.log_result("RAG System Health", False, "RAG system not operational", data)
+            elif response.status_code == 500:
+                self.log_result("RAG System Health", False, "HTTP 500 - RAG system initialization error")
             else:
                 self.log_result("RAG System Health", False, f"HTTP {response.status_code}")
         except Exception as e:

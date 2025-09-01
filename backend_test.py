@@ -17,8 +17,9 @@ BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://localhost:8
 if not BACKEND_URL.startswith('http'):
     BACKEND_URL = f'http://{BACKEND_URL}'
 
-print(f"🚀 PDF GENERATION & DOWNLOAD FLOW TESTING")
-print(f"Testing backend at: {BACKEND_URL}")
+print(f"🚀 RAG SYSTEM TESTING - NexteraEstate Legal AI")
+print(f"Testing RAG-powered legal guidance with source verification")
+print(f"Backend URL: {BACKEND_URL}")
 print("=" * 80)
 
 class BackendTester:

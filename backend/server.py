@@ -940,7 +940,7 @@ Please note: I cannot provide medical advice. For emergencies, call 911."""
             escalate=True
         )
     
-    if not gemini_client and not openai_client:
+    if not emergent_chat and not gemini_client and not openai_client:
         return BotResponse(
             reply=crisis_resources + "\n\nAI services currently unavailable, but please reach out to our support team.",
             escalate=True

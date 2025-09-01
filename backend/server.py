@@ -903,143 +903,347 @@ async def get_dashboard_stats(user_email: str = Query(...), db: Session = Depend
         logger.error(f"Error fetching dashboard stats: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# NEW LIVE ESTATE PLAN ENDPOINTS
+# PHASE 1: LIVE ESTATE PLAN MVP ENDPOINTS
 
-@app.post("/api/live-estate/start-monitoring")
-async def start_live_monitoring(request: LiveEstatePlanRequest, db: Session = Depends(get_db)):
-    """Start live monitoring for a user's estate plan"""
+@app.get("/api/live/status")
+async def get_live_status(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get user's live estate plan status"""
     try:
-        # Initialize Live Estate Engine
-        compliance_service = ComplianceService()
-        live_engine = LiveEstateEngine(compliance_service, None, None)
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         
-        # Create user profile for monitoring
-        user_profile = {
-            'user_id': request.user_id,
-            'state': request.state,
-            'marital_status': request.marital_status,
-            'dependents': request.dependents,
-            'home_ownership': request.home_ownership,
-            'business_ownership': request.business_ownership,
-            'documents': request.documents,
-            'notification_preferences': request.notification_preferences
-        }
+        # Get current plan version
+        current_version = db.query(PlanVersion).filter(
+            PlanVersion.user_id == user.id,
+            PlanVersion.status == "current"
+        ).first()
         
-        # Start monitoring (this would typically save to database)
-        result = live_engine.start_monitoring(user_profile)
+        # Get pending proposals
+        pending_proposals = db.query(UpdateProposal).filter(
+            UpdateProposal.user_id == user.id,
+            UpdateProposal.status == "pending"
+        ).count()
+        
+        # Get recent events
+        recent_events = db.query(LiveEvent).filter(
+            LiveEvent.user_id == user.id,
+            LiveEvent.status == "pending"
+        ).count()
+        
+        if current_version:
+            return {
+                "status": "action_needed" if pending_proposals > 0 else "current",
+                "current_version": current_version.version_number,
+                "last_updated": current_version.activated_at.isoformat() if current_version.activated_at else current_version.created_at.isoformat(),
+                "blockchain_hash": current_version.blockchain_tx_hash,
+                "blockchain_url": current_version.blockchain_url,
+                "pending_proposals": pending_proposals,
+                "recent_events": recent_events,
+                "message": "Action needed - review pending updates" if pending_proposals > 0 else f"Current as of {current_version.created_at.strftime('%B %d, %Y')}"
+            }
+        else:
+            return {
+                "status": "not_started",
+                "message": "Live Estate Plan monitoring not yet started",
+                "pending_proposals": 0,
+                "recent_events": 0
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting live status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/live/event")
+async def declare_life_event(request: dict, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Let users declare life events"""
+    try:
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        event_type = request.get('event_type')
+        event_data = request.get('event_data', {})
+        
+        # Validate event type
+        valid_events = ['marriage', 'divorce', 'child', 'move', 'home', 'business', 'death_in_family', 'major_asset']
+        if event_type not in valid_events:
+            raise HTTPException(status_code=400, detail=f"Invalid event type. Must be one of: {', '.join(valid_events)}")
+        
+        # Determine impact level based on event type
+        high_impact_events = ['marriage', 'divorce', 'child', 'move']
+        impact_level = "high" if event_type in high_impact_events else "medium"
+        
+        # Create life event
+        life_event = LiveEvent(
+            user_id=user.id,
+            event_type=event_type,
+            event_data=event_data,
+            state_change=event_data.get('new_state') if event_type == 'move' else None,
+            impact_level=impact_level,
+            status="pending"
+        )
+        db.add(life_event)
+        db.commit()
+        
+        # Create audit entry
+        audit_entry = PlanAudit(
+            user_id=user.id,
+            action_type="life_event_declared",
+            trigger_type="life_event",
+            trigger_details={
+                "event_type": event_type,
+                "event_data": event_data,
+                "impact_level": impact_level
+            }
+        )
+        db.add(audit_entry)
+        db.commit()
         
         return {
             "status": "success",
-            "message": "Live estate monitoring started",
-            "monitoring_id": request.user_id,
-            "next_check": datetime.now(timezone.utc) + timedelta(days=1),
-            "features_enabled": {
-                "rule_monitoring": True,
-                "life_event_triggers": True,
-                "automatic_proposals": True,
-                "blockchain_audit": True
-            }
+            "message": f"Life event '{event_type}' recorded successfully",
+            "event_id": life_event.id,
+            "impact_level": impact_level,
+            "next_steps": "Our system will analyze the impact and generate update proposals within 24 hours."
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error starting live monitoring: {str(e)}")
+        logger.error(f"Error declaring life event: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/live-estate/proposals/{user_id}", response_model=List[UpdateProposalResponse])
-async def get_update_proposals(user_id: str, db: Session = Depends(get_db)):
-    """Get pending update proposals for a user"""
+@app.post("/api/live/propose")
+async def generate_proposals(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Generate update proposals for a user (called by nightly cron)"""
     try:
-        # For now, return mock data - in production this would query database
-        mock_proposals = [
-            UpdateProposalResponse(
-                id=str(uuid.uuid4()),
-                trigger="state_law_change",
-                severity="medium",
-                title="New Digital Asset Laws in California",
-                description="California Assembly Bill 2273 requires explicit provisions for digital assets in wills.",
-                affected_documents=["will", "digital_asset_inventory"],
-                legal_basis=["CA Assembly Bill 2273", "Probate Code Section 250"],
-                estimated_time="15 minutes",
-                deadline="2024-01-01",
-                created_at=datetime.now(timezone.utc).isoformat()
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get pending life events
+        pending_events = db.query(LiveEvent).filter(
+            LiveEvent.user_id == user.id,
+            LiveEvent.status == "pending"
+        ).all()
+        
+        proposals_created = []
+        
+        for event in pending_events:
+            # Generate AI-powered proposal using Gemini
+            system_prompt = f"""You are an estate planning AI analyzing a life event to propose document updates.
+
+Event Type: {event.event_type}
+Event Data: {event.event_data}
+User State: {user.state or 'Unknown'}
+Impact Level: {event.impact_level}
+
+Generate a concise update proposal (under 256 tokens) that includes:
+1. Title (concise, specific)
+2. Description (what needs to change and why)
+3. Affected documents (will, trust, beneficiaries, etc.)
+4. Legal basis (relevant laws or best practices)
+5. Estimated time to complete
+
+Format as JSON with keys: title, description, affected_documents, legal_basis, estimated_time"""
+            
+            ai_response = await get_ai_response(f"Analyze this {event.event_type} event and propose estate plan updates", system_prompt)
+            
+            try:
+                import json
+                proposal_data = json.loads(ai_response)
+            except:
+                # Fallback if AI doesn't return valid JSON
+                proposal_data = {
+                    "title": f"Update Estate Plan for {event.event_type.title()}",
+                    "description": f"Your recent {event.event_type} may require updates to your estate planning documents to ensure they reflect your current situation.",
+                    "affected_documents": ["will"],
+                    "legal_basis": ["Estate planning best practices"],
+                    "estimated_time": "15 minutes"
+                }
+            
+            # Create update proposal
+            proposal = UpdateProposal(
+                user_id=user.id,
+                trigger_type="life_event",
+                trigger_id=event.id,
+                severity=event.impact_level,
+                title=proposal_data.get("title", f"Update for {event.event_type}"),
+                description=proposal_data.get("description", "Estate plan update recommended"),
+                affected_documents=proposal_data.get("affected_documents", ["will"]),
+                legal_basis=proposal_data.get("legal_basis", []),
+                estimated_time=proposal_data.get("estimated_time", "15 minutes"),
+                deadline=datetime.now(timezone.utc) + timedelta(days=30) if event.impact_level == "high" else None
             )
-        ]
-        return mock_proposals
-    except Exception as e:
-        logger.error(f"Error fetching proposals: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/api/live-estate/approve-update")
-async def approve_update(request: ApproveUpdateRequest, db: Session = Depends(get_db)):
-    """Approve and execute an update proposal"""
-    try:
-        if not request.user_approval:
-            return {"status": "rejected", "message": "Update proposal rejected by user"}
+            db.add(proposal)
+            
+            # Mark event as processed
+            event.status = "processed"
+            event.processed_at = datetime.now(timezone.utc)
+            
+            proposals_created.append({
+                "id": proposal.id,
+                "title": proposal.title,
+                "severity": proposal.severity
+            })
         
-        # Mock update execution - in production this would:
-        # 1. Generate updated documents
-        # 2. Create blockchain hash
-        # 3. Send for e-signature
-        # 4. Update database
-        
-        transaction_hash = secrets.token_hex(32)
+        db.commit()
         
         return {
-            "status": "approved",
-            "message": "Estate plan update completed successfully",
-            "transaction_hash": transaction_hash,
-            "polygonscan_url": f"https://amoy.polygonscan.com/tx/{transaction_hash}",
-            "updated_documents": ["will_v2.pdf", "digital_asset_inventory_v2.pdf"],
-            "version": "2.0",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-            "next_review": (datetime.now(timezone.utc) + timedelta(days=365)).isoformat()
+            "status": "success",
+            "proposals_created": len(proposals_created),
+            "proposals": proposals_created,
+            "message": f"Generated {len(proposals_created)} update proposals"
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error approving update: {str(e)}")
+        logger.error(f"Error generating proposals: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/live-estate/audit-trail/{user_id}")
-async def get_audit_trail(user_id: str, db: Session = Depends(get_db)):
-    """Get complete audit trail for user's live estate plan"""
+@app.post("/api/live/accept")
+async def accept_proposal(request: dict, user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Accept and execute an update proposal"""
     try:
-        # Mock audit trail - in production this would query database
-        return {
-            "user_id": user_id,
-            "audit_entries": [
-                {
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "action": "estate_plan_updated",
-                    "trigger": "state_law_change",
-                    "version": "2.0",
-                    "transaction_hash": secrets.token_hex(32),
-                    "documents_affected": ["will", "digital_asset_inventory"]
-                }
-            ]
-        }
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        proposal_id = request.get('proposal_id')
+        user_approval = request.get('user_approval', False)
+        
+        if not proposal_id:
+            raise HTTPException(status_code=400, detail="proposal_id is required")
+        
+        proposal = db.query(UpdateProposal).filter(
+            UpdateProposal.id == proposal_id,
+            UpdateProposal.user_id == user.id
+        ).first()
+        
+        if not proposal:
+            raise HTTPException(status_code=404, detail="Proposal not found")
+        
+        if not user_approval:
+            # User rejected the proposal
+            proposal.status = "rejected"
+            proposal.processed_at = datetime.now(timezone.utc)
+            db.commit()
+            
+            return {
+                "status": "rejected",
+                "message": "Update proposal rejected by user"
+            }
+        
+        # User approved - execute the update
+        try:
+            # Get user's current will
+            current_will = db.query(Will).filter(Will.user_id == user.id).first()
+            if not current_will:
+                raise HTTPException(status_code=404, detail="No will found to update")
+            
+            # Generate new version number
+            last_version = db.query(PlanVersion).filter(
+                PlanVersion.user_id == user.id
+            ).order_by(PlanVersion.created_at.desc()).first()
+            
+            if last_version:
+                version_parts = last_version.version_number.split('.')
+                major_version = int(version_parts[0])
+                minor_version = int(version_parts[1]) if len(version_parts) > 1 else 0
+                new_version = f"{major_version}.{minor_version + 1}"
+            else:
+                new_version = "1.0"
+            
+            # Create updated document hash
+            document_content = f"Will_v{new_version}_{user.email}_{datetime.now().isoformat()}"
+            document_hash = hashlib.sha256(document_content.encode()).hexdigest()
+            
+            # Generate PDF (mock for now)
+            pdf_generator = WillPDFGenerator()
+            try:
+                pdf_path = pdf_generator.generate_will_pdf(
+                    will_data={
+                        'id': current_will.id,
+                        'state': current_will.state,
+                        'personal_info': current_will.personal_info,
+                        'beneficiaries': current_will.beneficiaries,
+                        'assets': current_will.assets,
+                        'executors': current_will.executors if hasattr(current_will, 'executors') else []
+                    },
+                    user_data={
+                        'name': user.name,
+                        'email': user.email,
+                        'state': user.state or current_will.state
+                    }
+                )
+            except Exception as pdf_error:
+                logger.warning(f"PDF generation failed: {pdf_error}")
+                pdf_path = None
+            
+            # Create blockchain transaction (mock)
+            transaction_hash = secrets.token_hex(32)
+            blockchain_url = f"https://amoy.polygonscan.com/tx/{transaction_hash}"
+            
+            # Create new plan version
+            plan_version = PlanVersion(
+                user_id=user.id,
+                version_number=new_version,
+                will_id=current_will.id,
+                document_hash=document_hash,
+                blockchain_tx_hash=transaction_hash,
+                blockchain_url=blockchain_url,
+                status="current",
+                trigger_event_id=proposal.trigger_id,
+                pdf_path=pdf_path,
+                activated_at=datetime.now(timezone.utc)
+            )
+            
+            # Mark previous version as superseded
+            if last_version:
+                last_version.status = "superseded"
+            
+            db.add(plan_version)
+            
+            # Create audit entry
+            audit_entry = PlanAudit(
+                user_id=user.id,
+                plan_version_id=plan_version.id,
+                action_type="estate_plan_updated",
+                trigger_type=proposal.trigger_type,
+                trigger_details=proposal.affected_documents,
+                legal_citations=proposal.legal_basis,
+                changes_summary=proposal.description,
+                blockchain_tx_hash=transaction_hash,
+                blockchain_url=blockchain_url
+            )
+            db.add(audit_entry)
+            
+            # Mark proposal as approved
+            proposal.status = "approved"
+            proposal.processed_at = datetime.now(timezone.utc)
+            
+            db.commit()
+            
+            return {
+                "status": "approved",
+                "message": "Estate plan update completed successfully",
+                "version": new_version,
+                "transaction_hash": transaction_hash,
+                "blockchain_url": blockchain_url,
+                "updated_documents": proposal.affected_documents,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "next_review": (datetime.now(timezone.utc) + timedelta(days=365)).isoformat()
+            }
+            
+        except Exception as update_error:
+            logger.error(f"Error executing update: {str(update_error)}")
+            raise HTTPException(status_code=500, detail=f"Failed to execute update: {str(update_error)}")
+            
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error fetching audit trail: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/api/live-estate/legal-changes")
-async def get_recent_legal_changes(state: str = Query(None), days: int = Query(30), db: Session = Depends(get_db)):
-    """Get recent legal changes affecting estate planning"""
-    try:
-        # Mock legal changes - in production this would query compliance database
-        return {
-            "state": state or "all",
-            "period_days": days,
-            "changes": [
-                {
-                    "state": "CA",
-                    "title": "Digital Asset Inheritance Laws",
-                    "description": "New requirements for digital asset provisions in wills",
-                    "effective_date": "2024-01-01",
-                    "impact_level": "medium",
-                    "affected_documents": ["will", "digital_asset_inventory"]
-                }
-            ]
-        }
-    except Exception as e:
-        logger.error(f"Error fetching legal changes: {str(e)}")
+        logger.error(f"Error accepting proposal: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

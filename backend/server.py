@@ -1077,6 +1077,7 @@ Format as JSON with keys: title, description, affected_documents, legal_basis, e
                 deadline=datetime.now(timezone.utc) + timedelta(days=30) if event.impact_level == "high" else None
             )
             db.add(proposal)
+            db.flush()  # Flush to get the ID without committing
             
             # Mark event as processed
             event.status = "processed"

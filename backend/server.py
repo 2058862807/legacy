@@ -949,7 +949,17 @@ Please note: I cannot provide medical advice. For emergencies, call 911."""
     try:
         system_prompt = "You are a compassionate grief support assistant focused on estate planning after loss. Provide empathetic, supportive responses under 256 tokens. Never give medical advice. If someone mentions self-harm, suicidal thoughts, or immediate danger, always escalate. Focus on practical estate planning support during grief."
         
-        if gemini_client:
+        if emergent_chat:
+            # Create a new chat instance for grief support
+            chat = LlmChat(
+                api_key=EMERGENT_LLM_KEY,
+                session_id=request.session_id or str(uuid.uuid4()),
+                system_message=system_prompt
+            ).with_model("openai", "gpt-4o-mini")
+            
+            user_message = UserMessage(text=request.message)
+            reply = await chat.send_message(user_message)
+        elif gemini_client:
             response = gemini_client.generate_content(
                 f"{system_prompt}\n\nUser: {request.message}",
                 generation_config=genai.types.GenerationConfig(

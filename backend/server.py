@@ -940,7 +940,7 @@ async def rag_legal_analysis(request: BotRequest, user_email: str = Query(...), 
     """Advanced RAG-powered legal analysis with source verification"""
     try:
         # Check rate limit (higher limit for premium feature)
-        if not check_rate_limit(user_email, db):
+        if not check_rate_limit(user_email, db, "rag_analysis"):
             raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
         
         user = db.query(User).filter(User.email == user_email).first()

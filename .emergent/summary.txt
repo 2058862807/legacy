@@ -1,93 +1,100 @@
 <analysis>
-The previous AI engineer demonstrated a persistent challenge in ensuring a consistent working state between the local development environment and the user's experience in preview/production. A recurring pattern involved fixing reported issues, only for the user to report similar or related failures, often due to environment variable precedence, NextAuth configuration, or incorrect URL routing for deployed applications. Significant effort was invested in refactoring frontend-backend communication via Next.js API routes, eliminating mock data, addressing TypeScript build errors, integrating a professional logo, and migrating AI services to the Emergent LLM. The trajectory culminated in a comprehensive production deployment guide and the initial architectural setup for a Live Estate Plan feature.
+The trajectory details the evolution of the NexteraEstate application from an MVP to a more robust, feature-rich platform. The previous AI engineer focused on addressing critical blockers, implementing the Live Estate Plan MVP, and refining the pricing strategy. Significant effort was dedicated to fixing authentication issues, ensuring backend health, and stabilizing UI elements. Key decisions included restoring missing API endpoints, integrating a comprehensive pricing model, and updating legal disclaimers. The conversation culminated in a strategic pivot to enhance the AI's reliability and legal defensibility by implementing a Retrieval Augmented Generation (RAG) architecture, which involved creating new backend modules and integrating them into existing AI bot endpoints. The AI also developed an autonomous Tech Director for continuous monitoring.
 </analysis>
 
 <product_requirements>
-The NexteraEstate application aims to provide a stable, feature-rich platform for estate planning, deployed on Vercel (frontend) and Railway (backend). Initial requirements included a monorepo, Tailwind CSS, NextAuth v5 (Google OAuth), Stripe payments, AI bots (Help, Grief), client-side MetaMask blockchain notarization, UI modernization for key pages, and creation of legal pages (Privacy, Terms). Subsequent requests focused on a 50-state real-time compliance system, rebranding the Help Bot to Esquire AI, fixing API 404s and coming soon placeholders, ensuring database saving, resolving Vercel/Railway crashes, adding social media logos, trademark, document upload/listing, PDF generation, a Pet Trust feature, and Contact Support. The user's ultimate intent is a 100% functional, personally testable, production-ready platform. The latest major request is for a Live Estate Plan feature to keep documents current as laws and life change, by watching rules and user triggers, proposing updates, and re-generating/notarizing.
+The NexteraEstate application is an estate planning platform, initially developed as an MVP. The core problem it solves is providing a stable, feature-rich solution for estate planning, including will creation, compliance monitoring, and document management.
+
+Initial requirements included:
+- Monorepo structure, Tailwind CSS, NextAuth v5 (Google OAuth), Stripe payments.
+- AI bots (Help, Grief), client-side MetaMask blockchain notarization.
+- UI modernization for key pages (Home, Pricing, Login, Dashboard, Will, Compliance, Vault).
+- Legal pages (Privacy, Terms), professional logo integration.
+
+Subsequent major requirements:
+- **50-state Real-Time Compliance System**: Monitoring legal rules and displaying status.
+- **Esquire AI**: Rebranding/enhancement of the Help Bot.
+- **Backend Stability**: Fixing API 404s, coming soon placeholders, ensuring database saving, resolving Vercel/Railway crashes.
+- **Core Functionality**: Document upload/listing, PDF generation, Pet Trust feature, Contact Support.
+- **Live Estate Plan**: A major feature to dynamically update estate documents based on changing laws and life events, proposing updates, re-generating, signing, notarizing, and re-hashing. This includes backend tables, endpoints, a nightly cron job, and Polygon notarization.
+- **Autonomous Tech Director**: A self-monitoring, learning AI system to oversee platform health.
+- **RAG Architecture**: A critical enhancement for AI legal guidance, ensuring responses are source-verified and citation-backed to mitigate legal liability.
+
+The user's ultimate goal is a 100% functional, personally testable, production-ready platform with a strong, defensible legal position.
 </product_requirements>
 
 <key_technical_concepts>
--   **Next.js 14 (React)**: Frontend with App Router & TypeScript.
--   **FastAPI (Python)**: Backend API.
--   **SQLite**: Primary database.
--   **NextAuth v5**: Authentication (Google OAuth).
--   **Stripe**: Payment gateway.
--   **MetaMask (ethers.js)**: Blockchain interaction (Polygon).
--   **Emergent LLM Key**: Universal API for AI services.
--   **SQLAlchemy**: ORM.
--   **Tailwind CSS**: UI styling.
--   **ReportLab/fpdf2**: PDF generation.
+- **Next.js 14 (React)**: Frontend framework with App Router & TypeScript.
+- **FastAPI (Python)**: Backend API framework.
+- **SQLite**: Primary database (with PostgreSQL migration path).
+- **NextAuth v5**: Authentication (Google OAuth).
+- **Stripe**: Payment gateway.
+- **MetaMask (ethers.js)**: Blockchain interaction (Polygon).
+- **Emergent LLM Key / Gemini 1.5 Flash**: AI services.
+- **SQLAlchemy**: ORM for database interaction.
+- **Tailwind CSS**: UI styling.
+- **ReportLab/fpdf2**: PDF generation.
+- **Retrieval Augmented Generation (RAG)**: AI architecture for grounded, citation-backed responses.
+- **Sentence-Transformers, NumPy, Scikit-learn**: Libraries for RAG implementation.
 </key_technical_concepts>
 
 <code_architecture>
 
 
--   ****: Core FastAPI endpoints. Orchestrates AI, user, wills, documents, payments, compliance, blockchain, PDF. Now integrates  and uses Emergent LLM. Added  validation for blockchain.
--   ****: SQLAlchemy models. Defines schema. Modified engine creation for SQLite fallback to prevent Railway crashes.
--   ****: Python dependencies. Added .
--   ****: Encapsulates PDF generation.
--   ** (NEW)**: Foundational file for Live Estate Plan feature, handling dynamic document updates.
--   ****: Homepage. Revamped with new , , , , ,  components.
--   ****: Login page. Updated logo to , fixed CSS.
--   ****: User dashboard. Improved error handling for unauthenticated users, updated logo usage.
--   ****: Will Builder. Fixed TypeScript  undefined errors.
--   ****: Compliance Center. Debugged rendering for real data.
--   ****: Pricing page. Uses new  component.
--   ****: Document vault. Fixed TypeScript  undefined errors.
--   ****: Next.js API routes. Added  to prevent static generation issues.
--   ** (NEW)**: New FAQ page for common questions.
--   ****: Root layout. Cleaned duplicate metadata, added SEO tags, favicon, and ensured Tailwind CSS import.
--   ****: AI chat. Switched to Emergent LLM.
--   ****: AI bot UI. Integrated with Emergent LLM.
--   ****: Blockchain status. Improved session checking.
--   ****: Compliance badge. Fixed error handling and session checking.
--   ****: Document list. Improved session checking, fixed TypeScript errors.
--   ** (NEW/MODIFIED)**: Updated with professional layout, company address, and .
--   ****: Dashboard layout. Integrated , fixed TypeScript errors.
--   ** (NEW)**: Global navigation bar.
--   ****: Added 'pet-trust' type and content.
--   ** (NEW)**: Optimized  component for crisp logo rendering.
--   **, , ,  (NEW)**: Homepage specific components for improved UI/UX.
--   ** (NEW)**: Displays redesigned pricing plans.
--   ** (NEW)**: Displays quick compliance status. Fixed TypeScript error.
--   **, ,  (NEW)**: Frontend components for the new Live Estate Plan feature.
--   ****: Frontend API helper. Confirmed correct usage of relative paths.
--   ****: Public assets. Added , , , updated , .
--   ****: Local environment. Updated  to internal IP for preview, removed .
--   ****: Production environment. Updated  to internal IP for preview, intended to be  for production.
--   ****: NextAuth config. Removed hardcoded , added .
--   ****: Frontend scripts. Updated  script for IPv4 binding.
--   ****: TypeScript config. Confirmed  and .
--   ****: Vercel config. Added API rewrites.
--   ** (NEW)**: Comprehensive Vercel/Railway deployment guide.
+
+-   ****: The core FastAPI application. It orchestrates all backend functionalities including AI, users, wills, documents, payments, compliance, blockchain, and PDF generation.
+    - **Changes**: Was initially missing many critical API endpoints which were restored. Integrated  and now . Updated to handle new pricing logic and LLM provider (Gemini 1.5 Flash).
+-   ****: Defines all SQLAlchemy database models and handles engine creation.
+    - **Changes**: New models (, , , ) added for the Live Estate Plan feature. Modified to support new pricing plan details.
+-   ****: Foundational file for Live Estate Plan feature, handling dynamic document updates logic.
+-   ** (NEW)**: Contains the core logic for the Retrieval Augmented Generation system, including embedding, similarity search, and context preparation for LLMs.
+    - **Importance**: Provides source-verified, citation-backed legal guidance.
+-   ****: Lists Python dependencies.
+    - **Changes**: Added  (initially), later , , , , .
+-   ****: Frontend component for displaying different subscription plans.
+    - **Changes**: Completely rewritten to implement a detailed multi-tier pricing strategy (Free, Core, Plus, Pro, Enterprise, Founding Member, Add-ons) with billing toggles and feature comparisons.
+-   ****: The global footer of the application.
+    - **Changes**: Updated the physical company address.
+-   ** & **: Legal pages for privacy policy and terms of service.
+    - **Changes**: Updated the company address to reflect the new home office location.
+-   ****: Next.js middleware for route protection and authentication.
+    - **Changes**: Updated to correctly protect sensitive routes like  and , ensuring users are redirected to login if unauthenticated.
+-   ****: API route for creating new wills.
+    - **Changes**: Implemented session validation to prevent unauthorized will creation, enhancing security.
+-   **, , **: Frontend components for the Live Estate Plan feature.
+    - **Changes**:  was updated to consume the new Live Estate Plan backend API endpoints.
+-   ** (NEW)**: A new component to display the status of the Live Estate Plan on the dashboard.
+-   ****: User dashboard page.
+    - **Changes**: Integrated the  to show real-time Live Estate Plan status.
+-   ** (NEW Directory)**: Contains files for the autonomous Tech Director agent, including its Python application (), , and deployment script.
+    - **Importance**: Provides continuous monitoring, incident logging, and AI-powered recommendations for platform health.
+-   ** (NEW)**: A web interface for interacting with the Autonomous Tech Director.
+
 </code_architecture>
 
 <pending_tasks>
--   Complete the full implementation of the Live Estate Plan feature (Watchers, Engine, Actions, Proof).
--   Implement a complete Email System (confirmations, resets, notifications).
--   Implement full Subscription Management (for users to manage plans/billing).
--   Implement Sentry for frontend and backend observability.
--   Add uptime checks for site and API.
--   Add screenshots of the dashboard and a How it works section on the homepage.
--   Implement rate limits on public endpoints.
--   Final testing on actual deployed production environment (Vercel/Railway) as the preview environment remains problematic.
+- Complete the full implementation of the Email System (confirmations, resets, notifications for Live Estate Plan).
+- Implement full Subscription Management (for users to manage plans/billing beyond checkout).
+- Implement Sentry for frontend and backend observability.
+- Add uptime checks for site and API (partially covered by Autonomous Tech Director, but dedicated checks may be needed).
+- Add screenshots of the dashboard and a How it works section on the homepage.
+- Implement mobile responsiveness across all pages.
+- Final testing on actual deployed production environment (Vercel/Railway).
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was working on integrating a major new feature: the Live Estate Plan. This feature is designed to keep estate documents current with changing laws and personal life events. The system would monitor 50-state rules and user triggers, propose updates, then re-generate, sign, notarize, and re-hash documents on Polygon, maintaining an audit trail.
+Immediately before this summary request, the AI engineer was in the process of implementing the **Retrieval Augmented Generation (RAG) architecture** into the NexteraEstate platform. This critical enhancement aims to significantly improve the reliability and legal defensibility of the AI's legal guidance by providing source-verified, citation-backed responses.
 
-The AI engineer has completed the initial architectural setup for this feature:
--   A new backend file, , was created to house the core logic for the dynamic updates.
--   The main backend  was modified to integrate this new engine, likely setting up initial endpoints or services for it.
--   Three new frontend components were created:
-    -   
-    -   
-    -   
-    These components are intended to provide the user interface for managing the live estate plan, displaying update notifications, and configuring related settings.
+The work involved:
+1.  **Creating a new backend module**: A file named  was created to house the core logic for the RAG system. This module is responsible for retrieving relevant legal information and augmenting the LLM's prompt.
+2.  **Installing new dependencies**: The  file was updated to include , , and , which are essential libraries for embedding, similarity search, and other RAG functionalities. These were then installed.
+3.  **Integrating RAG into existing AI endpoints**: The  file was modified to utilize the new  within the existing bot endpoints, specifically  and . This ensures that AI responses from these bots are now grounded in legal sources.
+4.  **Adding a dedicated RAG endpoint**: A new API endpoint was added in  for direct testing and administrative use of the RAG system.
+5.  **Restarting the backend**: The backend service was restarted to load the new  and its integrations.
 
-This work followed extensive fixes to the application, including resolving numerous build errors, rectifying persistent connectivity issues (due to hardcoded URLs and  misconfigurations), integrating a professional logo with optimized rendering, migrating AI services to the cost-effective Emergent LLM key, and applying a significant styling/content overhaul to modernize the UI based on user feedback. The application is now positioned as having a professional design and all core features implemented, with a comprehensive deployment guide generated.
+The user acknowledged the benefits of the RAG system and its importance for legal protection. The immediate next step is to test the newly implemented RAG system to confirm its functionality. This follows prior successful implementations including critical security fixes (authentication), core functionality (will creation, PDF generation), and the deployment of an autonomous Tech Director.
 </current_work>
 
 <optional_next_step>
-Integrate the newly created Live Estate Plan components and backend logic into the main application flow, starting with the dashboard.
+Test the newly implemented RAG system to verify it's working correctly.
 </optional_next_step>

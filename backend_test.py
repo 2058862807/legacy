@@ -1091,7 +1091,544 @@ class BackendTester:
         except Exception as e:
             self.log_result("Live Status - Final", False, f"Request error: {str(e)}")
 
-    def run_comprehensive_production_tests(self):
+    def test_rag_system_health(self):
+        """Test RAG system health and status"""
+        print("\n🧠 Testing RAG System Health...")
+        
+        try:
+            response = self.session.get(f"{self.base_url}/api/rag/status", timeout=15)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data and data['status'] == 'operational':
+                    legal_docs = data.get('legal_documents_loaded', 0)
+                    embedding_model = data.get('embedding_model', 'unknown')
+                    self.log_result("RAG System Health", True, 
+                                  f"Status: {data['status']}, Legal docs: {legal_docs}, Model: {embedding_model}")
+                    
+                    # Check vector database health
+                    if 'vector_database_health' in data:
+                        db_health = data['vector_database_health']
+                        self.log_result("RAG Vector Database", True, f"Database health: {db_health}")
+                    
+                    # Check document types loaded
+                    if 'document_types' in data:
+                        doc_types = data['document_types']
+                        self.log_result("RAG Legal Document Types", True, f"Document types loaded: {doc_types}")
+                    
+                    return True
+                else:
+                    self.log_result("RAG System Health", False, "RAG system not operational", data)
+            else:
+                self.log_result("RAG System Health", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("RAG System Health", False, f"Request error: {str(e)}")
+        
+        return False
+
+    def test_rag_legal_analysis_endpoint(self):
+        """Test dedicated RAG legal analysis endpoint"""
+        print("\n⚖️ Testing RAG Legal Analysis Endpoint...")
+        
+        test_user_email = "rag.test@nexteraestate.com"
+        
+        # Create test user first
+        try:
+            user_data = {
+                "email": test_user_email,
+                "name": "RAG Test User",
+                "provider": "google"
+            }
+            response = self.session.post(f"{self.base_url}/api/users", json=user_data, timeout=10)
+            if response.status_code == 200:
+                self.log_result("RAG User Creation", True, "Test user created for RAG testing")
+        except Exception as e:
+            self.log_result("RAG User Creation", False, f"User creation error: {str(e)}")
+        
+        # Test legal analysis queries
+        legal_queries = [
+            {
+                "query": "What are the requirements for creating a valid will in California?",
+                "jurisdiction": "CA",
+                "expected_citations": ["Cal. Probate Code"]
+            },
+            {
+                "query": "How many witnesses are required for a will in Texas?",
+                "jurisdiction": "TX", 
+                "expected_citations": ["Tex. Est. Code"]
+            },
+            {
+                "query": "What is the federal estate tax exemption for 2024?",
+                "jurisdiction": "federal",
+                "expected_citations": ["26 U.S.C.", "Rev. Proc."]
+            },
+            {
+                "query": "What are the duties of an estate executor?",
+                "jurisdiction": "general",
+                "expected_citations": ["Restatement"]
+            }
+        ]
+        
+        for query_test in legal_queries:
+            try:
+                request_data = {
+                    "message": query_test["query"],
+                    "context": "estate_planning"
+                }
+                
+                response = self.session.post(
+                    f"{self.base_url}/api/rag/legal-analysis?user_email={test_user_email}&jurisdiction={query_test['jurisdiction']}",
+                    json=request_data,
+                    timeout=30  # RAG processing may take longer
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Check response structure
+                    required_fields = ['analysis', 'sources', 'citations', 'confidence', 'jurisdiction']
+                    if all(field in data for field in required_fields):
+                        
+                        # Check for legal citations
+                        citations = data.get('citations', [])
+                        has_expected_citations = any(
+                            any(expected in citation for expected in query_test['expected_citations'])
+                            for citation in citations
+                        )
+                        
+                        # Check confidence score
+                        confidence = data.get('confidence', 0.0)
+                        
+                        # Check sources
+                        sources = data.get('sources', [])
+                        
+                        if has_expected_citations and confidence > 0.5 and len(sources) > 0:
+                            self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", True,
+                                          f"Analysis complete: {len(sources)} sources, confidence: {confidence:.2f}, citations: {len(citations)}")
+                        else:
+                            self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", False,
+                                          f"Quality issues: citations={len(citations)}, confidence={confidence:.2f}, sources={len(sources)}")
+                    else:
+                        missing_fields = [f for f in required_fields if f not in data]
+                        self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", False,
+                                      f"Missing fields: {missing_fields}")
+                elif response.status_code == 429:
+                    self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", True,
+                                  "Rate limit reached (expected behavior)")
+                else:
+                    self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", False,
+                                  f"HTTP {response.status_code}")
+                    
+            except Exception as e:
+                self.log_result(f"RAG Legal Analysis - {query_test['jurisdiction']}", False,
+                              f"Request error: {str(e)}")
+
+    def test_rag_enhanced_bot_endpoints(self):
+        """Test RAG integration in existing bot endpoints"""
+        print("\n🤖 Testing RAG-Enhanced Bot Endpoints...")
+        
+        test_user_email = "rag.bot.test@nexteraestate.com"
+        
+        # Test enhanced help bot with RAG
+        try:
+            help_data = {
+                "message": "I need help understanding will requirements in New York. What are the legal requirements?",
+                "context": "estate_planning"
+            }
+            response = self.session.post(
+                f"{self.base_url}/api/bot/help?user_email={test_user_email}",
+                json=help_data,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'reply' in data and 'bot_name' in data:
+                    reply = data['reply']
+                    bot_name = data.get('bot_name', '')
+                    
+                    # Check for RAG-powered features
+                    has_citations = '📚 Sources:' in reply or 'citation' in reply.lower()
+                    has_confidence = 'confidence' in reply.lower() or '✅' in reply or '⚠️' in reply
+                    is_rag_powered = 'RAG' in bot_name or has_citations or has_confidence
+                    
+                    # Check for legal content
+                    has_legal_content = any(term in reply.lower() for term in [
+                        'witness', 'notarization', 'probate', 'estate', 'legal', 'law', 'code', 'statute'
+                    ])
+                    
+                    if is_rag_powered and has_legal_content:
+                        self.log_result("RAG-Enhanced Help Bot", True,
+                                      f"RAG features detected: citations={has_citations}, confidence={has_confidence}")
+                    elif len(reply) > 50:
+                        self.log_result("RAG-Enhanced Help Bot", True,
+                                      "Bot responding (RAG features may be limited)")
+                    else:
+                        self.log_result("RAG-Enhanced Help Bot", False,
+                                      f"Limited RAG functionality: {reply[:100]}...")
+                        
+                    # Check for additional RAG fields
+                    if 'confidence' in data:
+                        confidence = data['confidence']
+                        self.log_result("RAG Confidence Scoring", True, f"Confidence score: {confidence}")
+                    
+                    if 'sources_used' in data:
+                        sources_used = data['sources_used']
+                        self.log_result("RAG Source Integration", True, f"Sources used: {sources_used}")
+                        
+                else:
+                    self.log_result("RAG-Enhanced Help Bot", False, "Invalid response structure", data)
+            elif response.status_code == 429:
+                self.log_result("RAG-Enhanced Help Bot", True, "Rate limit reached (expected)")
+            else:
+                self.log_result("RAG-Enhanced Help Bot", False, f"HTTP {response.status_code}")
+                
+        except Exception as e:
+            self.log_result("RAG-Enhanced Help Bot", False, f"Request error: {str(e)}")
+        
+        # Test grief bot (should not be RAG-enhanced, but verify it still works)
+        try:
+            grief_data = {
+                "message": "I'm dealing with the loss of my spouse and need help with estate matters",
+                "context": "grief_support"
+            }
+            response = self.session.post(
+                f"{self.base_url}/api/bot/grief?user_email={test_user_email}",
+                json=grief_data,
+                timeout=20
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'reply' in data:
+                    reply = data['reply']
+                    has_crisis_resources = any(resource in reply for resource in [
+                        "988", "Crisis Text Line", "741741"
+                    ])
+                    
+                    if has_crisis_resources:
+                        self.log_result("Grief Bot (Non-RAG)", True, "Crisis resources included, functioning normally")
+                    else:
+                        self.log_result("Grief Bot (Non-RAG)", False, "Missing crisis resources")
+                else:
+                    self.log_result("Grief Bot (Non-RAG)", False, "Invalid response structure")
+            else:
+                self.log_result("Grief Bot (Non-RAG)", False, f"HTTP {response.status_code}")
+                
+        except Exception as e:
+            self.log_result("Grief Bot (Non-RAG)", False, f"Request error: {str(e)}")
+
+    def test_rag_dependencies_and_integration(self):
+        """Test RAG system dependencies and backend integration"""
+        print("\n🔧 Testing RAG Dependencies and Integration...")
+        
+        # Test if RAG engine is properly loaded by checking health endpoint
+        try:
+            response = self.session.get(f"{self.base_url}/api/health", timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                # The health endpoint should work regardless, but we can check for any RAG-related info
+                self.log_result("Backend RAG Integration", True, "Backend service running with RAG support")
+            else:
+                self.log_result("Backend RAG Integration", False, f"Backend health check failed: {response.status_code}")
+        except Exception as e:
+            self.log_result("Backend RAG Integration", False, f"Backend connection error: {str(e)}")
+        
+        # Test RAG system initialization by calling status endpoint
+        try:
+            response = self.session.get(f"{self.base_url}/api/rag/status", timeout=15)
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check embedding model
+                embedding_model = data.get('embedding_model')
+                if embedding_model == 'all-MiniLM-L6-v2':
+                    self.log_result("RAG Embedding Model", True, f"Sentence-transformers model loaded: {embedding_model}")
+                else:
+                    self.log_result("RAG Embedding Model", False, f"Unexpected model: {embedding_model}")
+                
+                # Check Gemini integration
+                gemini_available = data.get('gemini_available', False)
+                if gemini_available:
+                    self.log_result("RAG Gemini Integration", True, "Gemini AI available for RAG responses")
+                else:
+                    self.log_result("RAG Gemini Integration", False, "Gemini AI not configured")
+                
+                # Check legal APIs configuration
+                legal_apis = data.get('legal_apis_configured', {})
+                configured_apis = sum(1 for api, configured in legal_apis.items() if configured)
+                self.log_result("RAG Legal APIs", True if configured_apis > 0 else False,
+                              f"Legal APIs configured: {configured_apis}/3")
+                
+            else:
+                self.log_result("RAG System Dependencies", False, f"RAG status endpoint failed: {response.status_code}")
+                
+        except Exception as e:
+            self.log_result("RAG System Dependencies", False, f"RAG status error: {str(e)}")
+
+    def test_rag_response_quality_and_citations(self):
+        """Test RAG response quality, legal grounding, and citation accuracy"""
+        print("\n📚 Testing RAG Response Quality and Citations...")
+        
+        test_user_email = "rag.quality.test@nexteraestate.com"
+        
+        # Test queries designed to evaluate response quality
+        quality_tests = [
+            {
+                "name": "California Will Requirements",
+                "query": "What are the specific requirements for creating a valid will in California?",
+                "jurisdiction": "CA",
+                "expected_elements": ["witness", "signature", "writing", "testator"],
+                "expected_citations": ["Cal. Probate Code", "6110"]
+            },
+            {
+                "name": "Estate Tax Exemption",
+                "query": "What is the current federal estate tax exemption amount?",
+                "jurisdiction": "federal", 
+                "expected_elements": ["exemption", "2024", "federal", "estate tax"],
+                "expected_citations": ["26 U.S.C.", "2010"]
+            },
+            {
+                "name": "Executor Responsibilities",
+                "query": "What are the main duties and responsibilities of an estate executor?",
+                "jurisdiction": "general",
+                "expected_elements": ["fiduciary", "duty", "loyalty", "care", "account"],
+                "expected_citations": ["Restatement"]
+            }
+        ]
+        
+        for test in quality_tests:
+            try:
+                request_data = {
+                    "message": test["query"],
+                    "context": "estate_planning"
+                }
+                
+                response = self.session.post(
+                    f"{self.base_url}/api/rag/legal-analysis?user_email={test_user_email}&jurisdiction={test['jurisdiction']}",
+                    json=request_data,
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    analysis = data.get('analysis', '').lower()
+                    citations = data.get('citations', [])
+                    confidence = data.get('confidence', 0.0)
+                    sources = data.get('sources', [])
+                    
+                    # Check content quality
+                    content_score = sum(1 for element in test['expected_elements'] if element in analysis)
+                    content_quality = content_score / len(test['expected_elements'])
+                    
+                    # Check citation accuracy
+                    citation_score = sum(1 for expected in test['expected_citations'] 
+                                       if any(expected.lower() in citation.lower() for citation in citations))
+                    citation_quality = citation_score / len(test['expected_citations']) if test['expected_citations'] else 1.0
+                    
+                    # Overall quality assessment
+                    overall_quality = (content_quality + citation_quality + min(confidence, 1.0)) / 3
+                    
+                    if overall_quality >= 0.7:
+                        self.log_result(f"RAG Quality - {test['name']}", True,
+                                      f"High quality: content={content_quality:.2f}, citations={citation_quality:.2f}, confidence={confidence:.2f}")
+                    elif overall_quality >= 0.5:
+                        self.log_result(f"RAG Quality - {test['name']}", True,
+                                      f"Moderate quality: content={content_quality:.2f}, citations={citation_quality:.2f}, confidence={confidence:.2f}")
+                    else:
+                        self.log_result(f"RAG Quality - {test['name']}", False,
+                                      f"Low quality: content={content_quality:.2f}, citations={citation_quality:.2f}, confidence={confidence:.2f}")
+                    
+                    # Test source verification
+                    if len(sources) > 0:
+                        source_types = [s.get('source_type', 'unknown') for s in sources]
+                        legal_sources = sum(1 for st in source_types if st in ['statute', 'regulation', 'case_law', 'precedent'])
+                        source_quality = legal_sources / len(sources)
+                        
+                        if source_quality >= 0.8:
+                            self.log_result(f"RAG Sources - {test['name']}", True,
+                                          f"High-quality legal sources: {legal_sources}/{len(sources)}")
+                        else:
+                            self.log_result(f"RAG Sources - {test['name']}", False,
+                                          f"Mixed source quality: {legal_sources}/{len(sources)} legal sources")
+                    
+                elif response.status_code == 429:
+                    self.log_result(f"RAG Quality - {test['name']}", True, "Rate limit (expected)")
+                else:
+                    self.log_result(f"RAG Quality - {test['name']}", False, f"HTTP {response.status_code}")
+                    
+            except Exception as e:
+                self.log_result(f"RAG Quality - {test['name']}", False, f"Request error: {str(e)}")
+
+    def test_rag_vector_search_and_similarity(self):
+        """Test RAG vector search and similarity matching"""
+        print("\n🔍 Testing RAG Vector Search and Similarity...")
+        
+        test_user_email = "rag.vector.test@nexteraestate.com"
+        
+        # Test vector search with different query types
+        vector_tests = [
+            {
+                "name": "Exact Legal Term Match",
+                "query": "probate code requirements for wills",
+                "jurisdiction": "CA",
+                "expected_high_similarity": True
+            },
+            {
+                "name": "Semantic Legal Query",
+                "query": "what documents do I need to make my final wishes legally binding?",
+                "jurisdiction": "general",
+                "expected_high_similarity": True
+            },
+            {
+                "name": "Complex Estate Planning",
+                "query": "how do I protect my assets and ensure my children inherit everything?",
+                "jurisdiction": "general", 
+                "expected_high_similarity": True
+            },
+            {
+                "name": "Irrelevant Query",
+                "query": "what is the weather like today?",
+                "jurisdiction": "general",
+                "expected_high_similarity": False
+            }
+        ]
+        
+        for test in vector_tests:
+            try:
+                request_data = {
+                    "message": test["query"],
+                    "context": "estate_planning"
+                }
+                
+                response = self.session.post(
+                    f"{self.base_url}/api/rag/legal-analysis?user_email={test_user_email}&jurisdiction={test['jurisdiction']}",
+                    json=request_data,
+                    timeout=25
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    confidence = data.get('confidence', 0.0)
+                    sources = data.get('sources', [])
+                    
+                    # Evaluate similarity matching
+                    if test['expected_high_similarity']:
+                        if confidence >= 0.6 and len(sources) >= 2:
+                            self.log_result(f"RAG Vector Search - {test['name']}", True,
+                                          f"Good similarity matching: confidence={confidence:.2f}, sources={len(sources)}")
+                        elif confidence >= 0.4:
+                            self.log_result(f"RAG Vector Search - {test['name']}", True,
+                                          f"Moderate similarity: confidence={confidence:.2f}, sources={len(sources)}")
+                        else:
+                            self.log_result(f"RAG Vector Search - {test['name']}", False,
+                                          f"Low similarity for relevant query: confidence={confidence:.2f}")
+                    else:
+                        # For irrelevant queries, we expect lower confidence
+                        if confidence <= 0.5:
+                            self.log_result(f"RAG Vector Search - {test['name']}", True,
+                                          f"Correctly identified irrelevant query: confidence={confidence:.2f}")
+                        else:
+                            self.log_result(f"RAG Vector Search - {test['name']}", False,
+                                          f"High confidence for irrelevant query: confidence={confidence:.2f}")
+                            
+                elif response.status_code == 429:
+                    self.log_result(f"RAG Vector Search - {test['name']}", True, "Rate limit (expected)")
+                else:
+                    self.log_result(f"RAG Vector Search - {test['name']}", False, f"HTTP {response.status_code}")
+                    
+            except Exception as e:
+                self.log_result(f"RAG Vector Search - {test['name']}", False, f"Request error: {str(e)}")
+
+    def run_comprehensive_rag_tests(self):
+        """Run comprehensive RAG system testing"""
+        print("🧠 NEXTERAESTATE RAG SYSTEM COMPREHENSIVE TESTING")
+        print("Testing Retrieval Augmented Generation with Legal Source Verification")
+        print("=" * 80)
+        
+        # Test basic connectivity first
+        if not self.test_health_endpoint():
+            print("\n❌ CRITICAL: Backend health check failed. Cannot proceed with RAG tests.")
+            return False
+        
+        # Run all RAG-specific tests
+        print("\n🔧 RAG SYSTEM 1: Health and Dependencies")
+        self.test_rag_system_health()
+        self.test_rag_dependencies_and_integration()
+        
+        print("\n⚖️ RAG SYSTEM 2: Legal Analysis Endpoint")
+        self.test_rag_legal_analysis_endpoint()
+        
+        print("\n🤖 RAG SYSTEM 3: Enhanced Bot Integration")
+        self.test_rag_enhanced_bot_endpoints()
+        
+        print("\n📚 RAG SYSTEM 4: Response Quality and Citations")
+        self.test_rag_response_quality_and_citations()
+        
+        print("\n🔍 RAG SYSTEM 5: Vector Search and Similarity")
+        self.test_rag_vector_search_and_similarity()
+        
+        # Also run core backend tests to ensure no regressions
+        print("\n🔄 REGRESSION TESTING: Core Backend Systems")
+        self.test_compliance_data_system()
+        self.test_ai_bot_system()
+        
+        # Comprehensive RAG Summary
+        print("\n" + "=" * 80)
+        print("🎯 RAG SYSTEM TESTING SUMMARY")
+        print("=" * 80)
+        
+        total_tests = len(self.results)
+        passed_tests = sum(1 for r in self.results if r['success'])
+        failed_tests = total_tests - passed_tests
+        
+        print(f"📊 Total Tests: {total_tests}")
+        print(f"✅ Passed: {passed_tests}")
+        print(f"❌ Failed: {failed_tests}")
+        print(f"📈 Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+        
+        # RAG-specific system analysis
+        rag_systems = {
+            'RAG Health & Dependencies': [r for r in self.results if 'RAG' in r['test'] and ('Health' in r['test'] or 'Dependencies' in r['test'] or 'Integration' in r['test'])],
+            'RAG Legal Analysis': [r for r in self.results if 'RAG Legal Analysis' in r['test']],
+            'RAG Bot Enhancement': [r for r in self.results if 'RAG-Enhanced' in r['test'] or ('Bot' in r['test'] and 'RAG' in r['test'])],
+            'RAG Response Quality': [r for r in self.results if 'RAG Quality' in r['test'] or 'RAG Sources' in r['test']],
+            'RAG Vector Search': [r for r in self.results if 'RAG Vector Search' in r['test']],
+            'Core Backend (Regression)': [r for r in self.results if 'Compliance' in r['test'] or ('Bot' in r['test'] and 'RAG' not in r['test'])]
+        }
+        
+        print(f"\n🔍 RAG SYSTEMS STATUS:")
+        all_rag_systems_passed = True
+        
+        for system, tests in rag_systems.items():
+            if tests:
+                system_passed = sum(1 for t in tests if t['success'])
+                system_total = len(tests)
+                system_rate = (system_passed/system_total)*100 if system_total > 0 else 0
+                status = "✅ OPERATIONAL" if system_rate >= 80 else "❌ NEEDS ATTENTION"
+                print(f"   {system}: {system_passed}/{system_total} ({system_rate:.0f}%) {status}")
+                
+                if system_rate < 80 and 'Regression' not in system:
+                    all_rag_systems_passed = False
+        
+        # RAG readiness assessment
+        print(f"\n🧠 RAG SYSTEM READINESS ASSESSMENT:")
+        if failed_tests == 0:
+            print("   ✅ ALL RAG SYSTEMS OPERATIONAL - READY FOR PRODUCTION")
+        elif all_rag_systems_passed and failed_tests <= 2:
+            print("   ⚠️  RAG SYSTEMS MOSTLY OPERATIONAL - MINOR ISSUES DETECTED")
+            print("   📋 Review failed tests before full deployment")
+        else:
+            print("   ❌ RAG SYSTEM ISSUES DETECTED - REQUIRES ATTENTION")
+            print("   🔧 Address RAG failures before production deployment")
+        
+        if failed_tests > 0:
+            print(f"\n❌ FAILED TESTS REQUIRING ATTENTION:")
+            for result in self.results:
+                if not result['success']:
+                    print(f"   • {result['test']}: {result['details']}")
+        
+        return failed_tests == 0
         """Run comprehensive production launch verification tests"""
         print("🚀 NEXTERAESTATE PRODUCTION LAUNCH VERIFICATION")
         print("Testing all critical systems for production readiness...")

@@ -669,34 +669,58 @@ async def get_payment_status(session_id: str = Query(...)):
 # Bot endpoints
 @app.post("/api/bot/help")
 async def help_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):
-    """Esquire AI help bot endpoint"""
+    """Esquire AI help bot endpoint with RAG-powered legal guidance"""
     try:
         # Check rate limit
         if not check_rate_limit(user_email, db):
             raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
         
-        system_prompt = """You are Esquire AI, NexteraEstate's specialized AI lawyer chatbot designed to provide expert guidance on estate planning, wills, trusts, and legal document preparation.
-
-Your role:
-- Provide accurate, helpful information about estate planning
-- Guide users through creating wills, trusts, and related documents
-- Explain legal concepts in simple terms
-- Always remind users that complex situations require consultation with a licensed attorney
-- Keep responses under 256 tokens
-- Be professional, empathetic, and knowledgeable
-
-Important disclaimers:
-- You provide general legal information, not legal advice
-- For complex situations, recommend consulting with a licensed attorney
-- State laws vary, always verify local requirements"""
+        logger.info(f"Esquire AI RAG query from {user_email}: {request.message[:50]}...")
         
-        ai_response = await get_ai_response(request.message, system_prompt)
-        
-        return {
-            "reply": ai_response,
-            "escalate": False,
-            "bot_name": "Esquire AI"
-        }
+        # Use RAG engine for legally-grounded responses
+        try:
+            rag_response = await generate_legal_guidance(
+                query=request.message,
+                jurisdiction="general"  # Could be enhanced with user's state
+            )
+            
+            # Enhanced response with source verification
+            ai_response = rag_response.response
+            
+            # Add source citations if available
+            if rag_response.citations:
+                citations_text = "\n\n📚 Sources: " + ", ".join(rag_response.citations[:3])
+                ai_response += citations_text
+            
+            # Add confidence indicator
+            if rag_response.confidence > 0.8:
+                confidence_indicator = "\n\n✅ High confidence response based on verified legal sources."
+            elif rag_response.confidence > 0.6:
+                confidence_indicator = "\n\n⚠️ Moderate confidence - consider consulting an attorney for your specific situation."
+            else:
+                confidence_indicator = "\n\n⚠️ Limited confidence - strongly recommend consulting a licensed attorney."
+                
+            ai_response += confidence_indicator
+            
+            return {
+                "reply": ai_response,
+                "escalate": rag_response.confidence < 0.5,
+                "bot_name": "Esquire AI (RAG-Powered)",
+                "confidence": rag_response.confidence,
+                "sources_used": len(rag_response.sources),
+                "citations": rag_response.citations[:3]
+            }
+            
+        except Exception as rag_error:
+            logger.error(f"RAG engine error: {rag_error}")
+            # Fallback to basic response
+            return {
+                "reply": "I'm here to help with your estate planning questions, but I'm having trouble accessing my legal knowledge base right now. For immediate assistance, please contact our support team or consult with a licensed attorney.",
+                "escalate": True,
+                "bot_name": "Esquire AI",
+                "error": "RAG system temporarily unavailable"
+            }
+            
     except HTTPException:
         raise
     except Exception as e:

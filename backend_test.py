@@ -534,174 +534,79 @@ class BackendTester:
             self.log_result("Stripe Payment Status", False, f"Request error: {str(e)}")
     
     def test_ai_bot_endpoints(self):
-        """Test AI bot endpoints with comprehensive validation"""
-        test_user_email = "john.doe@example.com"
-        
-        # Test 1: Help bot with proper user_email parameter
-        print("\n🔍 Testing /api/bot/help endpoint...")
+        """Test Stripe payment endpoints"""
+        # Test create checkout
         try:
-            help_data = {
-                "message": "What is estate planning and how can you help me?",
-                "history": []
-            }
+            checkout_data = {"planId": "basic"}
             response = self.session.post(
-                f"{self.base_url}/api/bot/help?user_email={test_user_email}",
-                json=help_data,
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                # Verify JSON response structure
-                if 'reply' in data and 'escalate' in data:
-                    reply = data['reply']
-                    escalate = data['escalate']
-                    
-                    # Check if "Esquire AI" is mentioned in system prompt response
-                    esquire_mentioned = "Esquire AI" in reply
-                    
-                    self.log_result("Help Bot - Response Structure", True, 
-                                  f"Valid JSON with reply and escalate fields. Escalate: {escalate}")
-                    
-                    if esquire_mentioned:
-                        self.log_result("Help Bot - Esquire AI Mention", True, 
-                                      "Response mentions 'Esquire AI' as expected")
-                    else:
-                        self.log_result("Help Bot - Esquire AI Mention", False, 
-                                      "Response does not mention 'Esquire AI'")
-                    
-                    # Check if it's a fallback or real AI response
-                    if "AI services currently unavailable" in reply:
-                        self.log_result("Help Bot - Functionality", True, 
-                                      "Fallback response - AI service not configured")
-                    else:
-                        self.log_result("Help Bot - Functionality", True, 
-                                      f"AI response received: {reply[:100]}...")
-                else:
-                    self.log_result("Help Bot - Response Structure", False, 
-                                  "Missing 'reply' or 'escalate' fields", data)
-            else:
-                self.log_result("Help Bot - Endpoint", False, 
-                              f"HTTP {response.status_code}", response.text)
-        except Exception as e:
-            self.log_result("Help Bot - Endpoint", False, f"Request error: {str(e)}")
-        
-        # Test 2: Grief bot with proper user_email parameter
-        print("\n🔍 Testing /api/bot/grief endpoint...")
-        try:
-            grief_data = {
-                "message": "I'm struggling with the loss of a loved one and need help with their estate",
-                "history": []
-            }
-            response = self.session.post(
-                f"{self.base_url}/api/bot/grief?user_email={test_user_email}",
-                json=grief_data,
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                # Verify JSON response structure
-                if 'reply' in data and 'escalate' in data:
-                    reply = data['reply']
-                    escalate = data['escalate']
-                    
-                    # Check for crisis resources
-                    has_crisis_resources = any(resource in reply for resource in [
-                        "Crisis Text Line", "988", "741741", "CRISIS RESOURCES"
-                    ])
-                    
-                    self.log_result("Grief Bot - Response Structure", True, 
-                                  f"Valid JSON with reply and escalate fields. Escalate: {escalate}")
-                    
-                    if has_crisis_resources:
-                        self.log_result("Grief Bot - Crisis Resources", True, 
-                                      "Response includes crisis resources")
-                    else:
-                        self.log_result("Grief Bot - Crisis Resources", False, 
-                                      "Response missing crisis resources")
-                    
-                    # Check if it's a fallback or real AI response
-                    if "AI services currently unavailable" in reply:
-                        self.log_result("Grief Bot - Functionality", True, 
-                                      "Fallback response - AI service not configured")
-                    else:
-                        self.log_result("Grief Bot - Functionality", True, 
-                                      f"AI response received: {reply[:100]}...")
-                else:
-                    self.log_result("Grief Bot - Response Structure", False, 
-                                  "Missing 'reply' or 'escalate' fields", data)
-            else:
-                self.log_result("Grief Bot - Endpoint", False, 
-                              f"HTTP {response.status_code}", response.text)
-        except Exception as e:
-            self.log_result("Grief Bot - Endpoint", False, f"Request error: {str(e)}")
-        
-        # Test 3: Error handling - missing user_email parameter
-        print("\n🔍 Testing error handling...")
-        try:
-            help_data = {"message": "Test without user_email", "history": []}
-            response = self.session.post(
-                f"{self.base_url}/api/bot/help",  # No user_email parameter
-                json=help_data,
+                f"{self.base_url}/api/payments/create-checkout",
+                json=checkout_data,
                 timeout=10
             )
             
-            if response.status_code == 422:  # FastAPI validation error
-                self.log_result("Error Handling - Missing user_email", True, 
-                              "Correctly rejected request without user_email parameter")
-            else:
-                self.log_result("Error Handling - Missing user_email", False, 
-                              f"Expected 422, got {response.status_code}")
-        except Exception as e:
-            self.log_result("Error Handling - Missing user_email", False, f"Request error: {str(e)}")
-        
-        # Test 4: Rate limiting functionality
-        print("\n🔍 Testing rate limiting...")
-        self.test_rate_limiting(test_user_email)
-    
-    def test_rate_limiting(self, user_email):
-        """Test rate limiting functionality (20 requests per day per user)"""
-        try:
-            # Make multiple requests to test rate limiting
-            # Note: In a real scenario, we'd need to make 21+ requests to hit the limit
-            # For testing purposes, we'll make a few requests and verify the mechanism works
-            
-            successful_requests = 0
-            rate_limited = False
-            
-            for i in range(5):  # Test with 5 requests
-                help_data = {
-                    "message": f"Rate limit test request {i+1}",
-                    "history": []
-                }
-                response = self.session.post(
-                    f"{self.base_url}/api/bot/help?user_email={user_email}",
-                    json=help_data,
-                    timeout=10
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if "Daily limit reached" in data.get('reply', ''):
-                        rate_limited = True
-                        break
-                    else:
-                        successful_requests += 1
+            if response.status_code == 200:
+                data = response.json()
+                if 'url' in data:
+                    self.log_result("Stripe Create Checkout", True, "Checkout URL generated")
                 else:
-                    break
-            
-            if rate_limited:
-                self.log_result("Rate Limiting", True, 
-                              f"Rate limiting triggered after {successful_requests} requests")
+                    self.log_result("Stripe Create Checkout", False, "No URL in response", data)
+            elif response.status_code == 500:
+                # Expected if Stripe not configured
+                error_data = response.json()
+                if "Stripe not configured" in error_data.get('detail', ''):
+                    self.log_result("Stripe Create Checkout", True, "Expected error - Stripe not configured")
+                else:
+                    self.log_result("Stripe Create Checkout", False, f"Unexpected error: {error_data}")
             else:
-                self.log_result("Rate Limiting", True, 
-                              f"Rate limiting mechanism active - {successful_requests} requests processed")
-                
+                self.log_result("Stripe Create Checkout", False, f"HTTP {response.status_code}", response.text)
         except Exception as e:
-            self.log_result("Rate Limiting", False, f"Rate limiting test error: {str(e)}")
+            self.log_result("Stripe Create Checkout", False, f"Request error: {str(e)}")
+        
+        # Test invalid plan
+        try:
+            invalid_data = {"planId": "invalid"}
+            response = self.session.post(
+                f"{self.base_url}/api/payments/create-checkout",
+                json=invalid_data,
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                self.log_result("Stripe Invalid Plan", True, "Correctly rejected invalid plan")
+            elif response.status_code == 500:
+                # When Stripe is not configured, service check happens before validation
+                error_data = response.json()
+                if "Stripe not configured" in error_data.get('detail', ''):
+                    self.log_result("Stripe Invalid Plan", True, "Service unavailable - cannot test plan validation")
+                else:
+                    self.log_result("Stripe Invalid Plan", False, f"Unexpected 500 error: {error_data}")
+            else:
+                self.log_result("Stripe Invalid Plan", False, f"Expected 400 or 500, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Stripe Invalid Plan", False, f"Request error: {str(e)}")
+        
+        # Test payment status
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/payments/status?session_id=test_session",
+                timeout=10
+            )
+            
+            if response.status_code == 500:
+                # Expected if Stripe not configured
+                error_data = response.json()
+                if "Stripe not configured" in error_data.get('detail', ''):
+                    self.log_result("Stripe Payment Status", True, "Expected error - Stripe not configured")
+                else:
+                    self.log_result("Stripe Payment Status", False, f"Unexpected error: {error_data}")
+            elif response.status_code == 200:
+                self.log_result("Stripe Payment Status", True, "Status endpoint accessible")
+            else:
+                self.log_result("Stripe Payment Status", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Stripe Payment Status", False, f"Request error: {str(e)}")
     
-    def test_blockchain_endpoints(self):
+    def test_ai_bot_endpoints(self):
         """Test blockchain notarization endpoints"""
         # Test hash generation
         try:

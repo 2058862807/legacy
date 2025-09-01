@@ -482,24 +482,34 @@ async def generate_will_pdf(will_id: str, db: Session = Depends(get_db)):
         
         # Generate PDF
         pdf_generator = WillPDFGenerator()
-        pdf_content = pdf_generator.generate_will_pdf(
+        pdf_file_path = pdf_generator.generate_will_pdf(
             will_data={
+                'id': will.id,
                 'state': will.state,
                 'personal_info': will.personal_info,
                 'beneficiaries': will.beneficiaries,
                 'assets': will.assets,
-                'witnesses': will.witnesses,
-                'executor': will.executor
+                'executors': will.executors if hasattr(will, 'executors') else [],
+                'bequests': will.bequests if hasattr(will, 'bequests') else []
             },
             user_data={
                 'name': user.name,
-                'email': user.email
+                'email': user.email,
+                'state': user.state or will.state
             },
             compliance_data=compliance_data
         )
         
+        # Read the PDF file and return as streaming response
+        with open(pdf_file_path, 'rb') as pdf_file:
+            pdf_content = pdf_file.read()
+        
+        # Clean up temp file
+        os.remove(pdf_file_path)
+        
+        from io import BytesIO
         return StreamingResponse(
-            pdf_content,
+            BytesIO(pdf_content),
             media_type="application/pdf",
             headers={"Content-Disposition": f"attachment; filename=will_{will_id}.pdf"}
         )

@@ -427,7 +427,7 @@ class BackendTester:
         """Test user retrieval by email"""
         try:
             response = self.session.get(
-                f"{self.base_url}/api/users/{user_email}",
+                f"{self.base_url}/api/users?email={user_email}",  # Changed from /users/{email} to /users?email=
                 timeout=10
             )
             

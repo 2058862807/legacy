@@ -124,6 +124,7 @@ class WillResponse(BaseModel):
 
 class PaymentRequest(BaseModel):
     plan: str
+    billing_period: str = "monthly"  # monthly or yearly
     success_url: str = "http://localhost:3000/checkout/success"
     cancel_url: str = "http://localhost:3000/checkout/cancel"
 

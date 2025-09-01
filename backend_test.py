@@ -452,9 +452,9 @@ class BackendTester:
             
             if response.status_code == 200:
                 data = response.json()
-                if 'total_documents' in data and 'total_wills' in data:
+                if 'wills_count' in data and 'documents_count' in data:  # Changed field names to match API
                     self.log_result("Dashboard Stats", True, 
-                                  f"Stats: {data['total_documents']} docs, {data['total_wills']} wills")
+                                  f"Stats: {data['documents_count']} docs, {data['wills_count']} wills")
                 else:
                     self.log_result("Dashboard Stats", False, "Invalid stats format", data)
             else:

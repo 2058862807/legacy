@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import NexteraLogo from './NexteraLogo'
 
 export default function Footer() {
   return (
@@ -9,34 +10,21 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <img 
-                src="/nextera-logo.png" 
-                alt="NexteraEstate Logo" 
-                className="w-8 h-8 object-contain"
-                style={{
-                  imageRendering: 'crisp-edges',
-                  imageRendering: '-webkit-optimize-contrast',
-                }}
-              />
+              <NexteraLogo size="md" />
               <span className="text-xl font-bold">NexteraEstate™</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
-              Secure your legacy with cutting-edge technology, AI guidance, and blockchain security. 
-              Your trusted partner in estate planning.
+              Estate planning made simple. Create your plan, notarize on Polygon, meet your state rules.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <span className="sr-only">Facebook</span>
-                📘
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <span className="sr-only">Twitter</span>
-                🐦
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <span className="sr-only">LinkedIn</span>
-                💼
-              </a>
+            <div className="space-y-2 text-sm text-gray-400">
+              <p>NexteraEstate LLC</p>
+              <p>1234 Estate Avenue, Suite 100</p>
+              <p>San Francisco, CA 94102</p>
+              <p>
+                <a href="mailto:support@nexteraestate.com" className="hover:text-white transition-colors">
+                  support@nexteraestate.com
+                </a>
+              </p>
             </div>
           </div>
 
@@ -66,13 +54,18 @@ export default function Footer() {
                   Compliance Center
                 </Link>
               </li>
+              <li>
+                <Link href="/pricing" className="text-gray-300 hover:text-white transition-colors">
+                  Pricing
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Legal & Support */}
           <div>
             <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">
-              Legal
+              Legal & Support
             </h3>
             <ul className="space-y-3">
               <li>
@@ -86,14 +79,19 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
-                  Contact Support
+                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
+                  Security
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-300 hover:text-white transition-colors">
-                  Pricing
+                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">
+                  FAQ
                 </Link>
+              </li>
+              <li>
+                <a href="mailto:support@nexteraestate.com" className="text-gray-300 hover:text-white transition-colors">
+                  Support
+                </a>
               </li>
             </ul>
           </div>

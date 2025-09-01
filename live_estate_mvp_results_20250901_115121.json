@@ -1,0 +1,96 @@
+{
+  "timestamp": "2025-09-01T11:51:21.280481",
+  "backend_url": "http://localhost:8001",
+  "test_user_email": "live.estate.mvp.test@nexteraestate.com",
+  "total_tests": 12,
+  "passed_tests": 10,
+  "failed_tests": 2,
+  "success_rate": 83.33333333333334,
+  "mvp_ready": false,
+  "test_results": [
+    {
+      "test": "Test User Setup",
+      "success": true,
+      "details": "Test user created successfully",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:13.981142"
+    },
+    {
+      "test": "Initial Live Status",
+      "success": true,
+      "details": "Correct initial status: not_started",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:13.999142"
+    },
+    {
+      "test": "Life Event - Marriage",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:14.018491"
+    },
+    {
+      "test": "Life Event - Child Birth",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:14.033284"
+    },
+    {
+      "test": "Life Event - State Move",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:14.046502"
+    },
+    {
+      "test": "Life Event - Business Ownership",
+      "success": true,
+      "details": "Event recorded with correct medium impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:14.058218"
+    },
+    {
+      "test": "Life Event - Home Purchase",
+      "success": true,
+      "details": "Event recorded with correct medium impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:14.070495"
+    },
+    {
+      "test": "AI Proposal Generation",
+      "success": true,
+      "details": "Generated 5 proposals from life events",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:21.253004"
+    },
+    {
+      "test": "Status After Proposals",
+      "success": false,
+      "details": "No pending proposals found after generation",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:21.258712"
+    },
+    {
+      "test": "Proposal Acceptance",
+      "success": false,
+      "details": "HTTP 500",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:21.266993"
+    },
+    {
+      "test": "Proposal Rejection",
+      "success": true,
+      "details": "Proposal correctly rejected",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:21.275076"
+    },
+    {
+      "test": "Final Live Status",
+      "success": true,
+      "details": "Final status: not_started, version: none",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:51:21.280231"
+    }
+  ]
+}

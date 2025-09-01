@@ -1,0 +1,96 @@
+{
+  "timestamp": "2025-09-01T11:53:20.443110",
+  "backend_url": "http://localhost:8001",
+  "test_user_email": "live.estate.mvp.test@nexteraestate.com",
+  "total_tests": 12,
+  "passed_tests": 12,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "mvp_ready": true,
+  "test_results": [
+    {
+      "test": "Test User Setup",
+      "success": true,
+      "details": "Test user created successfully",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.462694"
+    },
+    {
+      "test": "Initial Live Status",
+      "success": true,
+      "details": "Status retrieved: action_needed",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.479638"
+    },
+    {
+      "test": "Life Event - Marriage",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.498241"
+    },
+    {
+      "test": "Life Event - Child Birth",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.509888"
+    },
+    {
+      "test": "Life Event - State Move",
+      "success": true,
+      "details": "Event recorded with correct high impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.520983"
+    },
+    {
+      "test": "Life Event - Business Ownership",
+      "success": true,
+      "details": "Event recorded with correct medium impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.532579"
+    },
+    {
+      "test": "Life Event - Home Purchase",
+      "success": true,
+      "details": "Event recorded with correct medium impact",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:13.544219"
+    },
+    {
+      "test": "AI Proposal Generation",
+      "success": true,
+      "details": "Generated 5 proposals from life events",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:20.392933"
+    },
+    {
+      "test": "Status After Proposals",
+      "success": true,
+      "details": "Status: action_needed, Pending proposals: 17",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:20.398440"
+    },
+    {
+      "test": "Proposal Acceptance",
+      "success": true,
+      "details": "Proposal approved, version: 1.1, tx: b405f0d197a11f20...",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:20.430828"
+    },
+    {
+      "test": "Proposal Rejection",
+      "success": true,
+      "details": "Proposal correctly rejected",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:20.437830"
+    },
+    {
+      "test": "Final Live Status",
+      "success": true,
+      "details": "Final status: action_needed, version: 1.1",
+      "response_data": null,
+      "timestamp": "2025-09-01T11:53:20.442862"
+    }
+  ]
+}

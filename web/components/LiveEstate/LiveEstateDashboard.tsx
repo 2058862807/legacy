@@ -15,16 +15,15 @@ interface UpdateProposal {
   created_at: string
 }
 
-interface AuditTrail {
-  user_id: string
-  monitoring_since: string
-  total_updates: number
-  legal_changes_tracked: number
-  profile_changes_detected: number
-  documents_current: boolean
-  next_scheduled_review: string
-  compliance_status: string
-  blockchain_verifications: any[]
+interface LiveEstateStatus {
+  status: string
+  current_version?: string
+  last_updated?: string
+  blockchain_hash?: string
+  blockchain_url?: string
+  pending_proposals: number
+  recent_events: number
+  message: string
 }
 
 export default function LiveEstateDashboard() {

@@ -810,51 +810,96 @@ class BackendTester:
         except Exception as e:
             self.log_result("Error Handling - Missing Fields", False, f"Request error: {str(e)}")
     
-    def run_all_tests(self):
-        """Run focused AI bot endpoint tests"""
-        print("=" * 60)
-        print("NexteraEstate AI Bot Endpoints Test Suite")
-        print("=" * 60)
+    def run_comprehensive_production_tests(self):
+        """Run comprehensive production launch verification tests"""
+        print("🚀 NEXTERAESTATE PRODUCTION LAUNCH VERIFICATION")
+        print("Testing all critical systems for production readiness...")
+        print("=" * 80)
         
         # Test basic connectivity first
         if not self.test_health_endpoint():
             print("\n❌ CRITICAL: Backend health check failed. Cannot proceed with other tests.")
             return False
         
-        print("\n🤖 Testing AI Bot Endpoints (Primary Focus)...")
-        self.test_ai_bot_endpoints()
+        # Run all critical system tests
+        print("\n📋 CRITICAL SYSTEM 1: Compliance Data System")
+        self.test_compliance_data_system()
         
-        print("\n🔄 Testing Additional Backend Functionality...")
-        self.test_stripe_endpoints()
+        print("\n💳 CRITICAL SYSTEM 2: Payment System")  
+        self.test_payment_system()
+        
+        print("\n🤖 CRITICAL SYSTEM 3: AI Bot System")
+        self.test_ai_bot_system()
+        
+        print("\n📄 CRITICAL SYSTEM 4: Estate Planning Features")
+        self.test_estate_planning_features()
+        
+        print("\n📁 CRITICAL SYSTEM 5: Document Management")
+        self.test_document_management()
+        
+        print("\n👤 CRITICAL SYSTEM 6: Authentication & User Management")
+        self.test_authentication_user_management()
+        
+        print("\n🔗 ADDITIONAL VERIFICATION: Blockchain Notarization")
         self.test_blockchain_endpoints()
+        
+        print("\n⚠️  ERROR HANDLING VERIFICATION")
         self.test_error_handling()
         
-        # Summary
-        print("\n" + "=" * 60)
-        print("TEST SUMMARY")
-        print("=" * 60)
+        # Comprehensive Summary
+        print("\n" + "=" * 80)
+        print("🎯 PRODUCTION LAUNCH VERIFICATION SUMMARY")
+        print("=" * 80)
         
         total_tests = len(self.results)
         passed_tests = sum(1 for r in self.results if r['success'])
         failed_tests = total_tests - passed_tests
         
-        print(f"Total Tests: {total_tests}")
-        print(f"Passed: {passed_tests}")
-        print(f"Failed: {failed_tests}")
-        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+        print(f"📊 Total Tests: {total_tests}")
+        print(f"✅ Passed: {passed_tests}")
+        print(f"❌ Failed: {failed_tests}")
+        print(f"📈 Success Rate: {(passed_tests/total_tests)*100:.1f}%")
         
-        # Focus on AI bot test results
-        ai_bot_tests = [r for r in self.results if 'Bot' in r['test'] or 'Rate Limiting' in r['test']]
-        ai_passed = sum(1 for r in ai_bot_tests if r['success'])
-        ai_total = len(ai_bot_tests)
+        # Critical system analysis
+        critical_systems = {
+            'Compliance': [r for r in self.results if 'Compliance' in r['test']],
+            'Payment': [r for r in self.results if 'Stripe' in r['test'] or 'Payment' in r['test']],
+            'AI Bot': [r for r in self.results if 'Bot' in r['test'] or 'AI' in r['test']],
+            'Estate Planning': [r for r in self.results if 'Will' in r['test'] or 'PDF' in r['test'] or 'Pet Trust' in r['test']],
+            'Document Management': [r for r in self.results if 'Document' in r['test']],
+            'Authentication': [r for r in self.results if 'User' in r['test'] or 'Dashboard' in r['test']]
+        }
         
-        print(f"\n🤖 AI Bot Tests: {ai_passed}/{ai_total} passed")
+        print(f"\n🔍 CRITICAL SYSTEMS STATUS:")
+        all_critical_passed = True
+        
+        for system, tests in critical_systems.items():
+            if tests:
+                system_passed = sum(1 for t in tests if t['success'])
+                system_total = len(tests)
+                system_rate = (system_passed/system_total)*100 if system_total > 0 else 0
+                status = "✅ OPERATIONAL" if system_rate >= 80 else "❌ NEEDS ATTENTION"
+                print(f"   {system}: {system_passed}/{system_total} ({system_rate:.0f}%) {status}")
+                
+                if system_rate < 80:
+                    all_critical_passed = False
+        
+        # Production readiness assessment
+        print(f"\n🚀 PRODUCTION READINESS ASSESSMENT:")
+        if failed_tests == 0:
+            print("   ✅ ALL SYSTEMS OPERATIONAL - READY FOR PRODUCTION LAUNCH")
+        elif all_critical_passed and failed_tests <= 3:
+            print("   ⚠️  MOSTLY OPERATIONAL - MINOR ISSUES DETECTED")
+            print("   📋 Review failed tests before launch")
+        else:
+            print("   ❌ CRITICAL ISSUES DETECTED - NOT READY FOR PRODUCTION")
+            print("   🔧 Address critical failures before launch")
         
         if failed_tests > 0:
-            print("\n❌ FAILED TESTS:")
+            print(f"\n❌ FAILED TESTS REQUIRING ATTENTION:")
             for result in self.results:
                 if not result['success']:
-                    print(f"  - {result['test']}: {result['details']}")
+                    print(f"   • {result['test']}: {result['details']}")
         
         return failed_tests == 0
 

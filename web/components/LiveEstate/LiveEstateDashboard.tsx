@@ -65,7 +65,10 @@ export default function LiveEstateDashboard() {
 
   const handleApproveUpdate = async (proposalId: string, approve: boolean) => {
     try {
-      const response = await fetch('/api/live-estate/approve-update', {
+      const userEmail = session?.user?.email
+      if (!userEmail) return
+
+      const response = await fetch(`/api/live/accept?user_email=${encodeURIComponent(userEmail)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

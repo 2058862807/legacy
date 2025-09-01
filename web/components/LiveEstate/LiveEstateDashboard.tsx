@@ -29,7 +29,7 @@ interface LiveEstateStatus {
 export default function LiveEstateDashboard() {
   const { data: session } = useSession()
   const [proposals, setProposals] = useState<UpdateProposal[]>([])
-  const [auditTrail, setAuditTrail] = useState<AuditTrail | null>(null)
+  const [liveStatus, setLiveStatus] = useState<LiveEstateStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

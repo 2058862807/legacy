@@ -156,25 +156,25 @@ export default function LiveEstateDashboard() {
         {/* Status Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">{auditTrail?.total_updates || 0}</div>
-            <div className="text-sm text-gray-600">Updates Applied</div>
+            <div className="text-2xl font-bold text-blue-600">{liveStatus?.current_version || '0'}</div>
+            <div className="text-sm text-gray-600">Current Version</div>
           </div>
           
           <div className="bg-white rounded-lg p-4 border border-gray-200">
             <div className="text-2xl font-bold text-green-600">
-              {auditTrail?.documents_current ? '✓' : '⚠️'}
+              {liveStatus?.status === 'current' ? '✓' : liveStatus?.status === 'action_needed' ? '⚠️' : '○'}
             </div>
-            <div className="text-sm text-gray-600">Documents Current</div>
+            <div className="text-sm text-gray-600">Status</div>
           </div>
           
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-purple-600">{proposals.length}</div>
+            <div className="text-2xl font-bold text-purple-600">{liveStatus?.pending_proposals || 0}</div>
             <div className="text-sm text-gray-600">Pending Updates</div>
           </div>
           
           <div className="bg-white rounded-lg p-4 border border-gray-200">
-            <div className="text-2xl font-bold text-orange-600">51</div>
-            <div className="text-sm text-gray-600">States Monitored</div>
+            <div className="text-2xl font-bold text-orange-600">{liveStatus?.recent_events || 0}</div>
+            <div className="text-sm text-gray-600">Recent Events</div>
           </div>
         </div>
       </div>

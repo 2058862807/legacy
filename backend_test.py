@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-NexteraEstate Backend API Testing Suite - PDF GENERATION & DOWNLOAD FLOW TESTING
-Critical Priority #3: Test PDF Generation & Download Flow
-Verify that users can successfully generate and download PDF documents for their wills after creation.
+NexteraEstate Backend API Testing Suite - RAG SYSTEM TESTING
+RAG (Retrieval Augmented Generation) System Testing Initiative
+Testing newly implemented RAG architecture with source-verified, citation-backed legal guidance.
 """
 
 import requests

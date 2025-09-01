@@ -117,6 +117,9 @@ export default function DashboardPage() {
           <ComplianceBadge />
         </div>
 
+        {/* Live Estate Banner */}
+        <LiveEstateBanner />
+
         {/* Stats Cards */}
         {error && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">

@@ -6,10 +6,11 @@ alembic==1.13.3
 pydantic==2.9.2
 python-dotenv==1.0.1
 stripe==11.5.0
-openai==1.56.1
+openai==1.99.9
 google-generativeai==0.8.3
-httpx>=0.23.0,<0.28.0
+httpx>=0.23.0,<0.29.0
 eth-account==0.13.4
 web3==7.6.0
 reportlab==4.4.3
 fpdf2==2.8.4
+emergentintegrations

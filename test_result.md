@@ -476,6 +476,21 @@ The will creation functionality is technically working correctly, but has **CRIT
 
 **CRITICAL RECOMMENDATION:** DO NOT DEPLOY TO PRODUCTION until authentication is properly implemented on all will creation pages and API endpoints.
 
+## Current Testing Focus (December 2024)
+
+**RAG System Testing Initiative:**
+- Testing newly implemented Retrieval Augmented Generation (RAG) architecture
+- RAG system provides source-verified, citation-backed legal guidance 
+- Integrated into existing bot endpoints (/api/bot/help and /api/bot/grief)
+- New dedicated RAG endpoint added for testing purposes
+- Backend restarted to load new rag_engine and integrations
+
+**Testing Objectives:**
+1. Verify RAG system functionality and integration
+2. Test source verification and citation capabilities
+3. Validate improved AI response quality with legal grounding
+4. Ensure proper integration with existing bot endpoints
+
 ## Agent Communication
 
 **From Testing Agent (CRITICAL SECURITY VULNERABILITIES DISCOVERED - September 1, 2025):**

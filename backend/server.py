@@ -510,14 +510,33 @@ async def generate_will_pdf(will_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/pet-trust/pdf")
-async def generate_pet_trust_pdf(request: dict, db: Session = Depends(get_db)):
+async def generate_pet_trust_pdf(request: dict, user_email: str = Query(...), db: Session = Depends(get_db)):
     """Generate PDF for pet trust"""
     try:
-        pdf_generator = WillPDFGenerator()
-        pdf_content = pdf_generator.generate_pet_trust_pdf(request)
+        # Get user data
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
         
+        user_data = {
+            'name': user.name,
+            'email': user.email,
+            'state': user.state or 'CA'
+        }
+        
+        pdf_generator = WillPDFGenerator()
+        pdf_file_path = pdf_generator.generate_pet_trust_pdf(request, user_data)
+        
+        # Read the PDF file and return as streaming response
+        with open(pdf_file_path, 'rb') as pdf_file:
+            pdf_content = pdf_file.read()
+        
+        # Clean up temp file
+        os.remove(pdf_file_path)
+        
+        from io import BytesIO
         return StreamingResponse(
-            pdf_content,
+            BytesIO(pdf_content),
             media_type="application/pdf",
             headers={"Content-Disposition": "attachment; filename=pet_trust.pdf"}
         )

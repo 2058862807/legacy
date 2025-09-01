@@ -2,6 +2,7 @@
 import React from 'react'
 import Navbar from '../components/Layout/Navbar'
 import Hero from '../components/Home/Hero'
+import LiveEstateFeature from '../components/LiveEstate/LiveEstateFeature'
 import Features from '../components/Home/Features'
 import StateBadge from '../components/Compliance/StateBadge'
 import Trust from '../components/Home/Trust'
@@ -14,6 +15,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <Hero />
+      <LiveEstateFeature />
       <Features />
       <StateBadge />
       <Trust />

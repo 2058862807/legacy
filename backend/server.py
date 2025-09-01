@@ -478,7 +478,15 @@ async def generate_will_pdf(will_id: str, db: Session = Depends(get_db)):
         
         # Get compliance data
         compliance_service = ComplianceService()
-        compliance_data = compliance_service.get_rule(will.state, "will", db)
+        compliance_rule = compliance_service.get_rule(will.state, "will", db)
+        compliance_data = None
+        if compliance_rule:
+            compliance_data = {
+                'witnesses_required': compliance_rule.witnesses_required,
+                'notarization_required': compliance_rule.notarization_required,
+                'ron_allowed': compliance_rule.ron_allowed,
+                'esign_allowed': compliance_rule.esign_allowed
+            }
         
         # Generate PDF
         pdf_generator = WillPDFGenerator()

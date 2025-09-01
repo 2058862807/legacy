@@ -224,6 +224,7 @@ class BotRequest(BaseModel):
 class BotResponse(BaseModel):
     reply: str
     escalate: bool = False
+    session_id: Optional[str] = None
 
 class HashRequest(BaseModel):
     content: str

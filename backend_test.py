@@ -493,7 +493,7 @@ class BackendTester:
     def test_notarization(self, test_hash):
         """Test blockchain notarization with a hash"""
         try:
-            notary_data = {"hash": test_hash}
+            notary_data = {"document_hash": test_hash, "user_address": "0x1234567890123456789012345678901234567890"}
             response = self.session.post(
                 f"{self.base_url}/api/notary/create",
                 json=notary_data,
@@ -502,8 +502,8 @@ class BackendTester:
             
             if response.status_code == 200:
                 data = response.json()
-                if 'txHash' in data and 'explorerUrl' in data:
-                    tx_hash = data['txHash']
+                if 'transaction_hash' in data and 'polygonscan_url' in data:
+                    tx_hash = data['transaction_hash']
                     self.log_result("Blockchain Notarization", True, f"Transaction created: {tx_hash[:16]}...")
                     
                     # Test status check

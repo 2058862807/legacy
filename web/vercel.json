@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://api.nexteraestate.com/api/:path*"
+      "destination": "https://api.nexteraestate.com/:path*"
     }
   ]
 }

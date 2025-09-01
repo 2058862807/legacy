@@ -919,6 +919,107 @@ async def get_notary_status(tx_hash: str = Query(...)):
         logger.error(f"Status check error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# RAG-powered legal analysis endpoint
+@app.post("/api/rag/legal-analysis")
+async def rag_legal_analysis(request: BotRequest, user_email: str = Query(...), jurisdiction: str = Query("general"), db: Session = Depends(get_db)):
+    """Advanced RAG-powered legal analysis with source verification"""
+    try:
+        # Check rate limit (higher limit for premium feature)
+        if not check_rate_limit(user_email, db):
+            raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
+        
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        logger.info(f"RAG legal analysis request from {user_email}: {request.message[:50]}...")
+        
+        # Generate RAG-powered response
+        rag_response = await generate_legal_guidance(
+            query=request.message,
+            jurisdiction=jurisdiction
+        )
+        
+        return {
+            "analysis": rag_response.response,
+            "sources": [
+                {
+                    "title": source.title,
+                    "citation": source.citation,  
+                    "jurisdiction": source.jurisdiction,
+                    "source_type": source.source_type,
+                    "confidence": source.confidence_score
+                }
+                for source in rag_response.sources
+            ],
+            "citations": rag_response.citations,
+            "confidence": rag_response.confidence,
+            "query_hash": rag_response.query_hash,
+            "timestamp": rag_response.timestamp,
+            "jurisdiction": jurisdiction,
+            "disclaimer": "This analysis is based on available legal sources and is for informational purposes only. Always consult with a licensed attorney for legal advice specific to your situation."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"RAG legal analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to generate legal analysis")
+
+# RAG system status and health check
+@app.get("/api/rag/status")
+async def rag_system_status():
+    """Check RAG system health and statistics"""
+    try:
+        rag_engine = get_rag_engine()
+        
+        # Get vector database statistics
+        conn = sqlite3.connect(rag_engine.vector_store.db_path)
+        cur = conn.cursor()
+        
+        cur.execute("SELECT COUNT(*) FROM legal_documents")
+        total_documents = cur.fetchone()[0]
+        
+        cur.execute("SELECT COUNT(*) FROM rag_queries")
+        total_queries = cur.fetchone()[0]
+        
+        cur.execute("SELECT AVG(confidence) FROM rag_queries WHERE created_at > datetime('now', '-24 hours')")
+        avg_confidence_24h = cur.fetchone()[0] or 0.0
+        
+        cur.execute("""
+            SELECT source_type, COUNT(*) 
+            FROM legal_documents 
+            GROUP BY source_type
+        """)
+        document_types = dict(cur.fetchall())
+        
+        conn.close()
+        
+        return {
+            "status": "operational",
+            "vector_database_health": "healthy",
+            "legal_documents_loaded": total_documents,
+            "total_queries_processed": total_queries,
+            "average_confidence_24h": round(avg_confidence_24h, 3),
+            "document_types": document_types,
+            "embedding_model": "all-MiniLM-L6-v2",
+            "legal_apis_configured": {
+                "nextlaw": bool(os.getenv("NEXTLAW_API_KEY")),
+                "westlaw": bool(os.getenv("WESTLAW_API_KEY")),
+                "lexis": bool(os.getenv("LEXIS_API_KEY"))
+            },
+            "gemini_available": bool(GEMINI_API_KEY),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"RAG status check error: {str(e)}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
 # Dashboard endpoints
 @app.get("/api/user/dashboard-stats")
 async def get_dashboard_stats(user_email: str = Query(...), db: Session = Depends(get_db)):

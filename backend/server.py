@@ -1236,6 +1236,13 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
             proposal.status = "approved"
             proposal.processed_at = datetime.now(timezone.utc)
             
+            # Mark the triggering event as processed
+            if proposal.trigger_id:
+                trigger_event = db.query(LiveEvent).filter(LiveEvent.id == proposal.trigger_id).first()
+                if trigger_event:
+                    trigger_event.status = "processed"
+                    trigger_event.processed_at = datetime.now(timezone.utc)
+            
             db.commit()
             
             return {

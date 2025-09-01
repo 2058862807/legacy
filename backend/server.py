@@ -174,8 +174,16 @@ if STRIPE_SECRET_KEY:
 # Initialize AI clients
 openai_client = None
 gemini_client = None
+emergent_chat = None
 
-if LLM_PROVIDER == 'gemini' and GEMINI_API_KEY:
+if LLM_PROVIDER == 'emergent' and EMERGENT_LLM_KEY:
+    # Initialize with a default system message - we'll override per conversation
+    emergent_chat = LlmChat(
+        api_key=EMERGENT_LLM_KEY,
+        session_id="default",
+        system_message="You are a helpful assistant."
+    ).with_model("openai", "gpt-4o-mini")
+elif LLM_PROVIDER == 'gemini' and GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     gemini_client = genai.GenerativeModel('gemini-1.5-flash')
 elif LLM_PROVIDER == 'openai' and OPENAI_API_KEY:

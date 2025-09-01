@@ -1079,9 +1079,9 @@ Format as JSON with keys: title, description, affected_documents, legal_basis, e
             db.add(proposal)
             db.flush()  # Flush to get the ID without committing
             
-            # Mark event as processed
-            event.status = "processed"
-            event.processed_at = datetime.now(timezone.utc)
+            # Don't mark event as processed immediately - leave it pending so proposals show up
+            # event.status = "processed"
+            # event.processed_at = datetime.now(timezone.utc)
             
             proposals_created.append({
                 "id": proposal.id,

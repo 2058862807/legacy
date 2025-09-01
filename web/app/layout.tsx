@@ -46,12 +46,6 @@ export const metadata = {
   },
   manifest: '/manifest.json',
 }
-    title: 'NexteraEstate - Secure Estate Planning',
-    description: 'Professional estate planning with AI, blockchain security, and 50-state legal compliance.',
-  },
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#2563eb',
-}
 
 export default function RootLayout({
   children,

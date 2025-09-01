@@ -365,6 +365,26 @@ class BackendTester:
         
         test_user_email = "document.test@nexteraestate.com"
         
+        # Create user first
+        try:
+            user_data = {
+                "email": test_user_email,
+                "name": "Document Test User",
+                "provider": "google"
+            }
+            response = self.session.post(
+                f"{self.base_url}/api/users",
+                json=user_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_result("Document User Creation", True, "Test user created for document testing")
+            else:
+                self.log_result("Document User Creation", False, f"HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Document User Creation", False, f"Request error: {str(e)}")
+        
         # Test document listing
         try:
             response = self.session.get(

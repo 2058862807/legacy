@@ -752,7 +752,7 @@ async def grief_bot(request: BotRequest, user_email: str = Query(...), db: Sessi
     """Grief support bot endpoint"""
     try:
         # Check rate limit
-        if not check_rate_limit(user_email, db):
+        if not check_rate_limit(user_email, db, "grief_bot"):
             raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
         
         system_prompt = """You are a compassionate grief support bot for NexteraEstate. Your role is to:

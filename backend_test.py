@@ -282,12 +282,15 @@ class BackendTester:
         # Test will creation
         try:
             will_data = {
-                "title": "Production Test Will",
                 "state": "CA",
                 "personal_info": {
                     "full_name": "Estate Test User",
                     "address": "123 Test St, San Francisco, CA 94102"
-                }
+                },
+                "beneficiaries": [],
+                "assets": [],
+                "witnesses": [],
+                "executor": {}
             }
             response = self.session.post(
                 f"{self.base_url}/api/wills?user_email={test_user_email}",

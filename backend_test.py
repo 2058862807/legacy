@@ -1726,35 +1726,36 @@ class BackendTester:
         return failed_tests == 0
 
 def main():
-    """Main test execution for production launch verification"""
+    """Main test execution for RAG system testing"""
     tester = BackendTester(BACKEND_URL)
-    success = tester.run_comprehensive_production_tests()
+    success = tester.run_comprehensive_rag_tests()
     
     # Save detailed results with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_file = f'/app/production_verification_results_{timestamp}.json'
+    results_file = f'/app/rag_system_test_results_{timestamp}.json'
     
     with open(results_file, 'w') as f:
         json.dump({
             'timestamp': datetime.now().isoformat(),
             'backend_url': BACKEND_URL,
+            'test_type': 'RAG_SYSTEM_TESTING',
             'total_tests': len(tester.results),
             'passed_tests': sum(1 for r in tester.results if r['success']),
             'failed_tests': sum(1 for r in tester.results if not r['success']),
             'success_rate': (sum(1 for r in tester.results if r['success']) / len(tester.results)) * 100,
-            'production_ready': success,
+            'rag_system_ready': success,
             'test_results': tester.results
         }, f, indent=2)
     
     print(f"\n📄 Detailed results saved to: {results_file}")
     
     if success:
-        print("\n🎉 PRODUCTION LAUNCH VERIFICATION COMPLETE!")
-        print("✅ All critical systems operational - Ready for user testing!")
+        print("\n🎉 RAG SYSTEM TESTING COMPLETE!")
+        print("✅ All RAG systems operational - Legal AI ready for production!")
         sys.exit(0)
     else:
-        print("\n⚠️  PRODUCTION LAUNCH VERIFICATION FAILED!")
-        print("❌ Critical issues detected - Address failures before launch")
+        print("\n⚠️  RAG SYSTEM TESTING COMPLETED WITH ISSUES!")
+        print("❌ Some RAG components need attention - Review failures before deployment")
         sys.exit(1)
 
 if __name__ == "__main__":

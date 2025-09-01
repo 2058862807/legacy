@@ -20,6 +20,7 @@ import requests
 import openai
 from openai import OpenAI
 import google.generativeai as genai
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 from eth_account import Account
 from eth_utils import to_hex
 from sqlalchemy.orm import Session

@@ -1188,7 +1188,7 @@ async def generate_will_pdf(will_id: str, user_email: str = Query(...), db: Sess
     try:
         # Get compliance data for the user's state
         compliance_service = ComplianceService()
-        compliance_rules = compliance_service.get_rules_by_state(user.state or 'CA')
+        compliance_rules = ComplianceService.get_rule(user.state or 'CA', 'will', db)
         
         # Prepare will data
         will_data = {

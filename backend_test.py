@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 
 # Get backend URL from environment or use default
-BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://10.219.10.95:8001')
+BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://localhost:8001')
 if not BACKEND_URL.startswith('http'):
     BACKEND_URL = f'http://{BACKEND_URL}'
 

@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '../../../auth'
 
 export async function GET(req: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth()
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const userEmail = req.nextUrl.searchParams.get('user_email')
     
-    if (!userEmail) {
-      return NextResponse.json({ error: 'User email required' }, { status: 400 })
+    // Verify the user_email matches the authenticated user
+    if (userEmail !== session.user.email) {
+      return NextResponse.json({ error: 'Forbidden - can only access your own data' }, { status: 403 })
     }
     
     // Proxy to backend
@@ -33,11 +41,18 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const session = await auth()
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const data = await req.json()
     const userEmail = req.nextUrl.searchParams.get('user_email')
     
-    if (!userEmail) {
-      return NextResponse.json({ error: 'User email required' }, { status: 400 })
+    // Verify the user_email matches the authenticated user
+    if (userEmail !== session.user.email) {
+      return NextResponse.json({ error: 'Forbidden - can only access your own data' }, { status: 403 })
     }
     
     // Proxy to backend

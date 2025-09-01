@@ -33,7 +33,7 @@ from compliance_service import ComplianceService, ComplianceRuleResponse, Compli
 from pdf_generator import WillPDFGenerator
 
 # Import new Live Estate Engine
-from live_estate_engine import LiveEstateEngine, UpdateProposal, UpdateTrigger, UpdateSeverity
+from live_estate_engine import LiveEstateEngine, UpdateTrigger, UpdateSeverity
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

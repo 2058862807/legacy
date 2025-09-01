@@ -42,19 +42,18 @@ export default function LiveEstateDashboard() {
   const fetchLiveEstateData = async () => {
     try {
       setLoading(true)
+      const userEmail = session?.user?.email
       
-      // Fetch update proposals
-      const proposalsResponse = await fetch(`/api/live-estate/proposals/${session?.user?.email}`)
-      if (proposalsResponse.ok) {
-        const proposalsData = await proposalsResponse.json()
-        setProposals(proposalsData)
+      if (!userEmail) {
+        setError('User email not available')
+        return
       }
-      
-      // Fetch audit trail
-      const auditResponse = await fetch(`/api/live-estate/audit-trail/${session?.user?.email}`)
-      if (auditResponse.ok) {
-        const auditData = await auditResponse.json()
-        setAuditTrail(auditData)
+
+      // Fetch live estate status
+      const statusResponse = await fetch(`/api/live/status?user_email=${encodeURIComponent(userEmail)}`)
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json()
+        setLiveStatus(statusData)
       }
       
     } catch (err: any) {

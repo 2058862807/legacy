@@ -1138,10 +1138,22 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
         
         # User approved - execute the update
         try:
-            # Get user's current will
+            # Get user's current will or create a basic one if none exists
             current_will = db.query(Will).filter(Will.user_id == user.id).first()
             if not current_will:
-                raise HTTPException(status_code=404, detail="No will found to update")
+                # Create a basic will for the user
+                current_will = Will(
+                    id=str(uuid.uuid4()),
+                    user_id=user.id,
+                    state=user.state or "CA",  # Default to CA if no state set
+                    personal_info={"full_name": user.name, "email": user.email},
+                    beneficiaries=[],
+                    assets=[],
+                    executors=[],
+                    bequests=[]
+                )
+                db.add(current_will)
+                db.flush()  # Get the ID
             
             # Generate new version number
             last_version = db.query(PlanVersion).filter(

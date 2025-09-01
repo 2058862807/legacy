@@ -119,7 +119,6 @@ function LoginContent() {
                   className="w-16 h-16 object-contain filter drop-shadow-2xl"
                   style={{
                     imageRendering: 'crisp-edges',
-                    imageRendering: '-webkit-optimize-contrast',
                   }}
                 />
               </div>

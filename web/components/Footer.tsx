@@ -18,8 +18,8 @@ export default function Footer() {
             </p>
             <div className="space-y-2 text-sm text-gray-400">
               <p>NexteraEstate LLC</p>
-              <p>1234 Estate Avenue, Suite 100</p>
-              <p>San Francisco, CA 94102</p>
+              <p>4105 D.T. James Parkway</p>
+              <p>Tuscaloosa, Alabama 35404</p>
               <p>
                 <a href="mailto:support@nexteraestate.com" className="hover:text-white transition-colors">
                   support@nexteraestate.com

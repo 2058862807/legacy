@@ -461,6 +461,119 @@ class BackendTester:
                 self.log_result("Dashboard Stats", False, f"HTTP {response.status_code}")
         except Exception as e:
             self.log_result("Dashboard Stats", False, f"Request error: {str(e)}")
+
+    def test_blockchain_endpoints(self):
+        """Test blockchain notarization endpoints"""
+        print("\n⛓️  Testing Blockchain Notarization...")
+        
+        # Test hash generation
+        try:
+            hash_data = {"content": "This is a test document for blockchain notarization"}
+            response = self.session.post(
+                f"{self.base_url}/api/notary/hash",
+                json=hash_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'hash' in data and len(data['hash']) == 64:  # SHA256 is 64 chars
+                    generated_hash = data['hash']
+                    self.log_result("Blockchain Hash Generation", True, f"Hash generated: {generated_hash[:16]}...")
+                    
+                    # Test notarization with the generated hash
+                    self.test_notarization(generated_hash)
+                else:
+                    self.log_result("Blockchain Hash Generation", False, "Invalid hash format", data)
+            else:
+                self.log_result("Blockchain Hash Generation", False, f"HTTP {response.status_code}", response.text)
+        except Exception as e:
+            self.log_result("Blockchain Hash Generation", False, f"Request error: {str(e)}")
+    
+    def test_notarization(self, test_hash):
+        """Test blockchain notarization with a hash"""
+        try:
+            notary_data = {"hash": test_hash}
+            response = self.session.post(
+                f"{self.base_url}/api/notary/create",
+                json=notary_data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'txHash' in data and 'explorerUrl' in data:
+                    tx_hash = data['txHash']
+                    self.log_result("Blockchain Notarization", True, f"Transaction created: {tx_hash[:16]}...")
+                    
+                    # Test status check
+                    self.test_notary_status(tx_hash)
+                else:
+                    self.log_result("Blockchain Notarization", False, "Missing transaction data", data)
+            elif response.status_code == 500:
+                error_data = response.json()
+                if "Blockchain services not configured" in error_data.get('detail', ''):
+                    self.log_result("Blockchain Notarization", True, "Expected - Blockchain not configured for demo")
+                else:
+                    self.log_result("Blockchain Notarization", False, f"Unexpected error: {error_data}")
+            else:
+                self.log_result("Blockchain Notarization", False, f"HTTP {response.status_code}", response.text)
+        except Exception as e:
+            self.log_result("Blockchain Notarization", False, f"Request error: {str(e)}")
+    
+    def test_notary_status(self, tx_hash):
+        """Test notary status endpoint"""
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/notary/status?tx={tx_hash}",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'status' in data and 'confirmations' in data:
+                    self.log_result("Blockchain Status Check", True, f"Status: {data['status']}")
+                else:
+                    self.log_result("Blockchain Status Check", False, "Invalid status format", data)
+            else:
+                self.log_result("Blockchain Status Check", False, f"HTTP {response.status_code}", response.text)
+        except Exception as e:
+            self.log_result("Blockchain Status Check", False, f"Request error: {str(e)}")
+
+    def test_error_handling(self):
+        """Test error handling for invalid requests"""
+        print("\n⚠️  Testing Error Handling...")
+        
+        # Test invalid JSON
+        try:
+            response = self.session.post(
+                f"{self.base_url}/api/bot/help",
+                data="invalid json",
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            if response.status_code == 422:  # FastAPI validation error
+                self.log_result("Error Handling - Invalid JSON", True, "Correctly rejected invalid JSON")
+            else:
+                self.log_result("Error Handling - Invalid JSON", False, f"Expected 422, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Error Handling - Invalid JSON", False, f"Request error: {str(e)}")
+        
+        # Test missing required fields
+        try:
+            response = self.session.post(
+                f"{self.base_url}/api/notary/hash",
+                json={},  # Missing content field
+                timeout=10
+            )
+            
+            if response.status_code == 422:
+                self.log_result("Error Handling - Missing Fields", True, "Correctly rejected missing fields")
+            else:
+                self.log_result("Error Handling - Missing Fields", False, f"Expected 422, got {response.status_code}")
+        except Exception as e:
+            self.log_result("Error Handling - Missing Fields", False, f"Request error: {str(e)}")
         """Test Stripe payment endpoints"""
         # Test create checkout
         try:

@@ -32,6 +32,18 @@ class AITeamResponse(BaseModel):
 
 router = APIRouter(prefix="/api/ai-team", tags=["AI Team Communication"])
 
+@router.get("/test-connection")
+async def test_ai_team_connection():
+    """Simple test endpoint to verify router is working"""
+    return {
+        "status": "AI Team Interface Connected",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "available_endpoints": [
+            "/api/ai-team/communicate",
+            "/api/ai-team/test-connection"
+        ]
+    }
+
 @router.post("/communicate")
 async def communicate_with_ai_team(message: AITeamMessage) -> Dict[str, Any]:
     """Direct communication interface with your AI team"""

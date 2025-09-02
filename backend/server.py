@@ -145,6 +145,7 @@ class NotaryRequest(BaseModel):
 
 class BotRequest(BaseModel):
     message: str
+    user_email: str
     context: str = ""
 
 # Live Estate Plan models

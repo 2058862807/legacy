@@ -626,16 +626,30 @@ This information is provided for educational purposes and does not constitute le
                 "escalation_reason": f"Technical error: {str(e)}",
                 "sources": []
             }
-# Global RAG engine instance
+# Global RAG engine instance - Initialize immediately
 rag_engine = None
+
+def initialize_rag_engine():
+    """Initialize the RAG engine"""
+    global rag_engine
+    try:
+        if rag_engine is None:
+            rag_engine = NexteraRAGEngine()
+            logger.info("✅ NexteraEstate RAG Engine initialized successfully")
+        return rag_engine
+    except Exception as e:
+        logger.error(f"❌ RAG Engine initialization failed: {e}")
+        return None
 
 def get_rag_engine() -> NexteraRAGEngine:
     """Get global RAG engine instance"""
     global rag_engine
     if rag_engine is None:
-        rag_engine = NexteraRAGEngine()
-        logger.info("NexteraEstate RAG Engine initialized successfully")
+        rag_engine = initialize_rag_engine()
     return rag_engine
+
+# Initialize RAG engine on module import
+rag_engine = initialize_rag_engine()
 
 # Convenience function for external use
 async def generate_legal_guidance(query: str, jurisdiction: str = "general") -> RAGResponse:

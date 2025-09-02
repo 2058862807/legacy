@@ -691,68 +691,75 @@ async def get_payment_status(session_id: str = Query(...)):
 
 # Bot endpoints
 @app.post("/api/bot/help")
-async def help_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):
-    """Esquire AI help bot endpoint with RAG-powered legal guidance"""
+async def esquire_ai_help(request: BotRequest, db: Session = Depends(get_db)):
+    """Enhanced Esquire AI with AutoLex Core integration"""
     try:
+        user_email = request.user_email
+        
         # Check rate limit
         if not check_rate_limit(user_email, db, "help_bot"):
-            raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
+            raise HTTPException(status_code=429, detail="Rate limit exceeded. Please try again later.")
         
-        logger.info(f"Esquire AI RAG query from {user_email}: {request.message[:50]}...")
+        logger.info(f"Enhanced Esquire AI query from {user_email}: {request.message[:50]}...")
         
-        # Use RAG engine for legally-grounded responses
-        try:
-            rag_response = await generate_legal_guidance(
-                query=request.message,
-                jurisdiction="general"  # Could be enhanced with user's state
-            )
+        # Use AutoLex Core for enhanced legal guidance
+        autolex_result = await autolex_core.process_legal_query(
+            query=request.message,
+            context={"user_email": user_email, "session_id": getattr(request, 'session_id', None)}
+        )
+        
+        # Format response based on AutoLex result
+        if autolex_result.get("requires_human_review", False):
+            response_text = f"""
+{autolex_result['response']}
+
+⚠️ **Important Notice**: This query has been flagged for human expert review due to its complexity or our confidence level being below our safety threshold.
+
+**Confidence Score**: {autolex_result.get('confidence_score', 0):.1%}
+**Escalation Reason**: {autolex_result.get('escalation_reason', 'Complex legal matter')}
+
+**Recommended Next Steps**:
+• Schedule a consultation with a licensed estate planning attorney
+• Consider upgrading to our Premium plan for human expert review
+• Provide additional context about your specific situation
+
+This demonstrates our commitment to providing only reliable, well-sourced legal guidance.
+"""
+        else:
+            # Include confidence and source information
+            sources_text = ""
+            if autolex_result.get("sources"):
+                sources_text = "\n\n**Sources Referenced**:\n" + "\n".join([
+                    f"• {source.get('title', 'Legal Source')} ({source.get('jurisdiction', 'Unknown')})"
+                    for source in autolex_result["sources"][:3]
+                ])
             
-            # Enhanced response with source verification
-            ai_response = rag_response.response
+            tertiary_info = ""
+            if autolex_result.get("tertiary_verification"):
+                tertiary_info = "\n\n✅ **Verified**: Cross-referenced with industry legal databases for accuracy."
             
-            # Add source citations if available
-            if rag_response.citations:
-                citations_text = "\n\n📚 Sources: " + ", ".join(rag_response.citations[:3])
-                ai_response += citations_text
-            
-            # Add confidence indicator
-            if rag_response.confidence > 0.8:
-                confidence_indicator = "\n\n✅ High confidence response based on verified legal sources."
-            elif rag_response.confidence > 0.6:
-                confidence_indicator = "\n\n⚠️ Moderate confidence - consider consulting an attorney for your specific situation."
-            else:
-                confidence_indicator = "\n\n⚠️ Limited confidence - strongly recommend consulting a licensed attorney."
-                
-            ai_response += confidence_indicator
-            
-            return {
-                "reply": ai_response,
-                "escalate": rag_response.confidence < 0.5,
-                "bot_name": "Esquire AI (RAG-Powered)",
-                "confidence": rag_response.confidence,
-                "sources_used": len(rag_response.sources),
-                "citations": rag_response.citations[:3]
-            }
-            
-        except Exception as rag_error:
-            logger.error(f"RAG engine error: {rag_error}")
-            # Fallback to basic response
-            return {
-                "reply": "I'm here to help with your estate planning questions, but I'm having trouble accessing my legal knowledge base right now. For immediate assistance, please contact our support team or consult with a licensed attorney.",
-                "escalate": True,
-                "bot_name": "Esquire AI",
-                "error": "RAG system temporarily unavailable"
-            }
-            
+            response_text = f"""{autolex_result['response']}{sources_text}{tertiary_info}
+
+**Confidence Score**: {autolex_result.get('confidence_score', 0):.1%}
+**Legal Disclaimer**: {autolex_result.get('legal_disclaimer', 'This guidance is based on general legal principles. Consult with a licensed attorney for advice specific to your situation.')}
+"""
+        
+        return {
+            "response": response_text,
+            "confidence_score": autolex_result.get("confidence_score", 0),
+            "sources": autolex_result.get("sources", []),
+            "requires_human_review": autolex_result.get("requires_human_review", False),
+            "layer_used": autolex_result.get("layer", 1),
+            "tertiary_verification": autolex_result.get("tertiary_verification", False),
+            "processing_time_ms": autolex_result.get("processing_time_ms", 0),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Help bot error: {str(e)}")
-        return {
-            "reply": "I apologize, but I'm having trouble processing your request right now. For immediate assistance with estate planning questions, please contact our support team.",
-            "escalate": True,
-            "bot_name": "Esquire AI"
-        }
+        logger.error(f"Enhanced Esquire AI error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"I apologize, but I'm experiencing technical difficulties. Please try again later or contact support.")
 
 @app.post("/api/bot/grief")
 async def grief_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):

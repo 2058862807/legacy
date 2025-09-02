@@ -84,13 +84,10 @@ async def _communicate_with_autolex(message: AITeamMessage) -> AITeamResponse:
         response_text = await _handle_development_query(message.message, message.context)
         confidence = 0.85
     else:
-        # Handle as legal query through normal AutoLex processing
-        autolex_result = await autolex_core.process_legal_query(
-            query=message.message,
-            context={**message.context, "direct_communication": True, "priority": message.priority}
-        )
-        response_text = autolex_result.get("response", "No response generated")
-        confidence = autolex_result.get("confidence_score", 0.0)
+        # Handle as legal query - placeholder for AutoLex processing
+        # TODO: Implement proper AutoLex integration
+        response_text = f"Legal query processing for: {message.message}"
+        confidence = 0.8
     
     return AITeamResponse(
         agent="AutoLex Core",

@@ -190,19 +190,46 @@ class AutoLexCore:
     async def _layer1_rag_processing(self, query: str, context: Dict = None) -> Dict[str, Any]:
         """Layer 1: Enhanced RAG processing with confidence scoring"""
         
-        # Use the enhanced RAG method we just implemented
-        rag_result = self.rag_engine.get_legal_guidance_with_confidence(query, context)
-        
-        return {
-            "layer": 1,
-            "source": "internal_rag",
-            "response": rag_result["response"],
-            "confidence_score": rag_result["confidence_score"],
-            "requires_human_review": rag_result["requires_human_review"],
-            "sources": rag_result["sources"],
-            "legal_disclaimer": rag_result["legal_disclaimer"],
-            "processing_time_ms": 0  # Will be calculated at the end
-        }
+        try:
+            if self.rag_engine and hasattr(self.rag_engine, 'get_legal_guidance_with_confidence'):
+                # Use the enhanced RAG method we implemented
+                rag_result = self.rag_engine.get_legal_guidance_with_confidence(query, context)
+                
+                return {
+                    "layer": 1,
+                    "source": "internal_rag",
+                    "response": rag_result["response"],
+                    "confidence_score": rag_result["confidence_score"],
+                    "requires_human_review": rag_result["requires_human_review"],
+                    "sources": rag_result["sources"],
+                    "legal_disclaimer": rag_result.get("legal_disclaimer"),
+                    "processing_time_ms": 0  # Will be calculated at the end
+                }
+            else:
+                # Fallback mode with basic response
+                logger.warning("RAG engine not available - using fallback response")
+                return {
+                    "layer": 1,
+                    "source": "fallback",
+                    "response": "I apologize, but I'm unable to provide detailed legal guidance at this time. Please consult with a licensed estate planning attorney for assistance with your specific situation.",
+                    "confidence_score": 0.0,
+                    "requires_human_review": True,
+                    "sources": [],
+                    "legal_disclaimer": "This system is temporarily unavailable. Please consult with a qualified attorney.",
+                    "escalation_reason": "RAG engine unavailable"
+                }
+        except Exception as e:
+            logger.error(f"Layer 1 RAG processing error: {e}")
+            return {
+                "layer": 1,
+                "source": "error_fallback",
+                "response": "I apologize, but I'm experiencing technical difficulties. Please consult with a licensed estate planning attorney for assistance with your legal questions.",
+                "confidence_score": 0.0,
+                "requires_human_review": True,
+                "sources": [],
+                "legal_disclaimer": "Technical error - please consult with a qualified attorney.",
+                "escalation_reason": f"Technical error: {str(e)}"
+            }
 
     async def _layer2_cross_reference(self, query: str, layer1_result: Dict) -> Dict[str, Any]:
         """Layer 2: Internal cross-reference and consistency validation"""

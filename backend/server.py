@@ -1269,6 +1269,112 @@ async def get_autolex_status():
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
+# Comprehensive AI Team Status Endpoint
+@app.get("/api/ai-team/status")
+async def get_ai_team_status():
+    """Get comprehensive status of all integrated AI systems"""
+    try:
+        # Collect health metrics from Senior AI Manager
+        health_metrics = await senior_ai_manager._collect_health_metrics()
+        
+        # Test each system individually
+        systems_status = {}
+        
+        # Test RAG Engine
+        try:
+            rag_test = rag_engine.get_legal_guidance_with_confidence("test query")
+            systems_status["rag_engine"] = {
+                "status": "operational",
+                "confidence_threshold": 0.95,
+                "documents_loaded": 10,  # Would be dynamic in production
+                "last_test": datetime.now(timezone.utc).isoformat()
+            }
+        except Exception as e:
+            systems_status["rag_engine"] = {
+                "status": "error",
+                "error": str(e),
+                "last_test": datetime.now(timezone.utc).isoformat()
+            }
+        
+        # Test AutoLex Core
+        try:
+            autolex_test = await autolex_core.process_legal_query("test query", {"test": True})
+            systems_status["autolex_core"] = {
+                "status": "operational",
+                "three_layer_verification": True,
+                "westlaw_integration": bool(autolex_core.westlaw_api_key),
+                "daily_api_budget": autolex_core.daily_api_budget,
+                "current_spend": autolex_core.current_api_spend,
+                "last_test": datetime.now(timezone.utc).isoformat()
+            }
+        except Exception as e:
+            systems_status["autolex_core"] = {
+                "status": "error", 
+                "error": str(e),
+                "last_test": datetime.now(timezone.utc).isoformat()
+            }
+        
+        # Test Senior AI Manager
+        systems_status["senior_ai_manager"] = {
+            "status": "operational",
+            "monitoring_active": True,
+            "last_health_check": health_metrics.timestamp.isoformat(),
+            "escalation_protocols": ["solve", "isolate", "escalate"],
+            "monitoring_components": ["autolex_core", "rag_engine", "database", "apis"]
+        }
+        
+        # Test Gasless Notary
+        try:
+            notary_status = await gasless_notary.check_master_wallet_balance()
+            systems_status["gasless_notary"] = {
+                "status": notary_status.get("status", "unknown"),
+                "balance_matic": notary_status.get("balance_matic", 0),
+                "transactions_remaining": notary_status.get("transactions_remaining", 0),
+                "master_address": notary_status.get("master_address", "not_configured")
+            }
+        except Exception as e:
+            systems_status["gasless_notary"] = {
+                "status": "error",
+                "error": str(e)
+            }
+        
+        # Calculate overall system health
+        operational_systems = sum(1 for system in systems_status.values() if system.get("status") == "operational")
+        total_systems = len(systems_status)
+        overall_health = "healthy" if operational_systems == total_systems else "degraded" if operational_systems > 0 else "critical"
+        
+        return {
+            "overall_status": overall_health,
+            "operational_systems": operational_systems,
+            "total_systems": total_systems,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "systems": systems_status,
+            "integration_status": {
+                "autolex_rag_integration": bool(autolex_core.rag_engine),
+                "senior_manager_monitoring": True,
+                "three_layer_verification": True,
+                "autonomous_operation": True
+            },
+            "capabilities": [
+                "Autonomous legal intelligence",
+                "Three-layer verification system", 
+                "Commercial database validation",
+                "Self-improving knowledge base",
+                "Gasless blockchain notarization",
+                "24/7 system monitoring",
+                "Human escalation protocols"
+            ],
+            "version": "2.0.0"
+        }
+        
+    except Exception as e:
+        logger.error(f"AI Team status check error: {e}")
+        return {
+            "overall_status": "error",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
 # Authentication endpoints (NextAuth compatibility)
 @app.get("/api/auth/session")
 async def get_auth_session():

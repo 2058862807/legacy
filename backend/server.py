@@ -96,6 +96,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Include AI team communication router
+app.include_router(ai_team_router)
+
 import openai
 from openai import OpenAI
 import google.generativeai as genai

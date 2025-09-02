@@ -28,18 +28,54 @@ const PRICING_PLANS: PricingPlan[] = [
     yearlyPrice: 0,
     period: 'month',
     features: [
-      'Draft and preview wills',
-      'Estate Readiness Score',
-      'On-chain document verification checker', 
-      'Basic AI legal guidance (5 questions/day)',
-      'Access to compliance database',
-      'Community support forum'
+      'Basic will creation',
+      'Document preview',
+      'AI legal guidance (5 queries/month)',
+      'State compliance check',
+      'Educational resources'
     ],
     limitations: [
-      'Cannot export PDFs',
-      'No document signing',
-      'No blockchain proof',
-      'Limited AI interactions'
+      'Cannot download documents',
+      'No notarization',
+      'Limited AI consultations'
+    ]
+  },
+  {
+    id: 'family',
+    name: 'Family',
+    description: 'Complete estate planning for families',
+    price: 49.99,
+    yearlyPrice: 499,
+    period: 'month',
+    popular: true,
+    features: [
+      'Everything in Free',
+      'Unlimited will creation',
+      'Basic trust documents',
+      'Unlimited AI consultations',
+      'Family communication portal',
+      'Document downloads',
+      'Email support',
+      '1 free blockchain notarization/month'
+    ]
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    description: 'Advanced estate planning with professional features',
+    price: 149.99,
+    yearlyPrice: 1499,
+    period: 'month',
+    features: [
+      'Everything in Family',
+      'Complex trust structures',
+      'Business asset planning',
+      'Tax optimization guidance',
+      'Dynamic asset mapping',
+      'Multi-state compliance',
+      'Priority support',
+      'Unlimited blockchain notarization',
+      'Human expert review (1/month)'
     ]
   },
   {

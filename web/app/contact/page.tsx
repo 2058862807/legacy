@@ -290,7 +290,7 @@ export default function ContactPage() {
                   <div className="text-purple-600 text-xl">📧</div>
                   <div>
                     <h4 className="font-medium">Email Support</h4>
-                    <p className="text-sm text-gray-600">support@nexteraestate.com</p>
+                    <p className="text-sm text-gray-600">NextEraEstate@gmail.com</p>
                   </div>
                 </div>
               </div>

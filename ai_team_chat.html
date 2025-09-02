@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexteraEstate AI Team Communication</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .chat-container { 
+            display: flex; 
+            height: 600px; 
+        }
+        .team-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+        }
+        .team-member {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .team-member:hover {
+            background-color: #e9ecef;
+        }
+        .team-member.active {
+            background-color: #667eea;
+            color: white;
+        }
+        .team-member-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .autolex { background: #28a745; }
+        .senior-manager { background: #17a2b8; }
+        .team { background: #6f42c1; }
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+        .message.ai {
+            background: white;
+            border: 1px solid #dee2e6;
+        }
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .message-content {
+            line-height: 1.5;
+        }
+        .confidence-score {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
+            background: white;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+        .send-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .send-button:hover {
+            background: #5a67d8;
+        }
+        .priority-selector {
+            margin-bottom: 10px;
+        }
+        .priority-selector select {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online { background: #28a745; }
+        .status-busy { background: #ffc107; }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Team Communication Center</h1>
+            <p>Direct communication with your autonomous AI team members</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="team-sidebar">
+                <h3 style="margin-bottom: 20px; color: #495057;">AI Team Members</h3>
+                
+                <div class="team-member active" data-recipient="autolex">
+                    <div class="team-member-icon autolex">🧠</div>
+                    <div>
+                        <div style="font-weight: bold;">AutoLex Core</div>
+                        <div style="font-size: 0.8em; color: #6c757d;">
+                            <span class="status-indicator status-online"></span>
+                            Legal Intelligence
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-member" data-recipient="senior_manager">
+                    <div class="team-member-icon senior-manager">👔</div>
+                    <div>
+                        <div style="font-weight: bold;">Senior AI Manager</div>
+                        <div style="font-size: 0.8em; color: #6c757d;">
+                            <span class="status-indicator status-online"></span>
+                            System Oversight
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-member" data-recipient="team">
+                    <div class="team-member-icon team">👥</div>
+                    <div>
+                        <div style="font-weight: bold;">Full AI Team</div>
+                        <div style="font-size: 0.8em; color: #6c757d;">
+                            <span class="status-indicator status-online"></span>
+                            Coordinated Response
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 15px; background: #e9ecef; border-radius: 10px;">
+                    <h4 style="margin-bottom: 10px;">Capabilities</h4>
+                    <ul style="font-size: 0.9em; color: #6c757d; list-style: none;">
+                        <li>🔍 System status & health</li>
+                        <li>⚡ Performance analysis</li>
+                        <li>🛠️ Issue resolution</li>
+                        <li>📊 Resource management</li>
+                        <li>🧠 Development assistance</li>
+                        <li>⚖️ Legal guidance</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="message ai">
+                        <div class="message-header">
+                            🤖 AI Team
+                            <span class="confidence-score">System Ready</span>
+                        </div>
+                        <div class="message-content">
+                            Hello Dustin! Your AI team is online and ready to assist. We're currently monitoring all systems and they're operating at optimal performance. 
+                            <br><br>
+                            <strong>Current Status:</strong>
+                            <ul style="margin-top: 10px;">
+                                <li>✅ AutoLex Core: 3-layer verification active</li>
+                                <li>✅ Senior AI Manager: Monitoring all components</li>
+                                <li>✅ RAG Engine: Legal knowledge base loaded</li>
+                                <li>✅ Gasless Notary: Ready for blockchain operations</li>
+                            </ul>
+                            <br>
+                            How can we assist you today?
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <div class="priority-selector">
+                        <label for="priority">Priority: </label>
+                        <select id="priority">
+                            <option value="low">Low</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="message-input" id="messageInput" placeholder="Ask your AI team anything..." />
+                        <button class="send-button" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRecipient = 'autolex';
+        
+        // Team member selection
+        document.querySelectorAll('.team-member').forEach(member => {
+            member.addEventListener('click', () => {
+                document.querySelectorAll('.team-member').forEach(m => m.classList.remove('active'));
+                member.classList.add('active');
+                currentRecipient = member.dataset.recipient;
+                
+                // Update chat context
+                const messages = document.getElementById('messages');
+                const contextMessage = document.createElement('div');
+                contextMessage.className = 'message ai';
+                contextMessage.innerHTML = `
+                    <div class="message-header">
+                        🔄 ${getRecipientName(currentRecipient)}
+                        <span class="confidence-score">Ready</span>
+                    </div>
+                    <div class="message-content">
+                        Now communicating with ${getRecipientName(currentRecipient)}. 
+                        ${getRecipientDescription(currentRecipient)}
+                    </div>
+                `;
+                messages.appendChild(contextMessage);
+                messages.scrollTop = messages.scrollHeight;
+            });
+        });
+        
+        function getRecipientName(recipient) {
+            const names = {
+                'autolex': 'AutoLex Core',
+                'senior_manager': 'Senior AI Manager', 
+                'team': 'Full AI Team'
+            };
+            return names[recipient] || recipient;
+        }
+        
+        function getRecipientDescription(recipient) {
+            const descriptions = {
+                'autolex': 'I specialize in legal intelligence, three-layer verification, and can assist with development questions related to the legal system architecture.',
+                'senior_manager': 'I handle system monitoring, performance optimization, resource management, and can coordinate responses across all AI systems.',
+                'team': 'You\'re now communicating with the entire AI team. We\'ll coordinate our responses to provide comprehensive assistance.'
+            };
+            return descriptions[recipient] || '';
+        }
+        
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const priority = document.getElementById('priority').value;
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage('user', 'You', message);
+            input.value = '';
+            
+            // Show loading indicator
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.innerHTML = '🤖 AI Team is thinking...';
+            loadingDiv.id = 'loading';
+            document.getElementById('messages').appendChild(loadingDiv);
+            
+            try {
+                // Send to AI team
+                const response = await fetch('/api/ai-team/communicate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        recipient: currentRecipient,
+                        priority: priority,
+                        context: {
+                            timestamp: new Date().toISOString(),
+                            interface: 'direct_communication'
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Remove loading indicator
+                document.getElementById('loading').remove();
+                
+                if (result.status === 'success') {
+                    // Display responses from AI team members
+                    Object.entries(result.responses).forEach(([agent, response]) => {
+                        addAIMessage(agent, response);
+                    });
+                } else {
+                    addMessage('ai', 'System Error', 'Sorry, I encountered an error processing your request. Please try again.');
+                }
+                
+            } catch (error) {
+                document.getElementById('loading').remove();
+                addMessage('ai', 'Connection Error', 'Unable to connect to AI team. Please check your connection and try again.');
+                console.error('Communication error:', error);
+            }
+        }
+        
+        function addMessage(type, sender, content) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <div class="message-header">${sender}</div>
+                <div class="message-content">${content}</div>
+            `;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function addAIMessage(agent, response) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai';
+            
+            const agentEmoji = {
+                'autolex_core': '🧠',
+                'senior_ai_manager': '👔',
+                'team_coordination': '👥'
+            };
+            
+            const confidence = response.confidence ? Math.round(response.confidence * 100) : 95;
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    ${agentEmoji[agent.replace(' ', '_').toLowerCase()] || '🤖'} ${response.agent || agent}
+                    <span class="confidence-score">${confidence}%</span>
+                </div>
+                <div class="message-content">
+                    ${response.response || response.summary || JSON.stringify(response)}
+                    ${response.recommendations && response.recommendations.length > 0 ? 
+                        '<br><br><strong>Recommendations:</strong><ul>' + 
+                        response.recommendations.map(rec => `<li>${rec}</li>`).join('') + 
+                        '</ul>' : ''
+                    }
+                </div>
+            `;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Enter key to send message
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Auto-focus on input
+        document.getElementById('messageInput').focus();
+    </script>
+</body>
+</html>

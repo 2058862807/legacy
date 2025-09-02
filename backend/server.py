@@ -1035,6 +1035,25 @@ async def rag_system_status():
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
+# Authentication endpoints (NextAuth compatibility)
+@app.get("/api/auth/session")
+async def get_auth_session():
+    """NextAuth session endpoint compatibility"""
+    return {"user": None}
+
+@app.get("/api/auth/providers")
+async def get_auth_providers():
+    """NextAuth providers endpoint compatibility"""
+    return {
+        "google": {
+            "id": "google",
+            "name": "Google",
+            "type": "oauth",
+            "signinUrl": "/api/auth/signin/google",
+            "callbackUrl": "/api/auth/callback/google"
+        }
+    }
+
 # Dashboard endpoints
 @app.get("/api/user/dashboard-stats")
 async def get_dashboard_stats(user_email: str = Query(...), db: Session = Depends(get_db)):

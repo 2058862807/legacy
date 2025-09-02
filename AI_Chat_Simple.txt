@@ -1,0 +1,26 @@
+NexteraEstate AI Team - Simple Command Method
+
+STEP 1: Open Command Prompt (CMD)
+STEP 2: Copy and paste these commands one at a time:
+
+TEST CONNECTION:
+curl http://localhost:8001/api/ai-team/test-connection
+
+TALK TO FULL AI TEAM:
+curl -X POST "http://localhost:8001/api/ai-team/communicate" -H "Content-Type: application/json" -d "{\"message\":\"YOUR_MESSAGE_HERE\",\"recipient\":\"team\",\"priority\":\"normal\"}"
+
+TALK TO SENIOR AI MANAGER:
+curl -X POST "http://localhost:8001/api/ai-team/communicate" -H "Content-Type: application/json" -d "{\"message\":\"YOUR_MESSAGE_HERE\",\"recipient\":\"senior_manager\",\"priority\":\"normal\"}"
+
+TALK TO AUTOLEX CORE:
+curl -X POST "http://localhost:8001/api/ai-team/communicate" -H "Content-Type: application/json" -d "{\"message\":\"YOUR_MESSAGE_HERE\",\"recipient\":\"autolex\",\"priority\":\"normal\"}"
+
+EXAMPLE QUESTIONS:
+- Replace YOUR_MESSAGE_HERE with:
+  - "Help me fix my deployment crashes"
+  - "What's my system status?"
+  - "Optimize my database performance"
+  - "Debug my API errors"
+
+EXAMPLE FULL COMMAND:
+curl -X POST "http://localhost:8001/api/ai-team/communicate" -H "Content-Type: application/json" -d "{\"message\":\"Help me fix my Vercel and Railway deployment issues\",\"recipient\":\"team\",\"priority\":\"high\"}"

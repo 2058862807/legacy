@@ -1,34 +1,35 @@
+# Simple backend-only Dockerfile for Railway deployment
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
-
-# Copy backend requirements
-COPY backend/requirements.txt ./
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    gcc \
+    g++ \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Copy backend requirements and install Python dependencies
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Try to install emergentintegrations (may fail, that's ok)
-RUN pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ || echo "emergentintegrations failed, continuing"
-
 # Copy backend code
-COPY backend/ ./
+COPY backend/ ./backend/
 
-# Create necessary directories
-RUN mkdir -p uploads data
+# Create uploads directory
+RUN mkdir -p /app/uploads
+
+# Set environment variables
+ENV PYTHONPATH=/app/backend
+ENV PORT=8000
 
 # Expose port
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8000/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health || exit 1
 
-# Start command
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start command - Railway will override with railway.toml
+CMD cd backend && python -m uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}

@@ -1022,52 +1022,48 @@ async def get_gasless_notarization_status(tx_hash: str = Query(...)):
         logger.error(f"Gasless status error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# RAG-powered legal analysis endpoint
+# Legacy RAG endpoint - now powered by AutoLex Core
 @app.post("/api/rag/legal-analysis")
-async def rag_legal_analysis(request: BotRequest, user_email: str = Query(...), jurisdiction: str = Query("general"), db: Session = Depends(get_db)):
-    """Advanced RAG-powered legal analysis with source verification"""
+async def rag_legal_analysis(request: BotRequest, db: Session = Depends(get_db)):
+    """Enhanced RAG legal analysis with AutoLex Core triple verification"""
     try:
+        user_email = request.user_email
+        
         # Check rate limit (higher limit for premium feature)
         if not check_rate_limit(user_email, db, "rag_analysis"):
-            raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
+            raise HTTPException(status_code=429, detail="Rate limit exceeded for RAG analysis. Please upgrade your plan or try again later.")
         
-        user = db.query(User).filter(User.email == user_email).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+        logger.info(f"AutoLex Core RAG analysis from {user_email}: {request.message[:50]}...")
         
-        logger.info(f"RAG legal analysis request from {user_email}: {request.message[:50]}...")
-        
-        # Generate RAG-powered response
-        rag_response = await generate_legal_guidance(
+        # Use AutoLex Core with full three-layer verification
+        autolex_result = await autolex_core.process_legal_query(
             query=request.message,
-            jurisdiction=jurisdiction
+            context={
+                "user_email": user_email, 
+                "analysis_type": "premium_rag",
+                "enable_tertiary_verification": True
+            }
         )
         
         return {
-            "analysis": rag_response.response,
-            "sources": [
-                {
-                    "title": source.title,
-                    "citation": source.citation,  
-                    "jurisdiction": source.jurisdiction,
-                    "source_type": source.source_type,
-                    "confidence": source.confidence_score
-                }
-                for source in rag_response.sources
-            ],
-            "citations": rag_response.citations,
-            "confidence": rag_response.confidence,
-            "query_hash": rag_response.query_hash,
-            "timestamp": rag_response.timestamp,
-            "jurisdiction": jurisdiction,
-            "disclaimer": "This analysis is based on available legal sources and is for informational purposes only. Always consult with a licensed attorney for legal advice specific to your situation."
+            "analysis": autolex_result["response"],
+            "confidence_score": autolex_result.get("confidence_score", 0),
+            "sources": autolex_result.get("sources", []),
+            "verification_layers_used": autolex_result.get("layer", 1),
+            "westlaw_verification": autolex_result.get("westlaw_verification"),
+            "lexis_verification": autolex_result.get("lexis_verification"),
+            "requires_human_review": autolex_result.get("requires_human_review", False),
+            "legal_disclaimer": autolex_result.get("legal_disclaimer"),
+            "processing_time_ms": autolex_result.get("processing_time_ms", 0),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "api_cost": autolex_result.get("westlaw_verification", {}).get("api_cost", 0.0)
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"RAG legal analysis error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to generate legal analysis")
+        logger.error(f"AutoLex RAG analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Advanced legal analysis temporarily unavailable. Please try the basic help bot or contact support.")
 
 # RAG system status and health check
 @app.get("/api/rag/status")

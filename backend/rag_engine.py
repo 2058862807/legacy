@@ -536,7 +536,7 @@ This information is provided for educational purposes and does not constitute le
         """Enhanced legal guidance with confidence scoring and human escalation"""
         try:
             # Get relevant legal sources
-            sources = self.similarity_search(query, k=5)
+            sources = self.vector_store.similarity_search(query, k=5)
             
             if not sources:
                 return {
@@ -548,7 +548,7 @@ This information is provided for educational purposes and does not constitute le
                 }
             
             # Calculate confidence based on source similarity and consensus
-            confidence_scores = [source.relevance_score for source in sources]
+            confidence_scores = [source.confidence_score for source in sources]
             avg_confidence = sum(confidence_scores) / len(confidence_scores)
             
             # Multiple factors determine overall confidence
@@ -569,7 +569,7 @@ This information is provided for educational purposes and does not constitute le
                     "confidence_score": overall_confidence,
                     "requires_human_review": True,
                     "escalation_reason": f"Confidence score {overall_confidence:.2%} below 95% threshold",
-                    "sources": [s.to_dict() for s in sources],
+                    "sources": [s.__dict__ for s in sources],
                     "suggested_next_steps": [
                         "Schedule consultation with estate planning attorney",
                         "Provide additional context about your specific situation",
@@ -600,8 +600,8 @@ This information is provided for educational purposes and does not constitute le
             """
             
             # Get AI response
-            if self.llm_provider == "gemini":
-                response = self.gemini_client.generate_content(prompt)
+            if self.model:
+                response = self.model.generate_content(prompt)
                 ai_response = response.text
             else:
                 # Fallback to other providers
@@ -611,7 +611,7 @@ This information is provided for educational purposes and does not constitute le
                 "response": ai_response,
                 "confidence_score": overall_confidence,
                 "requires_human_review": False,
-                "sources": [s.to_dict() for s in sources],
+                "sources": [s.__dict__ for s in sources],
                 "legal_disclaimer": "This guidance is based on general legal principles. Consult with a licensed attorney for advice specific to your situation.",
                 "jurisdiction_coverage": list(set(s.jurisdiction for s in sources)),
                 "last_updated": max(s.last_updated for s in sources)

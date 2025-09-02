@@ -13,9 +13,6 @@ import json
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from autolex_core import autolex_core
-from senior_ai_manager import senior_ai_manager
-
 logger = logging.getLogger(__name__)
 
 class AITeamMessage(BaseModel):

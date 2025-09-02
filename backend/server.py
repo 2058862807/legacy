@@ -839,47 +839,89 @@ This demonstrates our commitment to providing only reliable, well-sourced legal 
         raise HTTPException(status_code=500, detail=f"I apologize, but I'm experiencing technical difficulties. Please try again later or contact support.")
 
 @app.post("/api/bot/grief")
-async def grief_bot(request: BotRequest, user_email: str = Query(...), db: Session = Depends(get_db)):
-    """Grief support bot endpoint"""
+async def grief_bot(request: BotRequest, db: Session = Depends(get_db)):
+    """Integrated grief support bot with AutoLex Core oversight"""
     try:
+        user_email = request.user_email
+        
         # Check rate limit
         if not check_rate_limit(user_email, db, "grief_bot"):
-            raise HTTPException(status_code=429, detail="Daily rate limit exceeded (20 requests)")
+            raise HTTPException(status_code=429, detail="Rate limit exceeded. Please try again later.")
         
-        system_prompt = """You are a compassionate grief support bot for NexteraEstate. Your role is to:
+        logger.info(f"Grief support query from {user_email}: {request.message[:50]}...")
+        
+        # Use AutoLex Core for grief support with specialized context
+        grief_context = {
+            "user_email": user_email,
+            "bot_type": "grief_support",
+            "system_prompt": """You are a compassionate grief support bot integrated with NexteraEstate's legal platform. Your role is to:
 
 - Provide emotional support and understanding for those dealing with loss
-- Offer practical guidance on estate settlement and probate processes
+- Offer practical guidance on estate settlement and probate processes  
 - Share resources for grief counseling and support groups
-- Keep responses under 256 tokens
+- Connect legal estate questions to the platform's legal guidance system
 - Be extremely empathetic and supportive
 - Always include crisis resources when appropriate
 
 Crisis Resources:
 - National Suicide Prevention Lifeline: 988
-- Crisis Text Line: Text HOME to 741741
+- Crisis Text Line: Text HOME to 741741  
 - National Alliance on Mental Illness: 1-800-950-NAMI
 
 Remember: You're here to support people through difficult times with compassion and practical help."""
+        }
         
-        ai_response = await get_ai_response(request.message, system_prompt)
+        # Process through AutoLex Core for integrated response
+        autolex_result = await autolex_core.process_legal_query(
+            query=request.message,
+            context=grief_context
+        )
+        
+        # Format grief-specific response
+        base_response = autolex_result.get('response', '')
         
         # Always include crisis resources in grief bot responses
-        crisis_resources = "\n\nIf you're in crisis, please reach out:\n• National Suicide Prevention Lifeline: 988\n• Crisis Text Line: Text HOME to 741741"
+        crisis_resources = """
+
+🤗 **You're not alone in this difficult time.**
+
+**Crisis Support Available 24/7:**
+• National Suicide Prevention Lifeline: **988**
+• Crisis Text Line: Text **HOME** to **741741**
+• National Alliance on Mental Illness: **1-800-950-NAMI**
+
+If you have estate-related questions, our legal guidance system can help you navigate the process with compassion and clarity."""
+
+        # Combine response with crisis resources
+        full_response = base_response + crisis_resources
         
         return {
-            "reply": ai_response + crisis_resources,
-            "escalate": False,
-            "bot_name": "Grief Support"
+            "response": full_response,
+            "confidence_score": autolex_result.get("confidence_score", 0.95),
+            "bot_type": "grief_support",
+            "requires_human_review": autolex_result.get("requires_human_review", False),
+            "sources": autolex_result.get("sources", []),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "crisis_resources_included": True
         }
+        
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Grief bot error: {str(e)}")
+        logger.error(f"Integrated grief bot error: {str(e)}")
+        # Ensure crisis resources are always available even on error
         return {
-            "reply": "I'm here to support you through this difficult time. If you're in crisis, please call 988 (National Suicide Prevention Lifeline) or text HOME to 741741 (Crisis Text Line). For immediate help, please contact our support team.",
-            "escalate": True,
-            "bot_name": "Grief Support"
+            "response": """I'm here to support you through this difficult time. I'm experiencing a temporary issue, but your wellbeing is most important.
+
+**Immediate Crisis Support:**
+• National Suicide Prevention Lifeline: **988**
+• Crisis Text Line: Text **HOME** to **741741**
+
+Please contact our support team for additional assistance, and remember that you're not alone.""",
+            "bot_type": "grief_support",
+            "error": True,
+            "crisis_resources_included": True,
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
 # Document endpoints

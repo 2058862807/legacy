@@ -96,8 +96,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Include AI team communication router
-app.include_router(ai_team_router)
+# AI team communication router will be included after all endpoints are defined
 
 import openai
 from openai import OpenAI

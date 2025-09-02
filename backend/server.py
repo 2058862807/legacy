@@ -1119,6 +1119,37 @@ async def rag_system_status():
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
+# AutoLex Core system status endpoint
+@app.get("/api/autolex/status")
+async def get_autolex_status():
+    """Get AutoLex Core system status and health metrics"""
+    try:
+        # Get current system health from Senior AI Manager
+        health_metrics = await senior_ai_manager._collect_health_metrics()
+        
+        return {
+            "status": "operational",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "autolex_core_status": health_metrics.autolex_core_status,
+            "rag_engine_status": health_metrics.rag_engine_status,
+            "database_connectivity": health_metrics.database_connectivity,
+            "daily_api_spend": health_metrics.daily_api_spend,
+            "daily_budget": autolex_core.daily_api_budget,
+            "query_success_rate": health_metrics.query_success_rate,
+            "avg_confidence_score": sum(health_metrics.confidence_score_trend) / len(health_metrics.confidence_score_trend) if health_metrics.confidence_score_trend else 0.0,
+            "monitoring_active": True,
+            "last_health_check": health_metrics.timestamp.isoformat(),
+            "version": "1.0.0"
+        }
+        
+    except Exception as e:
+        logger.error(f"AutoLex status check error: {e}")
+        return {
+            "status": "degraded",
+            "error": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+
 # Authentication endpoints (NextAuth compatibility)
 @app.get("/api/auth/session")
 async def get_auth_session():

@@ -31,6 +31,10 @@ from fastapi.responses import FileResponse
 # Import gasless notary service
 from gasless_notary import gasless_notary
 
+# Import AutoLex Core system
+from autolex_core import autolex_core
+from senior_ai_manager import senior_ai_manager
+
 # Import existing modules
 from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, RateLimit, LiveEvent, PlanVersion, PlanAudit, UpdateProposal
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary

@@ -1060,9 +1060,9 @@ async def get_dashboard_stats(user_email: str = Query(...), db: Session = Depend
                     completion += 0.3
                 if will.assets:
                     completion += 0.2
-                if will.witnesses:
+                if will.witnesses_signed:  # Fixed: use witnesses_signed instead of witnesses
                     completion += 0.1
-                if will.executor:
+                if will.executors:  # Fixed: use executors instead of executor
                     completion += 0.1
                 total_completion += completion
             avg_completion = (total_completion / len(wills)) * 100

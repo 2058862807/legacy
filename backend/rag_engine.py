@@ -532,6 +532,100 @@ This information is provided for educational purposes and does not constitute le
         finally:
             conn.close()
 
+    def get_legal_guidance_with_confidence(self, query: str, context: str = None) -> dict:
+        """Enhanced legal guidance with confidence scoring and human escalation"""
+        try:
+            # Get relevant legal sources
+            sources = self.similarity_search(query, k=5)
+            
+            if not sources:
+                return {
+                    "response": "I don't have sufficient legal information to answer this query reliably.",
+                    "confidence_score": 0.0,
+                    "requires_human_review": True,
+                    "escalation_reason": "No relevant legal sources found",
+                    "sources": []
+                }
+            
+            # Calculate confidence based on source similarity and consensus
+            confidence_scores = [source.relevance_score for source in sources]
+            avg_confidence = sum(confidence_scores) / len(confidence_scores)
+            
+            # Multiple factors determine overall confidence
+            source_diversity = len(set(s.jurisdiction for s in sources))
+            recent_sources = sum(1 for s in sources if "2024" in s.last_updated or "2023" in s.last_updated) 
+            
+            # Weighted confidence calculation
+            overall_confidence = (
+                avg_confidence * 0.6 +  # Similarity match weight
+                min(source_diversity / 3, 1.0) * 0.2 +  # Jurisdiction diversity
+                min(recent_sources / len(sources), 1.0) * 0.2  # Recency weight
+            )
+            
+            # CRITICAL: Block responses below 95% confidence threshold
+            if overall_confidence < 0.95:
+                return {
+                    "response": "This query requires human expert review due to complexity or insufficient confidence in automated analysis.",
+                    "confidence_score": overall_confidence,
+                    "requires_human_review": True,
+                    "escalation_reason": f"Confidence score {overall_confidence:.2%} below 95% threshold",
+                    "sources": [s.to_dict() for s in sources],
+                    "suggested_next_steps": [
+                        "Schedule consultation with estate planning attorney",
+                        "Provide additional context about your specific situation",
+                        "Consider upgrading to premium plan for human expert review"
+                    ]
+                }
+            
+            # Generate response with high confidence
+            context_text = "\n\n".join([
+                f"Source: {source.title} ({source.jurisdiction})\n{source.content[:500]}..."
+                for source in sources
+            ])
+            
+            prompt = f"""
+            Based on these verified legal sources, provide estate planning guidance for: {query}
+            
+            Legal Sources:
+            {context_text}
+            
+            Requirements:
+            1. Cite specific sources in your response
+            2. Indicate any jurisdictional limitations
+            3. Include appropriate legal disclaimers
+            4. Provide actionable next steps
+            5. Note if professional review is recommended
+            
+            Context: {context or 'General estate planning inquiry'}
+            """
+            
+            # Get AI response
+            if self.llm_provider == "gemini":
+                response = self.gemini_client.generate_content(prompt)
+                ai_response = response.text
+            else:
+                # Fallback to other providers
+                ai_response = "Legal guidance requires Gemini AI configuration."
+            
+            return {
+                "response": ai_response,
+                "confidence_score": overall_confidence,
+                "requires_human_review": False,
+                "sources": [s.to_dict() for s in sources],
+                "legal_disclaimer": "This guidance is based on general legal principles. Consult with a licensed attorney for advice specific to your situation.",
+                "jurisdiction_coverage": list(set(s.jurisdiction for s in sources)),
+                "last_updated": max(s.last_updated for s in sources)
+            }
+            
+        except Exception as e:
+            logger.error(f"Enhanced legal guidance error: {e}")
+            return {
+                "response": "I apologize, but I'm unable to provide legal guidance at this time due to a technical issue.",
+                "confidence_score": 0.0,
+                "requires_human_review": True,
+                "escalation_reason": f"Technical error: {str(e)}",
+                "sources": []
+            }
 # Global RAG engine instance
 rag_engine = None
 

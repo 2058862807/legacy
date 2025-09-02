@@ -25,6 +25,7 @@ from rag_engine import rag_engine
 from gasless_notary import gasless_notary
 from autolex_core import autolex_core
 from senior_ai_manager import senior_ai_manager
+from ai_team_interface import router as ai_team_router
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

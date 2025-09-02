@@ -21,8 +21,8 @@ export default function Footer() {
               <p>4105 41st Ave.</p>
               <p>Northport, Alabama 35473</p>
               <p>
-                <a href="mailto:support@nexteraestate.com" className="hover:text-white transition-colors">
-                  support@nexteraestate.com
+                <a href="mailto:NextEraEstate@gmail.com" className="hover:text-white transition-colors">
+                  NextEraEstate@gmail.com
                 </a>
               </p>
             </div>

@@ -28,6 +28,9 @@ from eth_utils import to_hex
 from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse
 
+# Import gasless notary service
+from gasless_notary import gasless_notary
+
 # Import existing modules
 from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, RateLimit, LiveEvent, PlanVersion, PlanAudit, UpdateProposal
 from compliance_service import ComplianceService, ComplianceRuleResponse, ComplianceSummary

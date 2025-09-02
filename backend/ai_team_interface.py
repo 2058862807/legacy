@@ -72,29 +72,47 @@ async def communicate_with_ai_team(message: AITeamMessage) -> Dict[str, Any]:
 async def _communicate_with_autolex(message: AITeamMessage) -> AITeamResponse:
     """Direct communication with AutoLex Core"""
     
-    # Determine if this is a development question or legal question
-    dev_keywords = ["code", "implementation", "bug", "feature", "architecture", "database", "api", "frontend", "backend"]
-    is_dev_question = any(keyword in message.message.lower() for keyword in dev_keywords)
-    
-    if is_dev_question:
-        # Handle development-related questions
-        response_text = await _handle_development_query(message.message, message.context)
-        confidence = 0.85
-    else:
-        # Handle as legal query - placeholder for AutoLex processing
-        # TODO: Implement proper AutoLex integration
-        response_text = f"Legal query processing for: {message.message}"
-        confidence = 0.8
-    
-    return AITeamResponse(
-        agent="AutoLex Core",
-        response=response_text,
-        confidence=confidence,
-        timestamp=datetime.now(timezone.utc).isoformat(),
-        actions_taken=["Processed query through 3-layer verification"],
-        recommendations=["Consider upgrading to premium plan for enhanced features"] if confidence < 0.9 else [],
-        escalation_needed=confidence < 0.7
-    )
+    try:
+        # Import AutoLex Core dynamically to avoid circular imports
+        from autolex_core import autolex_core
+        
+        # Determine if this is a development question or legal question
+        dev_keywords = ["code", "implementation", "bug", "feature", "architecture", "database", "api", "frontend", "backend"]
+        is_dev_question = any(keyword in message.message.lower() for keyword in dev_keywords)
+        
+        if is_dev_question:
+            # Handle development-related questions
+            response_text = await _handle_development_query(message.message, message.context)
+            confidence = 0.85
+        else:
+            # Handle as legal query through normal AutoLex processing
+            autolex_result = await autolex_core.process_legal_query(
+                query=message.message,
+                context={**message.context, "direct_communication": True, "priority": message.priority}
+            )
+            response_text = autolex_result.get("response", "No response generated")
+            confidence = autolex_result.get("confidence_score", 0.0)
+        
+        return AITeamResponse(
+            agent="AutoLex Core",
+            response=response_text,
+            confidence=confidence,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            actions_taken=["Processed query through 3-layer verification"],
+            recommendations=["Consider upgrading to premium plan for enhanced features"] if confidence < 0.9 else [],
+            escalation_needed=confidence < 0.7
+        )
+        
+    except Exception as e:
+        logger.error(f"AutoLex communication error: {e}")
+        return AITeamResponse(
+            agent="AutoLex Core",
+            response=f"I apologize, but I'm experiencing technical difficulties communicating with my core systems. Error: {str(e)}. My autonomous learning and improvement systems are still active and monitoring.",
+            confidence=0.6,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            actions_taken=["Attempted AutoLex Core communication"],
+            escalation_needed=True
+        )
 
 async def _communicate_with_senior_manager(message: AITeamMessage) -> AITeamResponse:
     """Direct communication with Senior AI Manager"""

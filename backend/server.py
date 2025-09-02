@@ -1937,6 +1937,9 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
         logger.error(f"Error accepting proposal: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Include AI team communication router after all endpoints are defined
+app.include_router(ai_team_router)
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8001))

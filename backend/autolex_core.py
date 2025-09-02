@@ -65,7 +65,15 @@ class AutoLexCore:
     """
     
     def __init__(self):
-        self.rag_engine = rag_engine  # Use existing RAG as Layer 1
+        # Import and connect to existing RAG engine
+        try:
+            from rag_engine import rag_engine as existing_rag
+            self.rag_engine = existing_rag
+            logger.info("✅ AutoLex Core connected to existing RAG engine")
+        except ImportError:
+            logger.warning("⚠️ RAG engine not available - using fallback mode")
+            self.rag_engine = None
+        
         self.db_path = "/app/backend/autolex_core.db"
         self.westlaw_api_key = os.getenv("WESTLAW_API_KEY")
         self.lexis_api_key = os.getenv("LEXIS_API_KEY")

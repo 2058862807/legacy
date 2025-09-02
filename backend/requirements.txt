@@ -13,7 +13,7 @@ eth-account==0.13.4
 web3==7.6.0
 reportlab==4.4.3
 fpdf2==2.8.4
-emergentintegrations
 sentence-transformers==2.6.1
 numpy==1.26.4
 scikit-learn==1.4.2
+resend==2.4.0

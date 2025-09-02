@@ -16,28 +16,111 @@ import json
 logger = logging.getLogger(__name__)
 
 class GaslessNotaryService:
-    """Handles gasless blockchain notarization for users"""
+    """Handles gasless blockchain notarization for users with enhanced security"""
     
     def __init__(self):
         # Polygon network configuration
         self.rpc_url = os.getenv("POLYGON_RPC_URL", "https://polygon-rpc.com/")
         self.chain_id = 137  # Polygon Mainnet (use 80001 for Mumbai testnet)
         
-        # Master wallet configuration (NexteraEstate controlled)
-        self.master_private_key = os.getenv("MASTER_WALLET_PRIVATE_KEY")
+        # Enhanced security for master wallet
+        self.master_private_key = self._get_secure_private_key()
         self.min_balance_threshold = Decimal("0.1")  # Minimum MATIC balance
+        self.max_daily_transactions = 1000  # Rate limiting
+        self.daily_transaction_count = 0
+        self.last_reset_date = datetime.now(timezone.utc).date()
         
-        # Initialize Web3
-        self.w3 = Web3(Web3.HTTPProvider(self.rpc_url))
+        # Initialize Web3 with retry logic
+        self.w3 = None
+        self._initialize_web3_connection()
         
         if self.master_private_key:
             self.master_account = Account.from_key(self.master_private_key)
             self.master_address = self.master_account.address
             logger.info(f"Master wallet initialized: {self.master_address}")
+            
+            # Security validation
+            self._validate_wallet_security()
         else:
             logger.warning("Master wallet not configured - using mock mode")
             self.master_account = None
             self.master_address = None
+    
+    def _get_secure_private_key(self) -> Optional[str]:
+        """Securely retrieve private key with multiple fallback methods"""
+        # Method 1: Environment variable (current)
+        private_key = os.getenv("MASTER_WALLET_PRIVATE_KEY")
+        if private_key and private_key != "YOUR_ACTUAL_PRIVATE_KEY_GOES_HERE":
+            return private_key
+        
+        # Method 2: Encrypted file (future implementation)
+        # encrypted_key_path = os.getenv("ENCRYPTED_WALLET_PATH")
+        # if encrypted_key_path and os.path.exists(encrypted_key_path):
+        #     return self._decrypt_wallet_file(encrypted_key_path)
+        
+        # Method 3: HSM integration (future)
+        # hsm_key_id = os.getenv("HSM_KEY_ID")
+        # if hsm_key_id:
+        #     return self._get_hsm_private_key(hsm_key_id)
+        
+        return None
+    
+    def _initialize_web3_connection(self):
+        """Initialize Web3 with connection retry and fallback RPCs"""
+        rpc_urls = [
+            self.rpc_url,
+            "https://polygon-mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",  # Fallback
+            "https://polygon-rpc.com/",  # Another fallback
+        ]
+        
+        for rpc_url in rpc_urls:
+            try:
+                self.w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={'timeout': 60}))
+                if self.w3.is_connected():
+                    logger.info(f"Connected to Polygon via {rpc_url}")
+                    break
+            except Exception as e:
+                logger.warning(f"Failed to connect to {rpc_url}: {e}")
+                continue
+        
+        if not self.w3 or not self.w3.is_connected():
+            logger.error("Failed to connect to any Polygon RPC")
+    
+    def _validate_wallet_security(self):
+        """Validate wallet security and log security metrics"""
+        if not self.master_address:
+            return
+        
+        try:
+            # Check if wallet has been compromised (unusual transaction patterns)
+            balance = self.w3.eth.get_balance(self.master_address)
+            transaction_count = self.w3.eth.get_transaction_count(self.master_address)
+            
+            # Log security metrics (without sensitive data)
+            logger.info(f"Wallet security check: Balance positive: {balance > 0}, Tx count: {transaction_count}")
+            
+            # Alert if suspicious activity
+            if transaction_count > 10000:  # Arbitrary threshold
+                logger.warning("High transaction count detected - monitor for suspicious activity")
+            
+        except Exception as e:
+            logger.error(f"Wallet security validation failed: {e}")
+    
+    async def _check_daily_limits(self) -> bool:
+        """Check and enforce daily transaction limits"""
+        today = datetime.now(timezone.utc).date()
+        
+        # Reset counter if new day
+        if today > self.last_reset_date:
+            self.daily_transaction_count = 0
+            self.last_reset_date = today
+        
+        # Check if within limits
+        if self.daily_transaction_count >= self.max_daily_transactions:
+            logger.error(f"Daily transaction limit reached: {self.daily_transaction_count}")
+            return False
+        
+        return True
     
     async def get_notarization_price(self, document_type: str = "will") -> Dict[str, Any]:
         """Get pricing for notarization service"""

@@ -101,8 +101,8 @@ export class DocumentEncryption {
     try {
       // Convert base64 back to ArrayBuffer
       const encrypted = new Uint8Array([
-        ...this.base64ToArrayBuffer(encryptedData),
-        ...this.base64ToArrayBuffer(authTag)
+        ...Array.from(this.base64ToArrayBuffer(encryptedData)),
+        ...Array.from(this.base64ToArrayBuffer(authTag))
       ]);
 
       // Decrypt the data

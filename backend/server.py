@@ -157,16 +157,7 @@ elif LLM_PROVIDER == 'openai' and OPENAI_API_KEY:
 elif OPENAI_API_KEY:  # fallback to OpenAI
     openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
-app = FastAPI()
-
-# Create database tables on startup
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    from database import engine, Base
-    Base.metadata.create_all(bind=engine)
-    yield
-
-app = FastAPI(lifespan=lifespan)
+# Database initialization already handled in main lifespan function above
 
 # Add CORS middleware
 app.add_middleware(

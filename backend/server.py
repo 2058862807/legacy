@@ -937,6 +937,80 @@ async def get_notary_status(tx_hash: str = Query(...)):
         logger.error(f"Status check error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# GASLESS NOTARIZATION ENDPOINTS
+
+@app.get("/api/notary/pricing")
+async def get_notarization_pricing(document_type: str = Query("will")):
+    """Get pricing for gasless notarization service"""
+    try:
+        pricing = await gasless_notary.get_notarization_price(document_type)
+        return pricing
+    except Exception as e:
+        logger.error(f"Pricing error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/notary/wallet-status")
+async def get_wallet_status():
+    """Get master wallet status (admin endpoint)"""
+    try:
+        status = await gasless_notary.check_master_wallet_balance()
+        return status
+    except Exception as e:
+        logger.error(f"Wallet status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class GaslessNotarizeRequest(BaseModel):
+    document_hash: str
+    document_type: str = "will"
+    user_email: str
+    payment_intent_id: str  # Stripe payment confirmation
+
+@app.post("/api/notary/gasless-create")
+async def create_gasless_notarization(request: GaslessNotarizeRequest):
+    """Create gasless blockchain notarization (NexteraEstate pays gas)"""
+    try:
+        # Verify payment was completed (simplified for demo)
+        payment_confirmed = True  # In real implementation, verify with Stripe
+        
+        result = await gasless_notary.create_gasless_notarization(
+            document_hash=request.document_hash,
+            user_email=request.user_email,
+            document_type=request.document_type,
+            payment_confirmed=payment_confirmed
+        )
+        
+        if result["success"]:
+            return {
+                "success": True,
+                "transaction_hash": result["transaction_hash"],
+                "polygonscan_url": result["polygonscan_url"],
+                "status": result["status"],
+                "message": "Document successfully notarized on Polygon blockchain",
+                "timestamp": result["timestamp"],
+                "user_benefits": [
+                    "Immutable blockchain record created",
+                    "No crypto wallet required",
+                    "Gas fees handled by NexteraEstate",
+                    "Instant verification available"
+                ]
+            }
+        else:
+            raise HTTPException(status_code=500, detail=result["error"])
+            
+    except Exception as e:
+        logger.error(f"Gasless notarization error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/notary/gasless-status")
+async def get_gasless_notarization_status(tx_hash: str = Query(...)):
+    """Get status of gasless notarization"""
+    try:
+        status = await gasless_notary.get_notarization_status(tx_hash)
+        return status
+    except Exception as e:
+        logger.error(f"Gasless status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # RAG-powered legal analysis endpoint
 @app.post("/api/rag/legal-analysis")
 async def rag_legal_analysis(request: BotRequest, user_email: str = Query(...), jurisdiction: str = Query("general"), db: Session = Depends(get_db)):

@@ -19,7 +19,7 @@ export default function HomePage() {
       <Features />
       <StateBadge />
       <Trust />
-      <PricingCards />
+      <SimplePricingCards />
       <HomeCTA />
       <Footer />
     </div>

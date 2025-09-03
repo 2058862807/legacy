@@ -15,10 +15,10 @@ export default function HomeCTA() {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/login"
+            href="/start"
             className="w-full sm:w-auto bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors shadow-lg"
           >
-            Get Started Now
+            Start your plan
           </Link>
           <Link
             href="/pricing"

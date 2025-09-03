@@ -30,25 +30,25 @@ export default function LiveEstateFeature() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="text-4xl mb-4">🛡️</div>
-            <h3 className="text-xl font-bold text-white mb-3">Never Outdated</h3>
+            <h3 className="text-xl font-bold text-white mb-3">Never outdated</h3>
             <p className="text-blue-100">
-              Solves the #1 fear in estate planning - stale or legally invalid documents that leave your family at risk.
+              Your plan updates when laws change. We show what changed and why.
             </p>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="text-4xl mb-4">🔄</div>
-            <h3 className="text-xl font-bold text-white mb-3">Automatic Updates</h3>
+            <h3 className="text-xl font-bold text-white mb-3">Automatic updates</h3>
             <p className="text-blue-100">
-              Monitors legal changes across all 50 states and your life events, proposing updates with one-click approval.
+              Review and accept changes in one click. Keep everything current.
             </p>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="text-4xl mb-4">🔗</div>
-            <h3 className="text-xl font-bold text-white mb-3">Blockchain Audit</h3>
+            <h3 className="text-xl font-bold text-white mb-3">Blockchain audit</h3>
             <p className="text-blue-100">
-              Every update creates an immutable record on Polygon with timestamps and legal citations for complete transparency.
+              Each version is notarized with a public hash. <a href="https://polygonscan.com/tx/0x0000000000000000000000000000000000000000000000000000000000000000" target="_blank" rel="noopener noreferrer" className="text-white underline hover:text-blue-200">View sample</a>
             </p>
           </div>
         </div>

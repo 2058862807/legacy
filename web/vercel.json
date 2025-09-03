@@ -6,7 +6,10 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://api.nexteraestate.com/:path*"
+      "destination": "https://nexteraestate-backend.up.railway.app/api/:path*"
     }
-  ]
+  ],
+  "env": {
+    "NEXT_PUBLIC_BACKEND_BASE_URL": "https://nexteraestate-backend.up.railway.app"
+  }
 }

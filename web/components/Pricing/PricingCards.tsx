@@ -23,101 +23,46 @@ const PRICING_PLANS: PricingPlan[] = [
   {
     id: 'free',
     name: 'Free',
-    description: 'Draft and preview your estate plan',
+    description: 'Create and preview. Save progress. Email support.',
     price: 0,
     yearlyPrice: 0,
     period: 'month',
     features: [
-      'Basic will creation',
-      'Document preview',
-      'AI legal guidance (5 queries/month)',
-      'State compliance check',
-      'Educational resources'
-    ],
-    limitations: [
-      'Cannot download documents',
-      'No notarization',
-      'Limited AI consultations'
+      'Create and preview',
+      'Save progress', 
+      'Email support'
     ]
   },
   {
     id: 'family',
     name: 'Family',
-    description: 'Complete estate planning for families',
-    price: 49.99,
-    yearlyPrice: 499,
-    period: 'month',
+    description: 'All core documents. Automatic updates. Secure sharing.',
+    price: 199,
+    yearlyPrice: 199,
+    period: 'year',
     popular: true,
     features: [
-      'Everything in Free',
-      'Unlimited will creation',
-      'Basic trust documents',
-      'Unlimited AI consultations',
-      'Family communication portal',
-      'Document downloads',
-      'Email support',
-      '1 free blockchain notarization/month'
-    ]
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    description: 'Advanced estate planning with professional features',
-    price: 149.99,
-    yearlyPrice: 1499,
-    period: 'month',
-    features: [
-      'Everything in Family',
-      'Complex trust structures',
-      'Business asset planning',
-      'Tax optimization guidance',
-      'Dynamic asset mapping',
-      'Multi-state compliance',
-      'Priority support',
-      'Unlimited blockchain notarization',
-      'Human expert review (1/month)'
+      'All core documents',
+      'Automatic updates',
+      'Secure sharing',
+      '60 day money back'
     ]
   },
   {
     id: 'founding',
-    name: 'Founding Member',
-    description: 'Limited time - First 200 users only',
+    name: 'Founding Lifetime',
+    description: 'Lifetime access. All updates included. Priority support.',
     price: 129,
     yearlyPrice: 129,
     period: 'year',
     founding: true,
     features: [
-      'Everything in Core plan for 12 months',
-      'Lock renewal at $199/year forever',
-      'Founding member badge',
-      'Direct feedback line to founder',
-      'Early access to new features',
-      'Grandfathered pricing for life'
+      'Lifetime access',
+      'All updates included',
+      'Priority support'
     ]
-  },
-  {
-    id: 'core',
-    name: 'Core',
-    description: 'Essential estate planning for individuals',
-    price: 29,
-    yearlyPrice: 199, // 30% annual discount 
-    period: 'month',
-    popular: true,
-    features: [
-      'Export professional PDFs',
-      'Google OAuth sign-in',
-      'Blockchain proof for every document',
-      'Compliance monitoring (1 state)',
-      'Email support (48hr response)',
-      'Live Estate Plan basic monitoring',
-      'Document version history (3 versions)',
-      'AI legal guidance (20 questions/day)'
-    ],
-    addOns: [
-      { name: 'Additional State Monitoring', price: 5, description: 'per state/month' },
-      { name: 'Priority Email Support', price: 9, description: '24hr response' }
-    ]
-  },
+  }
+]
   {
     id: 'plus',
     name: 'Plus',

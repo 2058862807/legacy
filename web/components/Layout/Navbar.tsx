@@ -38,6 +38,12 @@ export default function Navbar() {
             <Link href="/compliance" className="text-gray-600 hover:text-gray-900 font-medium">
               Compliance
             </Link>
+            <button 
+              onClick={() => setShowStateModal(true)}
+              className="text-gray-600 hover:text-gray-900 font-medium"
+            >
+              State coverage
+            </button>
             <Link href="/faq" className="text-gray-600 hover:text-gray-900 font-medium">
               FAQ
             </Link>

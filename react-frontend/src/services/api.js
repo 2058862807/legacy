@@ -1,8 +1,30 @@
 import axios from 'axios';
 
-const API_BASE_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:8001/api'
-  : `${window.location.protocol}//${window.location.hostname}:8001/api`;
+// Auto-detect the correct backend URL based on environment
+const getBackendURL = () => {
+  if (window.location.hostname === 'localhost') {
+    return 'http://localhost:8001/api';
+  }
+  
+  // For Emergent platform - try common patterns
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  
+  // Pattern 1: Replace port number in hostname
+  if (hostname.includes('3001-')) {
+    return `${protocol}//${hostname.replace('3001-', '8001-')}/api`;
+  }
+  
+  // Pattern 2: Use different port on same hostname
+  if (hostname.includes('.emergent')) {
+    return `${protocol}//${hostname.replace(':3001', ':8001')}/api`;
+  }
+  
+  // Fallback: try same hostname with port 8001
+  return `${protocol}//${hostname}:8001/api`;
+};
+
+const API_BASE_URL = getBackendURL();
 
 // Create axios instance
 const api = axios.create({

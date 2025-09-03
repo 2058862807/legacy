@@ -102,6 +102,10 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm">
               © 2025 NexteraEstate™. All rights reserved.
+              <br />
+              <span className="text-xs text-gray-500">
+                Not a law firm. This is not legal advice.
+              </span>
             </div>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <span className="text-green-400 text-sm flex items-center">

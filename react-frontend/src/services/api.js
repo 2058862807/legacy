@@ -26,6 +26,14 @@ const getBackendURL = () => {
 
 const API_BASE_URL = getBackendURL();
 
+// Debug logging to help troubleshoot
+console.log('🔧 API Configuration:', {
+  'Frontend URL': window.location.href,
+  'Backend URL': API_BASE_URL,
+  'Hostname': window.location.hostname,
+  'Protocol': window.location.protocol
+});
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,

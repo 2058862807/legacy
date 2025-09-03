@@ -464,5 +464,11 @@ class AutoLexCore:
             "error": True
         }
 
-# Global AutoLex Core instance
-autolex_core = AutoLexCore()
+# Global AutoLex Core instance - Initialize safely
+try:
+    autolex_core = AutoLexCore()
+    logger.info("✅ AutoLex Core initialized successfully")
+except Exception as e:
+    logger.error(f"❌ AutoLex Core initialization failed: {e}")
+    # Create a fallback instance that won't crash the server
+    autolex_core = None

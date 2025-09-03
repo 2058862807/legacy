@@ -61,8 +61,7 @@ const PRICING_PLANS: PricingPlan[] = [
       'All updates included',
       'Priority support'
     ]
-  }
-]
+  },
   {
     id: 'plus',
     name: 'Plus',

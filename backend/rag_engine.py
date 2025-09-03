@@ -246,7 +246,7 @@ class LegalVectorStore:
                 jurisdiction=doc[4],
                 citation=doc[5],
                 last_updated=doc[6],
-                confidence_score=similarity
+                confidence_score=float(similarity)  # Convert numpy.float32 to Python float
             )))
         
         # Sort by similarity and return top k

@@ -19,10 +19,10 @@
 2. **Set Environment Variables**:
    ```bash
    MONGO_URL=mongodb://mongo:password@railway-mongo:27017/nexteraestate
-   OPENAI_API_KEY=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
-   GEMINI_API_KEY=AIzaSyArLWBXsqzVF9V_FkxpJJMtc5ePFJjC5aY
-   STRIPE_SECRET_KEY=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
-   EMERGENT_LLM_KEY=sk-emergent-d6fA0B122E235889fD
+   OPENAI_API_KEY=your_openai_api_key_here
+   GEMINI_API_KEY=your_gemini_api_key_here
+   STRIPE_SECRET_KEY=your_stripe_secret_key_here
+   EMERGENT_LLM_KEY=your_emergent_llm_key_here
    PORT=8001
    ```
 3. **Set Root Directory**: `/backend`

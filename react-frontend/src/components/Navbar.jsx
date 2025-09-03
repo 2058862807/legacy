@@ -16,8 +16,8 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">NexteraEstate</h1>
-              <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
+              <h1 className="text-3xl font-bold text-gray-900">NexteraEstate</h1>
+              <span className="ml-3 px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-full font-medium">
                 AI-Powered
               </span>
             </Link>

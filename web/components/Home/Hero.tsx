@@ -14,7 +14,7 @@ export default function Hero() {
           
           {/* Subhead */}
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Create your plan, notarize on Polygon, meet your state rules.
+            Start free. Pay when you download. Works in all 50 states.
           </p>
           
           {/* Explainer bullets */}

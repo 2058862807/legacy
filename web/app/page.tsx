@@ -6,7 +6,7 @@ import LiveEstateFeature from '../components/LiveEstate/LiveEstateFeature'
 import Features from '../components/Home/Features'
 import StateBadge from '../components/Compliance/StateBadge'
 import Trust from '../components/Home/Trust'
-import PricingCards from '../components/Pricing/PricingCards'
+import SimplePricingCards from '../components/Pricing/SimplePricingCards'
 import HomeCTA from '../components/Home/HomeCTA'
 import Footer from '../components/Footer'
 

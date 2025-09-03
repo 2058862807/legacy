@@ -35,10 +35,10 @@
    ```bash
    NEXTAUTH_SECRET=prod-secret-key-nexteraestate-2025
    NEXTAUTH_URL=https://nexteraestate.vercel.app
-   GOOGLE_CLIENT_ID=484116554866-hsvdc8016qb959mam5e025i5s7pfa74o.apps.googleusercontent.com
-   GOOGLE_CLIENT_SECRET=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
+   GOOGLE_CLIENT_ID=your_google_client_id_here
+   GOOGLE_CLIENT_SECRET=your_google_client_secret_here
    NEXT_PUBLIC_BACKEND_BASE_URL=https://nexteraestate-backend.up.railway.app
-   STRIPE_PUBLIC_KEY=pk_live_51RgFeiHTJFmgsQYSszCQubhTl9VPgTLIGLKuqPDD5Im72bNvIAYCO7Y8m7BWuGxhlksjkqV7JPTsIKcuqPJ7MrOn00vtmPuyiK
+   STRIPE_PUBLIC_KEY=your_stripe_public_key_here
    ```
 4. **Deploy**: Vercel will automatically use the vercel.json config
 

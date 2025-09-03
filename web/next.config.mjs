@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false, // Disable to reduce overhead
   experimental: {
     esmExternals: false,
+  },
+  // Optimize for development speed
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   // Handle environment variables properly
   env: {

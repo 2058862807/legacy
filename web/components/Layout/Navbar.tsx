@@ -16,6 +16,7 @@ import NexteraLogo from '../NexteraLogo'
 
 export default function Navbar() {
   const { data: session } = useSession()
+  const [showStateModal, setShowStateModal] = useState(false)
 
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">

@@ -146,10 +146,6 @@ from pdf_generator import WillPDFGenerator
 # Import RAG engine
 from rag_engine import get_rag_engine, generate_legal_guidance
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 # Environment variables
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 LLM_PROVIDER = os.environ.get('LLM_PROVIDER', 'emergent')

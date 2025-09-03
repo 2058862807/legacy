@@ -128,16 +128,16 @@ export default function LiveEstateFeature() {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/login"
+                href="/start"
                 className="bg-white text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
               >
-                Start Live Monitoring
+                Start your plan
               </Link>
               <Link
-                href="/pricing"
+                href="#pricing"
                 className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
               >
-                View Pricing
+                View pricing
               </Link>
             </div>
             

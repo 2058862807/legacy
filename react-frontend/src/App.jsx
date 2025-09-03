@@ -67,11 +67,7 @@ function AppContent() {
           />
           <Route 
             path="/ai-assistant" 
-            element={
-              <ProtectedRoute>
-                <AIAssistantPage />
-              </ProtectedRoute>
-            } 
+            element={<AIAssistantPage />} 
           />
 
           {/* Fallback */}

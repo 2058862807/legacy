@@ -9,7 +9,7 @@ export default function Hero() {
         <div className="text-center">
           {/* Headline */}
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Estate planning made <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">simple</span>
+            Build a state compliant will in 12 minutes
           </h1>
           
           {/* Subhead */}

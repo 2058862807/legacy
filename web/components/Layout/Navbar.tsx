@@ -55,8 +55,8 @@ export default function Navbar() {
                 Dashboard
               </Link>
             ) : (
-              <Link href="/login" className="text-blue-600 font-medium">
-                Sign In
+              <Link href="/start" className="text-blue-600 font-medium">
+                Start your plan
               </Link>
             )}
           </div>

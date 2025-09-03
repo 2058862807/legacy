@@ -1,0 +1,914 @@
+{
+  "timestamp": "2025-09-03T20:42:57.223105",
+  "backend_url": "http://localhost:8001",
+  "total_tests": 41,
+  "error_502_count": 0,
+  "connection_error_count": 0,
+  "results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "ok",
+        "timestamp": "2025-09-03T20:42:51.869786+00:00",
+        "compliance_enabled": true,
+        "database_available": true,
+        "live_estate_monitoring": true,
+        "features": {
+          "50_state_monitoring": true,
+          "automatic_updates": true,
+          "blockchain_audit": true,
+          "yearly_checkins": true
+        }
+      },
+      "timestamp": "2025-09-03T20:42:51.870540"
+    },
+    {
+      "test": "AI Team Status",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "overall_status": "degraded",
+        "operational_systems": 3,
+        "total_systems": 4,
+        "timestamp": "2025-09-03T20:42:51.941348+00:00",
+        "systems": {
+          "rag_engine": {
+            "status": "operational",
+            "confidence_threshold": 0.95,
+            "documents_loaded": 10,
+            "last_test": "2025-09-03T20:42:51.920586+00:00"
+          },
+          "autolex_core": {
+            "status": "operational",
+            "three_layer_verification": true,
+            "westlaw_integration": false,
+            "daily_api_budget": 500.0,
+            "current_spend": 0.0,
+            "last_test": "2025-09-03T20:42:51.941320+00:00"
+          },
+          "senior_ai_manager": {
+            "status": "operational",
+            "monitoring_active": true,
+            "last_health_check": "2025-09-03T20:42:51.893841+00:00",
+            "escalation_protocols": [
+              "solve",
+              "isolate",
+              "escalate"
+            ],
+            "monitoring_components": [
+              "autolex_core",
+              "rag_engine",
+              "database",
+              "apis"
+            ]
+          },
+          "gasless_notary": {
+            "status": "not_configured",
+            "balance_matic": 0,
+            "transactions_remaining": 0,
+            "master_address": "not_configured"
+          }
+        },
+        "integration_status": {
+          "autolex_rag_integration": true,
+          "senior_manager_monitoring": true,
+          "three_layer_verification": true,
+          "autonomous_operation": true
+        },
+        "capabilities": [
+          "Autonomous legal intelligence",
+          "Three-layer verification system",
+          "Commercial database validation",
+          "Self-improving knowledge base",
+          "Gasless blockchain notarization",
+          "24/7 system monitoring",
+          "Human escalation protocols"
+        ],
+        "version": "2.0.0"
+      },
+      "timestamp": "2025-09-03T20:42:51.942445"
+    },
+    {
+      "test": "AutoLex Status",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "operational",
+        "timestamp": "2025-09-03T20:42:52.015242+00:00",
+        "autolex_core_status": "healthy",
+        "rag_engine_status": "healthy",
+        "database_connectivity": true,
+        "daily_api_spend": 0.0,
+        "daily_budget": 500.0,
+        "query_success_rate": 0.987,
+        "avg_confidence_score": 0.8949999999999999,
+        "monitoring_active": true,
+        "last_health_check": "2025-09-03T20:42:52.015232+00:00",
+        "version": "1.0.0"
+      },
+      "timestamp": "2025-09-03T20:42:52.016166"
+    },
+    {
+      "test": "RAG System Status",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "operational",
+        "vector_database_health": "healthy",
+        "legal_documents_loaded": 10,
+        "total_queries_processed": 0,
+        "average_confidence_24h": 0.0,
+        "document_types": {
+          "precedent": 4,
+          "regulation": 2,
+          "statute": 4
+        },
+        "embedding_model": "all-MiniLM-L6-v2",
+        "legal_apis_configured": {
+          "nextlaw": false,
+          "westlaw": false,
+          "lexis": false
+        },
+        "gemini_available": true,
+        "timestamp": "2025-09-03T20:42:52.017678+00:00"
+      },
+      "timestamp": "2025-09-03T20:42:52.018393"
+    },
+    {
+      "test": "NextAuth Session",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "user": null
+      },
+      "timestamp": "2025-09-03T20:42:52.019837"
+    },
+    {
+      "test": "NextAuth Providers",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "google": {
+          "id": "google",
+          "name": "Google",
+          "type": "oauth",
+          "signinUrl": "/api/auth/signin/google",
+          "callbackUrl": "/api/auth/callback/google"
+        }
+      },
+      "timestamp": "2025-09-03T20:42:52.021222"
+    },
+    {
+      "test": "User Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "1afa4437-d052-4ef7-92fc-40dec1b22085",
+        "email": "test.502@nexteraestate.com",
+        "name": "502 Test User",
+        "created_at": "2025-09-03T20:40:01.574236"
+      },
+      "timestamp": "2025-09-03T20:42:52.029869"
+    },
+    {
+      "test": "User Retrieval",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "1afa4437-d052-4ef7-92fc-40dec1b22085",
+        "email": "test.502@nexteraestate.com",
+        "name": "502 Test User",
+        "created_at": "2025-09-03T20:40:01.574236"
+      },
+      "timestamp": "2025-09-03T20:42:52.032831"
+    },
+    {
+      "test": "Dashboard Stats",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "wills_count": 0,
+        "documents_count": 0,
+        "completion_percentage": 0.0,
+        "last_activity": "2025-09-03T20:42:52.046939+00:00"
+      },
+      "timestamp": "2025-09-03T20:42:52.047990"
+    },
+    {
+      "test": "Bot Test User Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "bfb1a3d4-0247-4e6b-a49e-8011f8f819a7",
+        "email": "bot.test.502@nexteraestate.com",
+        "name": "Bot Test User",
+        "created_at": "2025-09-03T20:40:01.606817"
+      },
+      "timestamp": "2025-09-03T20:42:52.056101"
+    },
+    {
+      "test": "Help Bot",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "response": "\nThis query requires human expert review due to complexity or insufficient confidence in automated analysis.\n\n\u26a0\ufe0f **Important Notice**: This query has been flagged for human expert review due to its complexity or our confidence level being below our safety threshold.\n\n**Confidence Score**: 72.3%\n**Escalation Reason**: Complex legal matter\n\n**Recommended Next Steps**:\n\u2022 Schedule a consultation with a licensed estate planning attorney\n\u2022 Consider upgrading to our Premium plan for human expert review\n\u2022 Provide additional context about your specific situation\n\nThis demonstrates our commitment to providing only reliable, well-sourced legal guidance.\n",
+        "confidence_score": 0.7231478714942932,
+        "sources": [
+          {
+            "id": "CA_PROBATE_6110",
+            "title": "California Probate Code Section 6110 - Will Requirements",
+            "content": "A will shall be in writing and satisfy the requirements of this section. A will shall be signed by the testator or in the testator's name by some other individual in the testator's conscious presence and by the testator's direction. A will shall be signed by at least two individuals, each of whom signed within a reasonable time after witnessing either the signing of the will or the testator's acknowledgment of that signature or acknowledgment of the will. The testator must be at least 18 years of age and of sound mind.",
+            "source_type": "statute",
+            "jurisdiction": "CA",
+            "citation": "Cal. Probate Code \u00a7 6110",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.5795406699180603
+          },
+          {
+            "id": "HOLOGRAPHIC_WILLS",
+            "title": "Holographic Will Requirements - Multi-State Analysis",
+            "content": "Holographic wills (handwritten wills) are recognized in approximately 26 states. Requirements typically include: (1) The will must be written entirely in the testator's handwriting, (2) The will must be signed by the testator, (3) The will must clearly express testamentary intent. States that recognize holographic wills include California, Texas, Nevada, Arizona, and others. Some states require witnesses even for holographic wills, while others do not.",
+            "source_type": "precedent",
+            "jurisdiction": "multi-state",
+            "citation": "Multi-State Holographic Will Analysis 2024",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.5764543414115906
+          },
+          {
+            "id": "TX_EST_251.051",
+            "title": "Texas Estates Code Section 251.051 - Written Will Requirements",
+            "content": "A will must be in writing and signed by the testator in person or signed by another person on behalf of the testator if the testator is present when the signature is made and directs that it be made, or the testator acknowledges the signature after it is made. The will must be attested by two or more credible witnesses who are at least 14 years of age and who subscribe their names to the will in their own handwriting in the presence of the testator.",
+            "source_type": "statute",
+            "jurisdiction": "TX",
+            "citation": "Tex. Est. Code \u00a7 251.051",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.5625167489051819
+          },
+          {
+            "id": "FL_PROB_732.502",
+            "title": "Florida Probate Code Section 732.502 - Will Execution Requirements",
+            "content": "Every will must be in writing and executed as follows: The testator must sign the will at the end; or the testator's name must be subscribed at the end of the will by some other person in the testator's presence and by the testator's direction. The testator must sign or acknowledge the signature on the will in the presence of two attesting witnesses. The attesting witnesses must sign the will in the presence of the testator and in the presence of each other.",
+            "source_type": "statute",
+            "jurisdiction": "FL",
+            "citation": "Fla. Stat. \u00a7 732.502",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.5097270011901855
+          },
+          {
+            "id": "NY_EPT_3-2.1",
+            "title": "New York Estates Powers and Trusts Law 3-2.1 - Execution of Wills",
+            "content": "The execution of a will, other than a nuncupative will, must be by the testator signing his name thereto or by some other person in his presence and by his direction signing the testator's name thereto. Such execution or signing must be in the presence of each of the attesting witnesses, or the testator must acknowledge such execution or signing in their presence. The testator must publish the will by declaring to the attesting witnesses that the instrument is his will.",
+            "source_type": "statute",
+            "jurisdiction": "NY",
+            "citation": "N.Y. EPT Law \u00a7 3-2.1",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.4646601676940918
+          }
+        ],
+        "requires_human_review": true,
+        "layer_used": 3,
+        "tertiary_verification": true,
+        "processing_time_ms": 0,
+        "timestamp": "2025-09-03T20:42:52.128356+00:00"
+      },
+      "timestamp": "2025-09-03T20:42:52.129718"
+    },
+    {
+      "test": "Grief Bot",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "response": "This query requires human expert review due to complexity or insufficient confidence in automated analysis.\n\n\ud83e\udd17 **You're not alone in this difficult time.**\n\n**Crisis Support Available 24/7:**\n\u2022 National Suicide Prevention Lifeline: **988**\n\u2022 Crisis Text Line: Text **HOME** to **741741**\n\u2022 National Alliance on Mental Illness: **1-800-950-NAMI**\n\nIf you have estate-related questions, our legal guidance system can help you navigate the process with compassion and clarity.",
+        "confidence_score": 0.5325559117396672,
+        "bot_type": "grief_support",
+        "requires_human_review": true,
+        "sources": [
+          {
+            "id": "EXECUTOR_DUTIES",
+            "title": "Fiduciary Duties of Estate Executors",
+            "content": "An executor has several key fiduciary duties: (1) Duty of loyalty - must act in the best interests of the estate and beneficiaries, (2) Duty of care - must manage estate assets prudently, (3) Duty to account - must provide accurate accounting of all estate transactions, (4) Duty to distribute - must distribute assets according to the will's terms, (5) Duty to pay debts and taxes - must satisfy valid claims against the estate.",
+            "source_type": "precedent",
+            "jurisdiction": "general",
+            "citation": "Restatement (Third) of Trusts \u00a7 78",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.42787498235702515
+          },
+          {
+            "id": "ESTATE_TAX_2024",
+            "title": "Federal Estate Tax Exemption 2024",
+            "content": "For decedents dying in 2024, the basic exclusion amount is $13,610,000. This amount is indexed for inflation and represents the federal estate tax exemption threshold. Estates valued below this amount are generally not subject to federal estate tax. The exemption is per person, so married couples can effectively exempt $27,220,000 when proper planning strategies are employed.",
+            "source_type": "regulation",
+            "jurisdiction": "federal",
+            "citation": "26 U.S.C. \u00a7 2010; Rev. Proc. 2024-1",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.35818812251091003
+          },
+          {
+            "id": "BENEFICIARY_DESIGNATIONS",
+            "title": "Beneficiary Designations vs. Will Provisions",
+            "content": "Assets with beneficiary designations (retirement accounts, life insurance, payable-on-death accounts) generally pass outside of probate and supersede will provisions. This is true for 401(k)s, IRAs, life insurance policies, and bank accounts with POD designations. It's crucial to regularly update beneficiary designations, especially after major life events like marriage, divorce, or the birth of children, as outdated designations can override intended will distributions.",
+            "source_type": "precedent",
+            "jurisdiction": "general",
+            "citation": "Estate Planning Best Practices 2024",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.35677552223205566
+          },
+          {
+            "id": "POWER_OF_ATTORNEY",
+            "title": "Durable Power of Attorney Requirements",
+            "content": "A durable power of attorney allows an appointed agent to make financial and legal decisions if the principal becomes incapacitated. Key requirements: (1) Must be in writing, (2) Must be signed by the principal, (3) Must include specific language indicating it remains effective despite incapacity, (4) Many states require notarization or witnesses, (5) Should specify the scope of authority granted to the agent. Powers can be immediate or springing (activated upon incapacity).",
+            "source_type": "precedent",
+            "jurisdiction": "general",
+            "citation": "Uniform Power of Attorney Act",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.26824259757995605
+          },
+          {
+            "id": "DIGITAL_ASSETS_REVISED_UFADAA",
+            "title": "Revised Uniform Fiduciary Access to Digital Assets Act",
+            "content": "A fiduciary with general authority over the property of a user may request a custodian of the digital assets of the user to provide access to the digital assets of the user. Unless the user provided direction that curtails the fiduciary's authority, a fiduciary has the right to access digital assets that the user could have accessed if the user were alive and had capacity.",
+            "source_type": "regulation",
+            "jurisdiction": "federal",
+            "citation": "Revised UFADAA \u00a7 4",
+            "last_updated": "2024-01-01",
+            "confidence_score": 0.24910692870616913
+          }
+        ],
+        "timestamp": "2025-09-03T20:42:52.229834+00:00",
+        "crisis_resources_included": true
+      },
+      "timestamp": "2025-09-03T20:42:52.231226"
+    },
+    {
+      "test": "AI Team Integration Test",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "test_timestamp": "2025-09-03T20:42:52.232526+00:00",
+        "test_query": "Test AI team integration",
+        "user_email": "ai.team.test@nexteraestate.com",
+        "integration_tests": {
+          "rag_engine": {
+            "status": "\u2705 PASS",
+            "response_time_ms": 187.04399999999998,
+            "confidence_score": 0.4714921182580292,
+            "requires_human_review": true
+          },
+          "autolex_core": {
+            "status": "\u2705 PASS",
+            "response_time_ms": 103.88799999999999,
+            "layer_used": 3,
+            "confidence_score": 0.4714921182580292,
+            "tertiary_verification": true,
+            "requires_human_review": true
+          },
+          "help_bot": {
+            "status": "\u2705 PASS",
+            "integration": "AutoLex Core \u2192 RAG Engine \u2192 User Response",
+            "response_time_ms": 0.024,
+            "user_facing": true
+          },
+          "senior_ai_manager": {
+            "status": "\u2705 PASS",
+            "monitoring_active": true,
+            "autolex_health": "healthy",
+            "rag_health": "healthy",
+            "last_check": "2025-09-03T20:42:52.585855+00:00"
+          },
+          "gasless_notary": {
+            "status": "\u2705 PASS",
+            "wallet_status": "not_configured",
+            "ready_for_notarization": true
+          }
+        },
+        "overall_integration": {
+          "status": "\u2705 ALL SYSTEMS INTEGRATED",
+          "passed_tests": 5,
+          "total_tests": 5,
+          "integration_score": "100.0%"
+        },
+        "integration_flow": [
+          "1. User query \u2192 Help/Grief Bot endpoint",
+          "2. Bot \u2192 AutoLex Core for processing",
+          "3. AutoLex Core \u2192 RAG Engine (Layer 1)",
+          "4. AutoLex Core \u2192 Cross-reference validation (Layer 2)",
+          "5. AutoLex Core \u2192 Westlaw/LEXIS verification if needed (Layer 3)",
+          "6. Senior AI Manager \u2192 Continuous monitoring of all components",
+          "7. Response \u2192 User with confidence scores and source citations",
+          "8. Gasless Notary \u2192 Available for document notarization"
+        ]
+      },
+      "timestamp": "2025-09-03T20:42:52.587007"
+    },
+    {
+      "test": "RAG Legal Analysis",
+      "success": false,
+      "details": "Client error: 422",
+      "status_code": 422,
+      "response_data": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "user_email"
+            ],
+            "msg": "Field required",
+            "input": {
+              "message": "What are the legal requirements for will execution?",
+              "context": "estate_planning"
+            }
+          }
+        ]
+      },
+      "timestamp": "2025-09-03T20:42:52.589687"
+    },
+    {
+      "test": "Stripe Checkout - Core",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "checkout_url": "https://checkout.stripe.com/c/pay/cs_live_a1ZEXTlt5qAUefZLVUqZi6OGXMQ1EqY27J9oTc6aSLG3x6Hag2b4hvPIWv#fidkdWxOYHwnPyd1blppbHNgWjA0V2JDYGxNUU9DaGJ2VFxWdn9GVHBnbVFpPFNVYlFJTEJJTnB0VUFBMExoMjdnS3NMRFxGSjJcPWgyR1JwQn1taW52b250UzJPVVF2TE5mcHRVTzJId0prNTVzcWhVcHxsTicpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+      },
+      "timestamp": "2025-09-03T20:42:53.025601"
+    },
+    {
+      "test": "Stripe Checkout - Plus",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "checkout_url": "https://checkout.stripe.com/c/pay/cs_live_a1TerW4mMEMIvdZ3IsUXxDKa1Oxy9r6DpPGkr08ab09CbwxUwQQUBYkucV#fidkdWxOYHwnPyd1blppbHNgWjA0V2JDYGxNUU9DaGJ2VFxWdn9GVHBnbVFpPFNVYlFJTEJJTnB0VUFBMExoMjdnS3NMRFxGSjJcPWgyR1JwQn1taW52b250UzJPVVF2TE5mcHRVTzJId0prNTVzcWhVcHxsTicpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+      },
+      "timestamp": "2025-09-03T20:42:53.309411"
+    },
+    {
+      "test": "Stripe Checkout - Pro",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "checkout_url": "https://checkout.stripe.com/c/pay/cs_live_a1xVCeFrvhykYKFOdc21IjtqDZCvMdKredaDhA9q77Ao581CD8QGr8lm1q#fidkdWxOYHwnPyd1blppbHNgWjA0V2JDYGxNUU9DaGJ2VFxWdn9GVHBnbVFpPFNVYlFJTEJJTnB0VUFBMExoMjdnS3NMRFxGSjJcPWgyR1JwQn1taW52b250UzJPVVF2TE5mcHRVTzJId0prNTVzcWhVcHxsTicpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+      },
+      "timestamp": "2025-09-03T20:42:53.589454"
+    },
+    {
+      "test": "Stripe Checkout - Enterprise",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "checkout_url": "https://checkout.stripe.com/c/pay/cs_live_a1AcVOaR3ENConhft8yfLbegHO51XfwYi825xN05s7Hnv4MHlqllrxb0X9#fidkdWxOYHwnPyd1blppbHNgWjA0V2JDYGxNUU9DaGJ2VFxWdn9GVHBnbVFpPFNVYlFJTEJJTnB0VUFBMExoMjdnS3NMRFxGSjJcPWgyR1JwQn1taW52b250UzJPVVF2TE5mcHRVTzJId0prNTVzcWhVcHxsTicpJ2N3amhWYHdzYHcnP3F3cGApJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl"
+      },
+      "timestamp": "2025-09-03T20:42:53.855232"
+    },
+    {
+      "test": "Payment Status",
+      "success": false,
+      "details": "Server error: 500",
+      "status_code": 500,
+      "response_data": "{\"detail\":\"Payment error: Request req_OpspltBsQJLYYF: No such checkout.session: test_session_id\"}",
+      "timestamp": "2025-09-03T20:42:53.964843"
+    },
+    {
+      "test": "Compliance Rules - CA",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "state": "CA",
+        "doc_type": "will",
+        "notarization_required": false,
+        "witnesses_required": 2,
+        "ron_allowed": true,
+        "esign_allowed": false,
+        "recording_supported": false,
+        "pet_trust_allowed": true,
+        "citations": [
+          "Probate Code 6110",
+          "Probate Code 6111"
+        ],
+        "updated_at": "2025-08-30T00:00:00"
+      },
+      "timestamp": "2025-09-03T20:42:53.970445"
+    },
+    {
+      "test": "Compliance Rules - NY",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "state": "NY",
+        "doc_type": "will",
+        "notarization_required": false,
+        "witnesses_required": 2,
+        "ron_allowed": false,
+        "esign_allowed": false,
+        "recording_supported": false,
+        "pet_trust_allowed": true,
+        "citations": [
+          "EPTL 3-2.1"
+        ],
+        "updated_at": "2025-08-30T00:00:00"
+      },
+      "timestamp": "2025-09-03T20:42:53.973434"
+    },
+    {
+      "test": "Compliance Rules - TX",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "state": "TX",
+        "doc_type": "will",
+        "notarization_required": false,
+        "witnesses_required": 2,
+        "ron_allowed": true,
+        "esign_allowed": false,
+        "recording_supported": true,
+        "pet_trust_allowed": true,
+        "citations": [
+          "Estates Code 251.051"
+        ],
+        "updated_at": "2025-08-30T00:00:00"
+      },
+      "timestamp": "2025-09-03T20:42:53.976242"
+    },
+    {
+      "test": "Compliance Rules - FL",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "state": "FL",
+        "doc_type": "will",
+        "notarization_required": false,
+        "witnesses_required": 2,
+        "ron_allowed": true,
+        "esign_allowed": false,
+        "recording_supported": false,
+        "pet_trust_allowed": true,
+        "citations": [
+          "Florida Statutes 732.502"
+        ],
+        "updated_at": "2025-08-30T00:00:00"
+      },
+      "timestamp": "2025-09-03T20:42:53.978907"
+    },
+    {
+      "test": "Compliance Rules - WA",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "state": "WA",
+        "doc_type": "will",
+        "notarization_required": false,
+        "witnesses_required": 2,
+        "ron_allowed": true,
+        "esign_allowed": false,
+        "recording_supported": false,
+        "pet_trust_allowed": true,
+        "citations": [
+          "RCW 11.12.020"
+        ],
+        "updated_at": "2025-08-30T00:00:00"
+      },
+      "timestamp": "2025-09-03T20:42:53.981484"
+    },
+    {
+      "test": "Compliance Summary",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "total_states": 51,
+        "total_rules": 52,
+        "ron_enabled_states": 30,
+        "esign_enabled_states": 1,
+        "pet_trust_states": 51,
+        "heat_map": {
+          "MT": 3,
+          "MA": 1,
+          "FL": 3,
+          "WA": 3,
+          "OR": 3,
+          "VA": 3,
+          "CO": 3,
+          "MS": 1,
+          "MD": 1,
+          "SC": 1,
+          "AR": 1,
+          "UT": 3,
+          "GA": 3,
+          "AZ": 3,
+          "MO": 3,
+          "RI": 1,
+          "PA": 3,
+          "NM": 3,
+          "CA": 7,
+          "WV": 3,
+          "NJ": 1,
+          "HI": 1,
+          "MI": 1,
+          "OK": 3,
+          "ID": 3,
+          "WI": 1,
+          "DC": 1,
+          "OH": 3,
+          "WY": 3,
+          "KS": 3,
+          "ME": 1,
+          "NE": 1,
+          "NC": 3,
+          "NY": 1,
+          "AL": 3,
+          "MN": 3,
+          "CT": 1,
+          "DE": 3,
+          "ND": 3,
+          "NV": 3,
+          "KY": 3,
+          "TX": 4,
+          "TN": 3,
+          "VT": 1,
+          "IA": 3,
+          "IN": 1,
+          "LA": 1,
+          "AK": 3,
+          "SD": 1,
+          "IL": 1,
+          "NH": 1
+        }
+      },
+      "timestamp": "2025-09-03T20:42:53.986601"
+    },
+    {
+      "test": "Will Test User Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "2123f7cf-c4c9-403b-b79b-266585d923f6",
+        "email": "will.test.502@nexteraestate.com",
+        "name": "Will Test User",
+        "created_at": "2025-09-03T20:40:03.945428"
+      },
+      "timestamp": "2025-09-03T20:42:53.994425"
+    },
+    {
+      "test": "Will Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "296d4cc0-d8f9-4ed2-9f73-25ba74b6d2dd",
+        "user_id": "2123f7cf-c4c9-403b-b79b-266585d923f6",
+        "state": "CA",
+        "personal_info": {
+          "full_name": "Will Test User",
+          "address": "123 Test St, San Francisco, CA 94102"
+        },
+        "beneficiaries": [],
+        "assets": [],
+        "witnesses": [],
+        "executor": {},
+        "completion_percentage": 30.0,
+        "created_at": "2025-09-03T20:42:53.999609",
+        "updated_at": "2025-09-03T20:42:53.999613"
+      },
+      "timestamp": "2025-09-03T20:42:54.007517"
+    },
+    {
+      "test": "Will Retrieval",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": [
+        {
+          "id": "135ab1e6-0f21-431f-baff-ce8610a369e9",
+          "user_id": "2123f7cf-c4c9-403b-b79b-266585d923f6",
+          "state": "CA",
+          "personal_info": {
+            "full_name": "Will Test User",
+            "address": "123 Test St, San Francisco, CA 94102"
+          },
+          "beneficiaries": [],
+          "assets": [],
+          "witnesses": [],
+          "executor": {},
+          "completion_percentage": 50.0,
+          "created_at": "2025-09-03T20:40:03.957646",
+          "updated_at": "2025-09-03T20:40:03.957651"
+        },
+        {
+          "id": "296d4cc0-d8f9-4ed2-9f73-25ba74b6d2dd",
+          "user_id": "2123f7cf-c4c9-403b-b79b-266585d923f6",
+          "state": "CA",
+          "personal_info": {
+            "full_name": "Will Test User",
+            "address": "123 Test St, San Francisco, CA 94102"
+          },
+          "beneficiaries": [],
+          "assets": [],
+          "witnesses": [],
+          "executor": {},
+          "completion_percentage": 50.0,
+          "created_at": "2025-09-03T20:42:53.999609",
+          "updated_at": "2025-09-03T20:42:53.999613"
+        }
+      ],
+      "timestamp": "2025-09-03T20:42:54.011019"
+    },
+    {
+      "test": "Document Test User Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "85165722-a96a-49e7-805e-75bd1e90f94c",
+        "email": "doc.test.502@nexteraestate.com",
+        "name": "Document Test User",
+        "created_at": "2025-09-03T20:40:03.971258"
+      },
+      "timestamp": "2025-09-03T20:42:54.018434"
+    },
+    {
+      "test": "Document Listing",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": [],
+      "timestamp": "2025-09-03T20:42:54.022398"
+    },
+    {
+      "test": "Pet Trust PDF Generation",
+      "success": true,
+      "details": "Success: 200 (non-JSON)",
+      "status_code": 200,
+      "response_data": "Content-Type: application/pdf",
+      "timestamp": "2025-09-03T20:42:54.249046"
+    },
+    {
+      "test": "Blockchain Hash Generation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "hash": "e6e3c288b4476f706d9cb82d1b7ad2cd299c20df578d0d51b363b5b38d4eaa9c",
+        "algorithm": "SHA256",
+        "timestamp": "2025-09-03T20:42:54.250849+00:00"
+      },
+      "timestamp": "2025-09-03T20:42:54.251507"
+    },
+    {
+      "test": "Blockchain Notarization",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "transaction_hash": "ba788e647724e132b5972d63c3a0ca890ad14f9fe772bce571c0f7544ea30853",
+        "polygonscan_url": "https://amoy.polygonscan.com/tx/ba788e647724e132b5972d63c3a0ca890ad14f9fe772bce571c0f7544ea30853",
+        "status": "pending",
+        "timestamp": "2025-09-03T20:42:54.253124+00:00",
+        "network": "Polygon Amoy Testnet"
+      },
+      "timestamp": "2025-09-03T20:42:54.253686"
+    },
+    {
+      "test": "Notary Status Check",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "transaction_hash": "test_tx_hash",
+        "status": "confirmed",
+        "confirmations": 12,
+        "network": "Polygon Amoy Testnet",
+        "polygonscan_url": "https://amoy.polygonscan.com/tx/test_tx_hash"
+      },
+      "timestamp": "2025-09-03T20:42:54.255114"
+    },
+    {
+      "test": "Gasless Notary Pricing",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "document_type": "will",
+        "service_fee_usd": 9.99,
+        "estimated_gas_cost_usd": 0.02,
+        "total_price_usd": 9.99,
+        "currency": "USD",
+        "description": "Blockchain notarization for will - gas fees included",
+        "benefits": [
+          "Immutable blockchain record",
+          "Timestamped proof of existence",
+          "Polygonscan verification link",
+          "No crypto wallet required",
+          "Instant notarization"
+        ]
+      },
+      "timestamp": "2025-09-03T20:42:54.256511"
+    },
+    {
+      "test": "Gasless Wallet Status",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "not_configured",
+        "balance": 0
+      },
+      "timestamp": "2025-09-03T20:42:54.257959"
+    },
+    {
+      "test": "Live Estate User Creation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "id": "21879cae-e0cc-4703-90f9-1a29d2395902",
+        "email": "live.estate.502@nexteraestate.com",
+        "name": "Live Estate Test User",
+        "created_at": "2025-09-03T20:40:05.265959"
+      },
+      "timestamp": "2025-09-03T20:42:54.266364"
+    },
+    {
+      "test": "Live Estate Status",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "not_started",
+        "message": "Live Estate Plan monitoring not yet started",
+        "pending_proposals": 0,
+        "recent_events": 0
+      },
+      "timestamp": "2025-09-03T20:42:54.278440"
+    },
+    {
+      "test": "Life Event Recording",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "success",
+        "message": "Life event 'marriage' recorded successfully",
+        "event_id": "d2e5690e-0813-4636-8b20-7d5d70d0b3b2",
+        "impact_level": "high",
+        "next_steps": "Our system will analyze the impact and generate update proposals within 24 hours."
+      },
+      "timestamp": "2025-09-03T20:42:54.295257"
+    },
+    {
+      "test": "AI Proposal Generation",
+      "success": true,
+      "details": "Success: 200",
+      "status_code": 200,
+      "response_data": {
+        "status": "success",
+        "proposals_created": 2,
+        "proposals": [
+          {
+            "id": "a1659f9d-4c7e-4d35-8f7b-f1213db7579c",
+            "title": "Update Estate Plan for Marriage",
+            "severity": "high"
+          },
+          {
+            "id": "9c7f4ab4-637f-4d6e-adfd-ad6811e2eb48",
+            "title": "Update Estate Plan for Marriage",
+            "severity": "high"
+          }
+        ],
+        "message": "Generated 2 update proposals"
+      },
+      "timestamp": "2025-09-03T20:42:57.210640"
+    },
+    {
+      "test": "Concurrent Requests",
+      "success": true,
+      "details": "All 10 concurrent requests successful",
+      "status_code": null,
+      "response_data": null,
+      "timestamp": "2025-09-03T20:42:57.222844"
+    }
+  ]
+}

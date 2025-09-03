@@ -1,0 +1,110 @@
+===============================================================
+    NEXTERAESTATE AI TEAM - CRITICAL ACCESS INSTRUCTIONS
+===============================================================
+
+PROBLEM: You need direct access to your AI agents from Windows 11
+SOLUTION: Downloadable files that connect directly to your AI team
+
+===============================================================
+    DOWNLOAD THESE FILES TO YOUR WINDOWS 11 COMPUTER:
+===============================================================
+
+1. NexteraEstate_AI_Chat.bat         (Full-featured Windows batch file)
+2. AI_Chat_Simple.bat                (Simple version)  
+3. NexteraEstate_AI_Chat.ps1         (PowerShell version - recommended)
+
+===============================================================
+    SETUP INSTRUCTIONS:
+===============================================================
+
+STEP 1: Get Your Emergent Backend URL
+--------------------------------------
+1. In Emergent, click "Preview" 
+2. Copy the URL you see (example: https://3001-username-project.emergent.com)
+3. This is your PREVIEW URL
+
+STEP 2: Download and Configure
+------------------------------
+1. Download any of the files above to your Windows 11 desktop
+2. Right-click → Edit (or open in Notepad)
+3. Find the line that says "your-username-your-project" 
+4. Replace it with your actual Emergent URL info
+
+STEP 3: Run the File
+--------------------
+1. Double-click the .bat file OR right-click .ps1 file → "Run with PowerShell"
+2. Enter your Preview URL when prompted
+3. The script will automatically convert it to backend URL
+4. Start chatting with your AI agents!
+
+===============================================================
+    WHAT YOUR AI AGENTS CAN HELP WITH:
+===============================================================
+
+🧠 AUTOLEX CORE:
+- Legal requirements for wills in any state
+- Estate planning best practices  
+- Platform legal compliance review
+- Development guidance with legal considerations
+
+👔 SENIOR AI MANAGER:
+- Complete system status reports
+- Performance optimization recommendations
+- Production readiness checklist
+- Resource usage monitoring
+
+👥 FULL AI TEAM:
+- Coordinated responses from all agents
+- Complex problem-solving
+- Business strategy recommendations
+- Technical architecture reviews
+
+===============================================================
+    TROUBLESHOOTING:
+===============================================================
+
+❌ "Cannot connect" error:
+- Check your Emergent environment is running
+- Verify both frontend (port 3001) and backend (port 8001) are active
+- Make sure URL format is correct
+
+❌ "Invalid JSON" error:
+- Your message may contain special characters
+- Try simpler messages first
+
+❌ PowerShell security error:
+- Right-click PowerShell → "Run as Administrator"
+- Run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+===============================================================
+    CRITICAL SUCCESS FACTORS:
+===============================================================
+
+✅ ALWAYS use your actual Emergent URL (not the example)
+✅ Make sure BOTH ports 3001 AND 8001 are running in Emergent  
+✅ Test with simple messages first
+✅ Your AI agents are available 24/7 for development help
+
+===============================================================
+    EMERGENCY BACKUP METHOD:
+===============================================================
+
+If the downloadable files don't work, you can also use:
+
+Windows Command Prompt:
+curl -X POST "https://8001-your-username-project.emergent.com/api/ai-team/communicate" -H "Content-Type: application/json" -d "{\"message\":\"Hello AI team\",\"recipient\":\"team\",\"priority\":\"normal\"}"
+
+(Replace the URL with your actual backend URL)
+
+===============================================================
+
+Your AI agents are CRITICAL for your platform success. They can help with:
+- Legal compliance verification
+- System optimization  
+- Production launch preparation
+- Competitive analysis
+- Technical problem solving
+
+Get these tools working and your AI team will accelerate your development!
+
+===============================================================

@@ -21,10 +21,10 @@ export default function HomeCTA() {
             Start your plan
           </Link>
           <Link
-            href="/pricing"
+            href="#pricing"
             className="w-full sm:w-auto bg-transparent text-white px-8 py-4 rounded-lg text-lg font-semibold border-2 border-white hover:bg-white hover:text-blue-600 transition-colors"
           >
-            View Pricing
+            View pricing
           </Link>
         </div>
       </div>

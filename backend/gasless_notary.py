@@ -46,6 +46,13 @@ class GaslessNotaryService:
         if self.master_private_key:
             self.master_account = Account.from_key(self.master_private_key)
             self.master_address = self.master_account.address
+            
+            # Validate the private key matches expected address
+            expected_address = os.getenv("POLYGON_MASTER_WALLET", "").lower()
+            if expected_address and self.master_address.lower() != expected_address:
+                logger.error(f"Private key mismatch! Expected: {expected_address}, Got: {self.master_address}")
+                raise ValueError("Private key does not match expected master wallet address")
+            
             logger.info(f"Master wallet initialized: {self.master_address}")
             
             # Security validation

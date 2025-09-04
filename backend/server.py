@@ -273,14 +273,19 @@ elif OPENAI_API_KEY:  # fallback to OpenAI
 # Database initialization already handled in main lifespan function above
 
 # Add CORS middleware with environment-aware origins
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://nexteraestate.vercel.app", 
-    "https://*.vercel.app",
-    "https://nexteraestate-frontend.vercel.app",
-    "https://*.up.railway.app",
-    "https://*.railway.app"
-]
+CORS_ORIGINS_ENV = os.getenv("CORS_ORIGINS", "")
+if CORS_ORIGINS_ENV:
+    ALLOWED_ORIGINS = CORS_ORIGINS_ENV.split(",")
+else:
+    ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://localhost:8001",
+        "https://nexteraestate.vercel.app", 
+        "https://*.vercel.app",
+        "https://nexteraestate-frontend.vercel.app",
+        "https://*.up.railway.app",
+        "https://*.railway.app"
+    ]
 
 # Add dynamic origin for production
 if os.environ.get('FRONTEND_URL'):
@@ -288,7 +293,7 @@ if os.environ.get('FRONTEND_URL'):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS if os.environ.get('NODE_ENV') != 'development' else ["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],

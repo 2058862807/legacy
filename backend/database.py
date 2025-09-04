@@ -266,3 +266,46 @@ class UpdateProposal(Base):
 def is_database_available() -> bool:
     """Check if database connection is available"""
     return DATABASE_URL is not None and engine is not None
+
+def ensure_database_indexes():
+    """Ensure all necessary database indexes exist"""
+    try:
+        with engine.connect() as conn:
+            # Users table indexes
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+            
+            # Wills table indexes  
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_wills_id ON wills(id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_wills_user_id ON wills(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_wills_status ON wills(status)")
+            
+            # Rate limits indexes
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_rate_limits_user_endpoint ON rate_limits(user_id, endpoint)")
+            
+            # Chat history indexes
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_chat_history_user_session ON chat_history(user_id, session_id)")
+            
+            # Live events indexes
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_live_events_user_id ON live_events(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_live_events_status ON live_events(status)")
+            
+            # Plan versions indexes
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_plan_versions_user_id ON plan_versions(user_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_plan_versions_status ON plan_versions(status)")
+            
+            conn.commit()
+            logger.info("✅ Database indexes ensured")
+            
+    except Exception as e:
+        logger.warning(f"Failed to create indexes: {e}")
+
+# Create all tables
+def create_tables():
+    """Create all database tables"""
+    try:
+        Base.metadata.create_all(bind=engine)
+        ensure_database_indexes()
+        logger.info("✅ Database tables and indexes created")
+    except Exception as e:
+        logger.error(f"Failed to create database tables: {e}")
+        raise

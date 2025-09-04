@@ -93,13 +93,8 @@ except ImportError as e:
     logger.warning(f"Gasless Notary import failed: {e}")
     gasless_notary = None
 
-# RAILWAY FIX: Disable problematic AI components that crash on database init
-if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('NIXPACKS_BUILD_DIR'):
-    logger.warning("🚂 Railway environment detected - using minimal AI mode")
-    autolex_core = None
-    senior_ai_manager = None
-    ai_team_router = None
-else:
+# AI System Loading - Use AI_ENABLED flag
+if AI_ENABLED:
     try:
         from autolex_core import autolex_core
         logger.info("✅ AutoLex Core imported")
@@ -120,6 +115,11 @@ else:
     except ImportError as e:
         logger.warning(f"AI Team Interface import failed: {e}")
         ai_team_router = None
+else:
+    logger.info("🔒 AI systems disabled - no API keys configured")
+    autolex_core = None
+    senior_ai_manager = None
+    ai_team_router = None
 
 # Initialize integrated AI system startup
 @asynccontextmanager

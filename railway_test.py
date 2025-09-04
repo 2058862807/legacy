@@ -9,8 +9,8 @@ import sys
 os.environ['RAILWAY'] = 'true'
 os.environ['DATA_DIR'] = '/tmp'
 
-# Change to backend directory
-os.chdir('/app/backend')
+# Add backend to Python path
+sys.path.insert(0, '/app/backend')
 
 try:
     print("Testing Railway deployment imports...")

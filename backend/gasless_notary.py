@@ -167,6 +167,42 @@ class GaslessNotaryService:
             ]
         }
     
+    async def get_wallet_status(self) -> Dict[str, Any]:
+        """Get comprehensive wallet status information"""
+        try:
+            if not WEB3_AVAILABLE or not self.w3 or not self.master_address:
+                return {
+                    "master_address": None,
+                    "balance_matic": None,
+                    "daily_transaction_count": 0,
+                    "max_daily_transactions": self.max_daily_transactions,
+                    "status": "not_configured"
+                }
+            
+            # Get current balance
+            balance_wei = self.w3.eth.get_balance(self.master_address)
+            balance_matic = self.w3.from_wei(balance_wei, 'ether')
+            
+            return {
+                "master_address": self.master_address,
+                "balance_matic": float(balance_matic),
+                "daily_transaction_count": self.daily_transaction_count,
+                "max_daily_transactions": self.max_daily_transactions,
+                "min_balance_threshold": float(self.min_balance_threshold),
+                "status": "active" if balance_matic >= self.min_balance_threshold else "low_balance"
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting wallet status: {e}")
+            return {
+                "master_address": self.master_address if hasattr(self, 'master_address') else None,
+                "balance_matic": None,
+                "daily_transaction_count": 0,
+                "max_daily_transactions": self.max_daily_transactions,
+                "status": "error",
+                "error": str(e)
+            }
+
     async def check_master_wallet_balance(self) -> Dict[str, Any]:
         """Check master wallet balance and status"""
         if not self.master_address:

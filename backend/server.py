@@ -20,6 +20,37 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Environment and feature guards for Railway deployment
+import logging
+import sys
+
+# Structured logging for observability
+logging.basicConfig(
+    stream=sys.stdout, 
+    level=logging.INFO, 
+    format="%(asctime)s %(levelname)s %(message)s"
+)
+
+# Railway deployment guards
+RAILWAY = os.getenv("RAILWAY") == "true"
+DATA_DIR = os.getenv("DATA_DIR", "/data")
+os.makedirs(DATA_DIR, exist_ok=True)
+
+AI_ENABLED = (
+    os.getenv("AI_ENABLED", "true") == "true" 
+    and not RAILWAY 
+    and (os.getenv("OPENAI_API_KEY") or os.getenv("GEMINI_API_KEY"))
+)
+
+WEB3_ENABLED = (
+    os.getenv("WEB3_ENABLED", "true") == "true" 
+    and os.getenv("POLYGON_PRIVATE_KEY") 
+    and os.getenv("POLYGON_RPC_URL")
+)
+
+# Log startup configuration
+logging.info("AI_ENABLED=%s WEB3_ENABLED=%s DATA_DIR=%s RAILWAY=%s", AI_ENABLED, WEB3_ENABLED, DATA_DIR, RAILWAY)
+
 # Utility functions for resilience
 async def retry_with_timeout(func, max_retries=3, timeout=30, *args, **kwargs):
     """Retry function with exponential backoff and timeout"""

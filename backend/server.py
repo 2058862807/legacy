@@ -20,6 +20,28 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Utility functions for resilience
+async def retry_with_timeout(func, max_retries=3, timeout=30, *args, **kwargs):
+    """Retry function with exponential backoff and timeout"""
+    import time
+    import random
+    
+    for attempt in range(max_retries):
+        try:
+            # Apply timeout to the function call
+            return await asyncio.wait_for(func(*args, **kwargs), timeout=timeout)
+        except asyncio.TimeoutError:
+            logger.warning(f"Timeout on attempt {attempt + 1}/{max_retries}")
+            if attempt == max_retries - 1:
+                raise HTTPException(status_code=504, detail="Operation timed out")
+        except Exception as e:
+            logger.warning(f"Attempt {attempt + 1}/{max_retries} failed: {str(e)}")
+            if attempt == max_retries - 1:
+                raise
+            # Exponential backoff with jitter
+            wait_time = (2 ** attempt) + random.uniform(0, 1)
+            await asyncio.sleep(wait_time)
+
 # Set up logging first
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

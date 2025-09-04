@@ -9,19 +9,22 @@ import sys
 os.environ['RAILWAY'] = 'true'
 os.environ['DATA_DIR'] = '/tmp'
 
+# Change to backend directory
+os.chdir('/app/backend')
+
 try:
     print("Testing Railway deployment imports...")
     
     # Test the problematic import
     print("✓ Testing autolex_core import...")
-    from autolex_core import autolex_core
+    import autolex_core
     print("✓ autolex_core imported successfully")
     
     print("✓ Testing server import...")
     import server
     print("✓ server imported successfully")
     
-    print("✓ Testing health endpoints...")
+    print("✓ Testing FastAPI app...")
     # Test that health endpoints return quickly
     from server import app
     print("✓ FastAPI app created successfully")

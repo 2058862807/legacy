@@ -1,27 +1,24 @@
 import axios from 'axios';
 
-// Auto-detect the correct backend URL based on environment
+// Use environment variable for backend URL
 const getBackendURL = () => {
+  // Try Vite environment variable first
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  
+  // Try process.env for compatibility
+  if (process.env.REACT_APP_BACKEND_URL) {
+    return process.env.REACT_APP_BACKEND_URL;
+  }
+  
+  // Development fallback
   if (window.location.hostname === 'localhost') {
     return 'http://localhost:8001/api';
   }
   
-  // For Emergent platform - try common patterns
-  const hostname = window.location.hostname;
-  const protocol = window.location.protocol;
-  
-  // Pattern 1: Replace port number in hostname
-  if (hostname.includes('3001-')) {
-    return `${protocol}//${hostname.replace('3001-', '8001-')}/api`;
-  }
-  
-  // Pattern 2: Use different port on same hostname
-  if (hostname.includes('.emergent')) {
-    return `${protocol}//${hostname.replace(':3001', ':8001')}/api`;
-  }
-  
-  // Fallback: try same hostname with port 8001
-  return `${protocol}//${hostname}:8001/api`;
+  // Production fallback - should be set via environment
+  return '/api';
 };
 
 const API_BASE_URL = getBackendURL();

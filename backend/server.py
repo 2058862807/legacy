@@ -97,16 +97,13 @@ except ImportError as e:
 if AI_ENABLED:
     try:
         from autolex_core import autolex_core
+        from senior_ai_manager import senior_ai_manager
+        AUTOLEX_AVAILABLE = True
         logger.info("✅ AutoLex Core imported")
     except ImportError as e:
         logger.warning(f"AutoLex Core import failed: {e}")
+        AUTOLEX_AVAILABLE = False
         autolex_core = None
-
-    try:
-        from senior_ai_manager import senior_ai_manager
-        logger.info("✅ Senior AI Manager imported")
-    except ImportError as e:
-        logger.warning(f"Senior AI Manager import failed: {e}")
         senior_ai_manager = None
 
     try:
@@ -117,6 +114,7 @@ if AI_ENABLED:
         ai_team_router = None
 else:
     logger.info("🔒 AI systems disabled - no API keys configured")
+    AUTOLEX_AVAILABLE = False
     autolex_core = None
     senior_ai_manager = None
     ai_team_router = None

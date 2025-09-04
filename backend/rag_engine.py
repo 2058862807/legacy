@@ -55,7 +55,16 @@ class LegalVectorStore:
     
     def __init__(self, db_path: str = "legal_vectors.db"):
         self.db_path = db_path
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')  # Lightweight embedding model
+        
+        # Initialize ML model if available
+        if ML_AVAILABLE and SentenceTransformer:
+            self.model = SentenceTransformer('all-MiniLM-L6-v2')  # Lightweight embedding model
+            self.ml_enabled = True
+        else:
+            self.model = None
+            self.ml_enabled = False
+            logger.warning("RAG Engine running in basic mode - ML features disabled")
+            
         self.init_database()
         self.load_legal_documents()
     

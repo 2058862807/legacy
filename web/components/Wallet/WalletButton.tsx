@@ -17,7 +17,7 @@ export default function WalletButton() {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }
 
-  const isPolygonAmoy = network?.chainId === BigInt(80002)
+  const isPolygonMainnet = network?.chainId === BigInt(137)
 
   if (!isConnected) {
     return (

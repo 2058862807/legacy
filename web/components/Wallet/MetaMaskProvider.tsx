@@ -125,7 +125,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
     setIsConnected(false)
   }
 
-  // Switch to Polygon Amoy network
+  // Switch to Polygon Mainnet network
   const switchToPolygon = async () => {
     if (!isMetaMaskInstalled()) return
 

@@ -227,8 +227,17 @@ class LegalVectorStore:
         conn.close()
     
     def similarity_search(self, query: str, k: int = 5, jurisdiction: str = None) -> List[LegalSource]:
-        """Find most relevant legal documents using semantic search"""
-        query_embedding = self.model.encode(query)
+        """Find most relevant legal documents using semantic search or text fallback"""
+        
+        if not self.ml_enabled or not self.model:
+            # Fallback to simple text matching
+            return self._text_based_search(query, k, jurisdiction)
+        
+        try:
+            query_embedding = self.model.encode(query)
+        except Exception as e:
+            logger.warning(f"Embedding generation failed, using text fallback: {e}")
+            return self._text_based_search(query, k, jurisdiction)
         
         conn = sqlite3.connect(self.db_path)
         cur = conn.cursor()
@@ -251,25 +260,63 @@ class LegalVectorStore:
         # Calculate similarities
         similarities = []
         for doc in documents:
-            stored_embedding = np.frombuffer(doc[7], dtype=np.float32)
-            similarity = np.dot(query_embedding, stored_embedding) / (
-                np.linalg.norm(query_embedding) * np.linalg.norm(stored_embedding)
-            )
-            
-            similarities.append((similarity, LegalSource(
-                id=doc[0],
-                title=doc[1], 
-                content=doc[2],
-                source_type=doc[3],
-                jurisdiction=doc[4],
-                citation=doc[5],
-                last_updated=doc[6],
-                confidence_score=float(similarity)  # Convert numpy.float32 to Python float
-            )))
+            try:
+                stored_embedding = np.frombuffer(doc[7], dtype=np.float32)
+                similarity = np.dot(query_embedding, stored_embedding) / (
+                    np.linalg.norm(query_embedding) * np.linalg.norm(stored_embedding)
+                )
+                
+                similarities.append((similarity, LegalSource(
+                    id=doc[0],
+                    title=doc[1],
+                    content=doc[2],
+                    source_type=doc[3],
+                    jurisdiction=doc[4],
+                    citation=doc[5],
+                    last_updated=doc[6],
+                    confidence_score=float(similarity)  # Convert numpy.float32 to Python float
+                )))
+            except Exception as e:
+                logger.warning(f"Error processing document embedding: {e}")
+                continue
         
         # Sort by similarity and return top k
         similarities.sort(key=lambda x: x[0], reverse=True)
         return [source for _, source in similarities[:k]]
+    
+    def _text_based_search(self, query: str, k: int = 5, jurisdiction: str = None) -> List[LegalSource]:
+        """Fallback search using simple text matching"""
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        
+        # Simple text search using LIKE
+        sql = """
+            SELECT id, title, content, source_type, jurisdiction, citation, last_updated
+            FROM legal_documents
+            WHERE (LOWER(content) LIKE LOWER(?) OR LOWER(title) LIKE LOWER(?))
+        """
+        params = [f"%{query}%", f"%{query}%"]
+        
+        if jurisdiction:
+            sql += " AND (jurisdiction = ? OR jurisdiction = 'general' OR jurisdiction = 'federal')"
+            params.append(jurisdiction)
+            
+        sql += " LIMIT ?"
+        params.append(k)
+        
+        cur.execute(sql, params)
+        documents = cur.fetchall()
+        conn.close()
+        
+        return [LegalSource(
+            id=doc[0],
+            title=doc[1], 
+            content=doc[2],
+            source_type=doc[3],
+            jurisdiction=doc[4],
+            citation=doc[5],
+            last_updated=doc[6]
+        ) for doc in documents]
 
 class LegalAPIClient:
     """Client for accessing professional legal databases"""

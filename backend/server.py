@@ -358,6 +358,32 @@ async def health_check():
         }
     }
 
+@app.get("/api/ready")
+async def readiness_check(db: Session = Depends(get_db)):
+    """Kubernetes-style readiness probe"""
+    try:
+        # Check database connection
+        db.query(User).first()
+        
+        # Check critical environment variables
+        required_envs = ["MONGO_URL"]
+        missing_envs = [env for env in required_envs if not os.environ.get(env)]
+        
+        if missing_envs:
+            raise HTTPException(status_code=503, detail=f"Missing required environment variables: {missing_envs}")
+            
+        return {
+            "status": "ready",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "checks": {
+                "database": "ok",
+                "environment": "ok"
+            }
+        }
+    except Exception as e:
+        logger.error(f"Readiness check failed: {e}")
+        raise HTTPException(status_code=503, detail="Service not ready")
+
 # User management endpoints
 @app.post("/api/users", response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):

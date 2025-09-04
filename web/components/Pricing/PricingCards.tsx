@@ -61,12 +61,8 @@ const PRICING_PLANS: PricingPlan[] = [
       'All updates included',
       'Priority support'
     ]
-  },
-  {
-    id: 'plus',
-    name: 'Plus',
-    description: 'Complete protection for growing families',
-    price: 49,
+  }
+]
     yearlyPrice: 349, // 30% annual discount
     period: 'month',
     features: [

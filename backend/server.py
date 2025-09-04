@@ -2229,6 +2229,11 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
         logger.error(f"Error accepting proposal: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/ai-chat")
+async def ai_chat_interface():
+    """Redirect to AI team chat interface"""
+    return FileResponse("static/ai_team_chat.html")
+
 # Mount static files for AI team interfaces
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

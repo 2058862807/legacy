@@ -984,6 +984,19 @@ async def esquire_ai_help(request: BotRequest, db: Session = Depends(get_db)):
         
         logger.info(f"Enhanced Esquire AI query from {user_email}: {request.message[:50]}...")
         
+        # Check if AutoLex Core is available
+        if not AUTOLEX_AVAILABLE or not autolex_core:
+            return {
+                "response": "Our AI legal assistant is currently being configured for this environment. Please contact our support team for immediate assistance with your estate planning questions.",
+                "confidence_score": 0,
+                "sources": [],
+                "requires_human_review": True,
+                "layer_used": 0,
+                "tertiary_verification": False,
+                "processing_time_ms": 0,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        
         # Use AutoLex Core for enhanced legal guidance
         autolex_result = await autolex_core.process_legal_query(
             query=request.message,

@@ -18,8 +18,8 @@ interface WalletContextType {
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
-// Polygon Amoy testnet configuration
-const POLYGON_AMOY = {
+// Polygon Mainnet configuration
+const POLYGON_MAINNET = {
   chainId: '0x89', // 137 in hex (Polygon Mainnet)
   chainName: 'Polygon Mainnet',
   nativeCurrency: {

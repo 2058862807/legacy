@@ -45,7 +45,7 @@ export default function WalletButton() {
 
   return (
     <div className="flex items-center space-x-3">
-      {!isPolygonAmoy && (
+      {!isPolygonMainnet && (
         <button
           onClick={switchToPolygon}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"

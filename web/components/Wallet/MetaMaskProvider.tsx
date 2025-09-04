@@ -20,15 +20,15 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
 // Polygon Amoy testnet configuration
 const POLYGON_AMOY = {
-  chainId: '0x13882', // 80002 in hex
-  chainName: 'Polygon Amoy Testnet',
+  chainId: '0x89', // 137 in hex (Polygon Mainnet)
+  chainName: 'Polygon Mainnet',
   nativeCurrency: {
     name: 'MATIC',
-    symbol: 'MATIC', 
+    symbol: 'MATIC',
     decimals: 18
   },
-  rpcUrls: ['https://rpc-amoy.polygon.technology'],
-  blockExplorerUrls: ['https://amoy.polygonscan.com']
+  rpcUrls: ['https://polygon-rpc.com/'],
+  blockExplorerUrls: ['https://polygonscan.com/']
 }
 
 interface MetaMaskProviderProps {

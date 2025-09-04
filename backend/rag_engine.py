@@ -208,9 +208,18 @@ class LegalVectorStore:
         if count == 0:
             logger.info("Loading legal documents into vector database...")
             for doc in legal_documents:
-                # Generate embedding
-                embedding = self.model.encode(doc["content"])
-                embedding_bytes = embedding.tobytes()
+                # Generate embedding if ML is available
+                if self.ml_enabled and self.model:
+                    try:
+                        embedding = self.model.encode(doc["content"])
+                        embedding_bytes = embedding.tobytes()
+                    except Exception as e:
+                        logger.warning(f"Failed to generate embedding for {doc['id']}: {e}")
+                        # Use dummy embedding for fallback
+                        embedding_bytes = np.zeros(384, dtype=np.float32).tobytes()
+                else:
+                    # Use dummy embedding when ML not available
+                    embedding_bytes = np.zeros(384, dtype=np.float32).tobytes()
                 
                 cur.execute("""
                     INSERT INTO legal_documents 

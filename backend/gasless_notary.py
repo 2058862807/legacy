@@ -30,7 +30,7 @@ class GaslessNotaryService:
     def __init__(self):
         # Polygon network configuration
         self.rpc_url = os.getenv("POLYGON_RPC_URL", "https://polygon-rpc.com/")
-        self.chain_id = 137  # Polygon Mainnet (use 80001 for Mumbai testnet)
+        self.chain_id = 137  # Polygon Mainnet
         
         # Enhanced security for master wallet
         self.master_private_key = self._get_secure_private_key()

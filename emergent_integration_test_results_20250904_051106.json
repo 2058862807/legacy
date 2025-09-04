@@ -1,0 +1,137 @@
+{
+  "total_tests": 18,
+  "passed_tests": 17,
+  "failed_tests": 1,
+  "success_rate": 94.44444444444444,
+  "emergent_working": true,
+  "graceful_degradation": false,
+  "core_working": true,
+  "results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: ok",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.579511"
+    },
+    {
+      "test": "Test User Creation",
+      "success": true,
+      "details": "User created for emergent testing",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.626410"
+    },
+    {
+      "test": "AI Bot Help - Emergent Integration",
+      "success": false,
+      "details": "Unexpected response: \nThis query requires human expert review due to complexity or insufficient confidence in automated a...",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.777167"
+    },
+    {
+      "test": "AI Bot Grief - Crisis Resources",
+      "success": true,
+      "details": "Crisis resources included in response",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.879649"
+    },
+    {
+      "test": "AI Bot Grief - Emergent Integration",
+      "success": true,
+      "details": "AI responding with empathy: This query requires human expert review due to complexity or insufficient confidence in automated an...",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.879694"
+    },
+    {
+      "test": "AI Bot Grief - Specialized Mode",
+      "success": true,
+      "details": "Grief support mode activated",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.879703"
+    },
+    {
+      "test": "AI Bot Grief - Crisis Flag",
+      "success": true,
+      "details": "Crisis resources flag set correctly",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.879708"
+    },
+    {
+      "test": "User Creation",
+      "success": true,
+      "details": "User created: 6c964cd7-5ea7-40ca-a165-72c20544cdc4",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.888474"
+    },
+    {
+      "test": "User Retrieval",
+      "success": true,
+      "details": "User retrieved successfully",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.891728"
+    },
+    {
+      "test": "Will User Creation",
+      "success": true,
+      "details": "User created for will testing",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.899777"
+    },
+    {
+      "test": "Will Creation",
+      "success": true,
+      "details": "Will created: 77a92489-5ee2-4204-98f9-2242d6b55f55, completion: 90.0%",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.915754"
+    },
+    {
+      "test": "Compliance Rules - CA",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.920698"
+    },
+    {
+      "test": "Compliance Rules - NY",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.923732"
+    },
+    {
+      "test": "Compliance Rules - TX",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.926607"
+    },
+    {
+      "test": "Compliance Rules - FL",
+      "success": true,
+      "details": "Witnesses: 2, Notarization: False",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.929474"
+    },
+    {
+      "test": "Compliance Summary",
+      "success": true,
+      "details": "50-state data loaded: 51 states available",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.934857"
+    },
+    {
+      "test": "Error Handling - Missing Fields",
+      "success": true,
+      "details": "Correctly rejected missing fields",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.937157"
+    },
+    {
+      "test": "Error Handling - Invalid JSON",
+      "success": true,
+      "details": "Correctly rejected invalid JSON",
+      "response_data": null,
+      "timestamp": "2025-09-04T05:11:06.938605"
+    }
+  ]
+}

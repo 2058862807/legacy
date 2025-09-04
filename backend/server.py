@@ -190,7 +190,7 @@ GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
-POLYGON_RPC_URL = os.environ.get('POLYGON_RPC_URL', 'https://rpc-amoy.polygon.technology')
+POLYGON_RPC_URL = os.environ.get('POLYGON_RPC_URL', 'https://polygon-rpc.com')
 POLYGON_PRIVATE_KEY = os.environ.get('POLYGON_PRIVATE_KEY')
 
 # Initialize Stripe

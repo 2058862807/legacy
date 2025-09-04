@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 
 interface NexteraLogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
   className?: string
   priority?: boolean
 }

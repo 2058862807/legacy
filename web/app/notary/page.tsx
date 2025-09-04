@@ -22,7 +22,7 @@ export default function NotaryPage() {
   const [error, setError] = useState<string>('')
 
   const NOTARY_ADDRESS = process.env.NEXT_PUBLIC_NOTARY_ADDRESS || ''
-  const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || '80002'
+  const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || '137'
   const EXPLORER = process.env.NEXT_PUBLIC_EXPLORER || 'https://amoy.polygonscan.com'
 
   const connectWallet = async () => {

@@ -2250,7 +2250,10 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
         raise HTTPException(status_code=500, detail=str(e))
 
 # Include AI team communication router after all endpoints are defined
-app.include_router(ai_team_router)
+if ai_team_router is not None:
+    app.include_router(ai_team_router)
+else:
+    logging.info("AI Team router disabled - AI services not available")
 
 if __name__ == "__main__":
     import uvicorn

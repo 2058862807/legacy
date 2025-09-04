@@ -513,6 +513,25 @@ async def get_compliance_summary(db: Session = Depends(get_db)):
         logger.error(f"Error fetching compliance summary: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/compliance/refresh")
+async def refresh_compliance_data(db: Session = Depends(get_db)):
+    """Refresh compliance data from seed file"""
+    try:
+        result = ComplianceService.refresh_from_seed(db)
+        if "error" in result:
+            raise HTTPException(status_code=500, detail=result["error"])
+        
+        return {
+            "status": "success",
+            "message": "Compliance data refreshed successfully",
+            "stats": result
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error refreshing compliance data: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Will endpoints
 @app.post("/api/wills", response_model=WillResponse)
 async def create_will(will: WillCreate, user_email: str = Query(...), db: Session = Depends(get_db)):

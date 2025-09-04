@@ -1220,6 +1220,11 @@ async def generate_hash(request: HashRequest):
 @app.post("/api/notary/create")
 async def create_notarization(request: NotaryRequest):
     """Create blockchain notarization"""
+    if not WEB3_ENABLED:
+        raise HTTPException(
+            status_code=503, 
+            detail="Blockchain services are currently disabled. Missing required configuration (POLYGON_PRIVATE_KEY, POLYGON_RPC_URL)."
+        )
     try:
         # Validate hash format
         hash_clean = request.document_hash.lower().replace('0x', '')

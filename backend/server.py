@@ -226,9 +226,18 @@ emergent_client = None
 gemini_client = None
 openai_client = None
 
-if LLM_PROVIDER == 'emergent' and EMERGENT_LLM_KEY:
-    # Using emergent integrations
-    emergent_client = LlmChat(api_key=EMERGENT_LLM_KEY)
+if LLM_PROVIDER == 'emergent' and EMERGENT_LLM_KEY and EMERGENT_AVAILABLE:
+    # Using emergent integrations with proper initialization
+    try:
+        emergent_client = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id="nexteraestate_session",
+            system_message="You are Esquire AI, a specialized legal assistant for estate planning."
+        )
+        logger.info("✅ Emergent LLM client initialized successfully")
+    except Exception as e:
+        logger.warning(f"⚠️ Emergent LLM client initialization failed: {e}")
+        emergent_client = None
 elif LLM_PROVIDER == 'gemini' and GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     gemini_client = genai.GenerativeModel('gemini-1.5-flash')

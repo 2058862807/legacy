@@ -13,11 +13,20 @@ import sqlite3
 from dataclasses import dataclass
 import asyncio
 import httpx
-import numpy as np
-from sentence_transformers import SentenceTransformer
 import google.generativeai as genai
 
 logger = logging.getLogger(__name__)
+
+# Guarded imports for optional ML dependencies
+try:
+    import numpy as np
+    from sentence_transformers import SentenceTransformer
+    ML_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"ML dependencies not available: {e}")
+    ML_AVAILABLE = False
+    np = None
+    SentenceTransformer = None
 
 @dataclass
 class LegalSource:

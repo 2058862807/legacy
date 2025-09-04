@@ -58,13 +58,8 @@ class SeniorAIManager:
     
     def __init__(self):
         self.autolex_core = AutoLexCore()
-        # Railway-compatible database path  
-        if os.environ.get('RAILWAY_ENVIRONMENT'):
-            # Railway deployment - use /tmp for writable storage
-            self.db_path = "/tmp/senior_manager.db"
-        else:
-            # Local development
-            self.db_path = os.path.join(os.getcwd(), "senior_manager.db")
+        # Railway-compatible database path using DATA_DIR
+        self.db_path = SENIOR_DB_PATH
         self.webmaster_email = os.getenv("WEBMASTER_EMAIL", "NextEraEstate@gmail.com")
         self.smtp_config = self._get_smtp_config()
         

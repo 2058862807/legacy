@@ -1217,7 +1217,7 @@ async def get_notary_status(tx_hash: str = Query(...)):
             "status": "confirmed",
             "confirmations": 12,
             "network": "Polygon Amoy Testnet",
-            "polygonscan_url": f"https://amoy.polygonscan.com/tx/{tx_hash}"
+            "polygonscan_url": f"https://polygonscan.com/tx/{tx_hash}"
         }
     except Exception as e:
         logger.error(f"Status check error: {str(e)}")

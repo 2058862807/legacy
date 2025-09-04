@@ -19,6 +19,11 @@ import google.generativeai as genai
 # Import existing RAG engine
 from rag_engine import rag_engine, LegalSource
 
+# SQLite path fix for Railway deployment
+DATA_DIR = os.getenv("DATA_DIR", "/data")
+os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "autolex_core.db")
+
 logger = logging.getLogger(__name__)
 
 class ConfidenceLevel(Enum):

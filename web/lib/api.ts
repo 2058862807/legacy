@@ -1,4 +1,5 @@
-const API_BASE = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
+// Use relative URLs for API calls in preview environment
+const API_BASE = '/api'
 
 export async function apiFetch<T = any>(
   endpoint: string,

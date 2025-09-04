@@ -957,6 +957,11 @@ async def stripe_webhook(request: Request):
 @app.post("/api/bot/help")
 async def esquire_ai_help(request: BotRequest, db: Session = Depends(get_db)):
     """Enhanced Esquire AI with AutoLex Core integration"""
+    if not AI_ENABLED:
+        raise HTTPException(
+            status_code=503, 
+            detail="AI services are currently disabled in this environment. Please contact support for assistance."
+        )
     try:
         user_email = request.user_email
         

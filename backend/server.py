@@ -366,7 +366,7 @@ async def readiness_check(db: Session = Depends(get_db)):
         db.query(User).first()
         
         # Check critical environment variables
-        required_envs = ["MONGO_URL"]
+        required_envs = ["DATABASE_URL"] if os.environ.get("DATABASE_URL") else []
         missing_envs = [env for env in required_envs if not os.environ.get(env)]
         
         if missing_envs:

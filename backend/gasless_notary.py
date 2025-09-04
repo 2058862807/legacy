@@ -9,11 +9,20 @@ import logging
 from typing import Dict, Any, Optional
 from decimal import Decimal
 from datetime import datetime, timezone
-from web3 import Web3
-from eth_account import Account
 import json
 
 logger = logging.getLogger(__name__)
+
+# Guarded imports for optional blockchain dependencies  
+try:
+    from web3 import Web3
+    from eth_account import Account
+    WEB3_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Web3 dependencies not available: {e}")
+    WEB3_AVAILABLE = False
+    Web3 = None
+    Account = None
 
 class GaslessNotaryService:
     """Handles gasless blockchain notarization for users with enhanced security"""

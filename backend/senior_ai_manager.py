@@ -17,6 +17,11 @@ from email.mime.multipart import MIMEMultipart
 
 from autolex_core import AutoLexCore, DataIngestionMetrics, AlertLevel
 
+# SQLite path fix for Railway deployment
+DATA_DIR = os.getenv("DATA_DIR", "/data")
+os.makedirs(DATA_DIR, exist_ok=True)
+SENIOR_DB_PATH = os.path.join(DATA_DIR, "senior_manager.db")
+
 logger = logging.getLogger(__name__)
 
 @dataclass

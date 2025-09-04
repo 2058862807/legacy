@@ -1235,15 +1235,40 @@ async def get_notarization_pricing(document_type: str = Query("will")):
         logger.error(f"Pricing error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/notary/wallet-status")
+@app.get("/api/gasless-notary/wallet-status")
 async def get_wallet_status():
-    """Get master wallet status (admin endpoint)"""
+    """Get master wallet status and balance"""
     try:
-        status = await gasless_notary.check_master_wallet_balance()
-        return status
+        if not gasless_notary:
+            return {
+                "status": "mock_mode",
+                "message": "Gasless notary in development mode",
+                "master_address": None,
+                "balance": None
+            }
+        
+        # Get wallet status from gasless notary service
+        status = await gasless_notary.get_wallet_status()
+        
+        return {
+            "status": "active" if status.get("master_address") else "not_configured",
+            "master_address": status.get("master_address"),
+            "balance_matic": status.get("balance_matic"),
+            "network": "Polygon Mainnet",
+            "chain_id": 137,
+            "rpc_url": os.environ.get('POLYGON_RPC_URL', 'https://polygon-rpc.com'),
+            "daily_transaction_count": status.get("daily_transaction_count", 0),
+            "max_daily_transactions": status.get("max_daily_transactions", 1000)
+        }
+        
     except Exception as e:
-        logger.error(f"Wallet status error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error fetching wallet status: {str(e)}")
+        return {
+            "status": "error",
+            "message": str(e),
+            "master_address": None,
+            "balance": None
+        }
 
 class GaslessNotarizeRequest(BaseModel):
     document_hash: str

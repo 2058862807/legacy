@@ -447,46 +447,12 @@ async def get_ai_response(message: str, system_prompt: str) -> str:
 
 # Health check endpoint
 @app.get("/api/health")
-async def health_check():
-    return {
-        "status": "ok",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "compliance_enabled": True,
-        "database_available": True,
-        "live_estate_monitoring": True,
-        "features": {
-            "50_state_monitoring": True,
-            "automatic_updates": True,
-            "blockchain_audit": True,
-            "yearly_checkins": True
-        }
-    }
+def health():
+    return {"ok": True}
 
 @app.get("/api/ready")
-async def readiness_check(db: Session = Depends(get_db)):
-    """Kubernetes-style readiness probe"""
-    try:
-        # Check database connection
-        db.query(User).first()
-        
-        # Check critical environment variables
-        required_envs = ["DATABASE_URL"] if os.environ.get("DATABASE_URL") else []
-        missing_envs = [env for env in required_envs if not os.environ.get(env)]
-        
-        if missing_envs:
-            raise HTTPException(status_code=503, detail=f"Missing required environment variables: {missing_envs}")
-            
-        return {
-            "status": "ready",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "checks": {
-                "database": "ok",
-                "environment": "ok"
-            }
-        }
-    except Exception as e:
-        logger.error(f"Readiness check failed: {e}")
-        raise HTTPException(status_code=503, detail="Service not ready")
+def ready():
+    return {"ok": True}
 
 # User management endpoints
 @app.post("/api/users", response_model=UserResponse)

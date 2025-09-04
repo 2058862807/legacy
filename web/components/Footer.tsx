@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <NexteraLogo size="md" />
+              <NexteraLogo size="lg" />
               <span className="text-xl font-bold">NexteraEstate™</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">

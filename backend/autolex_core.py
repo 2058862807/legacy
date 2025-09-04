@@ -79,13 +79,8 @@ class AutoLexCore:
             logger.warning("⚠️ RAG engine not available - using fallback mode")
             self.rag_engine = None
         
-        # Railway-compatible database path
-        if os.environ.get('RAILWAY_ENVIRONMENT'):
-            # Railway deployment - use /tmp for writable storage
-            self.db_path = "/tmp/autolex_core.db"
-        else:
-            # Local development
-            self.db_path = os.path.join(os.getcwd(), "autolex_core.db")
+        # Railway-compatible database path using DATA_DIR
+        self.db_path = DB_PATH
         self.westlaw_api_key = os.getenv("WESTLAW_API_KEY")
         self.lexis_api_key = os.getenv("LEXIS_API_KEY")
         

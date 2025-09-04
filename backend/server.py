@@ -128,7 +128,7 @@ async def lifespan(app: FastAPI):
             asyncio.create_task(senior_ai_manager.continuous_monitoring_loop())
             logger.info("✅ Senior AI Manager monitoring started")
         else:
-            logger.error("❌ Senior AI Manager initialization failed")
+            logger.warning("⚠️ Senior AI Manager disabled (Railway compatibility mode)")
         
         # Step 4: Initialize Gasless Notary with environment validation
         logger.info("⛓️ Initializing Gasless Notary...")

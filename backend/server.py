@@ -2029,7 +2029,7 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
             
             # Create blockchain transaction (mock)
             transaction_hash = secrets.token_hex(32)
-            blockchain_url = f"https://amoy.polygonscan.com/tx/{transaction_hash}"
+            blockchain_url = f"https://polygonscan.com/tx/{transaction_hash}"
             
             # Create new plan version
             plan_version = PlanVersion(

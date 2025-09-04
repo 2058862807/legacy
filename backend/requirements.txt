@@ -17,3 +17,4 @@ sentence-transformers==2.6.1
 numpy==1.26.4
 scikit-learn==1.4.2
 resend==2.4.0
+emergentintegrations

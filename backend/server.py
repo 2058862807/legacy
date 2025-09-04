@@ -2229,6 +2229,9 @@ async def accept_proposal(request: dict, user_email: str = Query(...), db: Sessi
         logger.error(f"Error accepting proposal: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Mount static files for AI team interfaces
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Include AI team communication router after all endpoints are defined
 if ai_team_router is not None:
     app.include_router(ai_team_router)

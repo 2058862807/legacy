@@ -389,7 +389,8 @@ async def get_ai_response(message: str, system_prompt: str) -> str:
     """Get AI response from configured provider"""
     try:
         if emergent_client:
-            response = emergent_client.chat([UserMessage(content=f"{system_prompt}\n\nUser: {message}")])
+            # Use emergent integrations with proper message format
+            response = emergent_client.chat([UserMessage(content=message)])
             return response.message.content
         elif gemini_client:
             response = gemini_client.generate_content(f"{system_prompt}\n\nUser: {message}")

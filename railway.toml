@@ -4,3 +4,6 @@ dockerfilePath = "Dockerfile.backend"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
+
+[env]
+PORT = "8001"

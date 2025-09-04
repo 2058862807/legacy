@@ -13,7 +13,15 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import httpx
 import sqlite3
-from sentence_transformers import SentenceTransformer
+
+# Guard sentence_transformers import for Railway deployment
+try:
+    from sentence_transformers import SentenceTransformer
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    SentenceTransformer = None
+
 import google.generativeai as genai
 
 # Import existing RAG engine

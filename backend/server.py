@@ -47,35 +47,49 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Import all AI systems for integrated management with error handling
+logger.info("🚀 Loading AI systems...")
+
 try:
     from rag_engine import rag_engine
+    logger.info("✅ RAG Engine imported")
 except ImportError as e:
     logger.warning(f"RAG Engine import failed: {e}")
     rag_engine = None
 
 try:
     from gasless_notary import gasless_notary
+    logger.info("✅ Gasless Notary imported")
 except ImportError as e:
     logger.warning(f"Gasless Notary import failed: {e}")
     gasless_notary = None
 
-try:
-    from autolex_core import autolex_core
-except ImportError as e:
-    logger.warning(f"AutoLex Core import failed: {e}")
+# RAILWAY FIX: Disable problematic AI components that crash on database init
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('NIXPACKS_BUILD_DIR'):
+    logger.warning("🚂 Railway environment detected - using minimal AI mode")
     autolex_core = None
-
-try:
-    from senior_ai_manager import senior_ai_manager
-except ImportError as e:
-    logger.warning(f"Senior AI Manager import failed: {e}")
     senior_ai_manager = None
-
-try:
-    from ai_team_interface import router as ai_team_router
-except ImportError as e:
-    logger.warning(f"AI Team Interface import failed: {e}")
     ai_team_router = None
+else:
+    try:
+        from autolex_core import autolex_core
+        logger.info("✅ AutoLex Core imported")
+    except ImportError as e:
+        logger.warning(f"AutoLex Core import failed: {e}")
+        autolex_core = None
+
+    try:
+        from senior_ai_manager import senior_ai_manager
+        logger.info("✅ Senior AI Manager imported")
+    except ImportError as e:
+        logger.warning(f"Senior AI Manager import failed: {e}")
+        senior_ai_manager = None
+
+    try:
+        from ai_team_interface import router as ai_team_router
+        logger.info("✅ AI Team Interface imported")
+    except ImportError as e:
+        logger.warning(f"AI Team Interface import failed: {e}")
+        ai_team_router = None
 
 # Initialize integrated AI system startup
 @asynccontextmanager

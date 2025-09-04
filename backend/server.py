@@ -1033,6 +1033,11 @@ This demonstrates our commitment to providing only reliable, well-sourced legal 
 @app.post("/api/bot/grief")
 async def grief_bot(request: BotRequest, db: Session = Depends(get_db)):
     """Integrated grief support bot with AutoLex Core oversight"""
+    if not AI_ENABLED:
+        raise HTTPException(
+            status_code=503, 
+            detail="AI services are currently disabled in this environment. Please contact support for assistance."
+        )
     try:
         user_email = request.user_email
         

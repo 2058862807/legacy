@@ -1244,21 +1244,24 @@ async def get_wallet_status():
                 "status": "mock_mode",
                 "message": "Gasless notary in development mode",
                 "master_address": None,
-                "balance": None
+                "balance": None,
+                "network": "Polygon Mainnet",
+                "chain_id": 137
             }
         
-        # Get wallet status from gasless notary service
-        status = await gasless_notary.get_wallet_status()
+        # Get basic wallet info
+        master_address = getattr(gasless_notary, 'master_address', None)
+        expected_address = os.environ.get('POLYGON_MASTER_WALLET', '').lower()
         
         return {
-            "status": "active" if status.get("master_address") else "not_configured",
-            "master_address": status.get("master_address"),
-            "balance_matic": status.get("balance_matic"),
+            "status": "configured" if master_address else "not_configured",
+            "master_address": master_address,
+            "expected_address": expected_address,
+            "addresses_match": master_address.lower() == expected_address if master_address and expected_address else False,
             "network": "Polygon Mainnet",
             "chain_id": 137,
             "rpc_url": os.environ.get('POLYGON_RPC_URL', 'https://polygon-rpc.com'),
-            "daily_transaction_count": status.get("daily_transaction_count", 0),
-            "max_daily_transactions": status.get("max_daily_transactions", 1000)
+            "private_key_configured": bool(os.environ.get('POLYGON_PRIVATE_KEY'))
         }
         
     except Exception as e:

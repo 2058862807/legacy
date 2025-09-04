@@ -1328,6 +1328,11 @@ class GaslessNotarizeRequest(BaseModel):
 @app.post("/api/notary/gasless-create")
 async def create_gasless_notarization(request: GaslessNotarizeRequest):
     """Create gasless blockchain notarization (NexteraEstate pays gas)"""
+    if not WEB3_ENABLED:
+        raise HTTPException(
+            status_code=503, 
+            detail="Blockchain services are currently disabled. Missing required configuration (POLYGON_PRIVATE_KEY, POLYGON_RPC_URL)."
+        )
     try:
         # Verify payment was completed (simplified for demo)
         payment_confirmed = True  # In real implementation, verify with Stripe

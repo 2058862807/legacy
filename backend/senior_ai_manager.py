@@ -79,58 +79,123 @@ class SeniorAIManager:
         self._initialize_manager_database()
         
     def _initialize_manager_database(self):
-        """Initialize Senior AI Manager tracking database"""
-        conn = sqlite3.connect(self.db_path)
-        cur = conn.cursor()
-        
-        # System health monitoring
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS system_health (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                autolex_status TEXT,
-                rag_status TEXT,
-                database_connectivity BOOLEAN,
-                api_response_times TEXT,
-                memory_usage REAL,
-                daily_api_spend REAL,
-                query_success_rate REAL,
-                avg_confidence_score REAL
-            )
-        """)
-        
-        # Automated remediation log
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS remediation_log (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                issue_type TEXT,
-                affected_component TEXT,
-                remediation_action TEXT,
-                success BOOLEAN,
-                impact_metrics TEXT,
-                escalated_to_human BOOLEAN
-            )
-        """)
-        
-        # Human escalation log
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS escalation_log (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                alert_id TEXT UNIQUE,
-                severity TEXT,
-                component TEXT,
-                title TEXT,
-                description TEXT,
-                human_response TEXT,
-                resolution_time_minutes INTEGER,
-                resolved BOOLEAN
-            )
-        """)
-        
-        conn.commit()
-        conn.close()
+        """Initialize Senior AI Manager tracking database with error handling"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cur = conn.cursor()
+            
+            # System health monitoring
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS system_health (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    autolex_status TEXT,
+                    rag_status TEXT,
+                    database_connectivity BOOLEAN,
+                    api_response_times TEXT,
+                    memory_usage REAL,
+                    daily_api_spend REAL,
+                    query_success_rate REAL,
+                    avg_confidence_score REAL
+                )
+            """)
+            
+            # Automated remediation log
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS remediation_log (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    issue_type TEXT,
+                    affected_component TEXT,
+                    remediation_action TEXT,
+                    success BOOLEAN,
+                    impact_metrics TEXT,
+                    escalated_to_human BOOLEAN
+                )
+            """)
+            
+            # Human escalation log
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS escalation_log (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    alert_id TEXT UNIQUE,
+                    severity TEXT,
+                    component TEXT,
+                    title TEXT,
+                    description TEXT,
+                    human_response TEXT,
+                    resolution_time_minutes INTEGER,
+                    resolved BOOLEAN
+                )
+            """)
+            
+            conn.commit()
+            conn.close()
+            logger.info(f"✅ Senior AI Manager database initialized: {self.db_path}")
+            
+        except sqlite3.OperationalError as e:
+            logger.warning(f"⚠️ Senior AI Manager database initialization failed: {e}")
+            logger.warning("   Running in memory-only mode (data not persistent)")
+            # Create in-memory database as fallback
+            try:
+                self.db_path = ":memory:"
+                conn = sqlite3.connect(self.db_path)
+                cur = conn.cursor()
+                
+                # System health monitoring
+                cur.execute("""
+                    CREATE TABLE system_health (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        autolex_status TEXT,
+                        rag_status TEXT,
+                        database_connectivity BOOLEAN,
+                        api_response_times TEXT,
+                        memory_usage REAL,
+                        daily_api_spend REAL,
+                        query_success_rate REAL,
+                        avg_confidence_score REAL
+                    )
+                """)
+                
+                # Automated remediation log
+                cur.execute("""
+                    CREATE TABLE remediation_log (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        issue_type TEXT,
+                        affected_component TEXT,
+                        remediation_action TEXT,
+                        success BOOLEAN,
+                        impact_metrics TEXT,
+                        escalated_to_human BOOLEAN
+                    )
+                """)
+                
+                # Human escalation log
+                cur.execute("""
+                    CREATE TABLE escalation_log (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        alert_id TEXT UNIQUE,
+                        severity TEXT,
+                        component TEXT,
+                        title TEXT,
+                        description TEXT,
+                        human_response TEXT,
+                        resolution_time_minutes INTEGER,
+                        resolved BOOLEAN
+                    )
+                """)
+                
+                conn.commit()
+                conn.close()
+                logger.info("✅ Senior AI Manager using in-memory database")
+            except Exception as mem_error:
+                logger.error(f"❌ Failed to create in-memory database: {mem_error}")
+                # Continue without database - app should still work
+                pass
 
     async def continuous_monitoring_loop(self):
         """Main monitoring loop - runs continuously"""

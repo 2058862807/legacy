@@ -38,8 +38,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 AI_ENABLED = (
     os.getenv("AI_ENABLED", "true") == "true" 
-    and not RAILWAY 
-    and bool(os.getenv("OPENAI_API_KEY") or os.getenv("GEMINI_API_KEY"))
+    and bool(os.getenv("OPENAI_API_KEY") or os.getenv("GEMINI_API_KEY") or os.getenv("EMERGENT_LLM_KEY"))
 )
 
 WEB3_ENABLED = (

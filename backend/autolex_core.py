@@ -105,57 +105,121 @@ class AutoLexCore:
         self._initialize_core_database()
         
     def _initialize_core_database(self):
-        """Initialize AutoLex Core tracking database"""
-        conn = sqlite3.connect(self.db_path)
-        cur = conn.cursor()
-        
-        # Data ingestion metrics table
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS ingestion_metrics (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                sources_scanned INTEGER,
-                sources_successful INTEGER,
-                sources_failed INTEGER,
-                documents_ingested INTEGER,
-                avg_confidence_score REAL,
-                failed_sources TEXT,
-                processing_time_ms INTEGER
-            )
-        """)
-        
-        # Tertiary verification logs
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS tertiary_verifications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                query TEXT,
-                internal_confidence REAL,
-                triggers TEXT,
-                api_provider TEXT,
-                api_cost REAL,
-                verification_result TEXT,
-                discrepancy_found BOOLEAN,
-                resolution TEXT
-            )
-        """)
-        
-        # System alerts and escalations
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS system_alerts (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                timestamp DATETIME,
-                alert_level TEXT,
-                component TEXT,
-                message TEXT,
-                auto_resolved BOOLEAN,
-                human_notified BOOLEAN,
-                resolution_time_minutes INTEGER
-            )
-        """)
-        
-        conn.commit()
-        conn.close()
+        """Initialize AutoLex Core tracking database with error handling"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cur = conn.cursor()
+            
+            # Data ingestion metrics table
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS ingestion_metrics (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    sources_scanned INTEGER,
+                    sources_successful INTEGER,
+                    sources_failed INTEGER,
+                    documents_ingested INTEGER,
+                    avg_confidence_score REAL,
+                    failed_sources TEXT,
+                    processing_time_ms INTEGER
+                )
+            """)
+            
+            # Tertiary verification logs
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS tertiary_verifications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    query TEXT,
+                    internal_confidence REAL,
+                    triggers TEXT,
+                    api_provider TEXT,
+                    api_cost REAL,
+                    verification_result TEXT,
+                    discrepancy_found BOOLEAN,
+                    resolution TEXT
+                )
+            """)
+            
+            # System alerts and escalations
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS system_alerts (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp DATETIME,
+                    alert_level TEXT,
+                    component TEXT,
+                    message TEXT,
+                    auto_resolved BOOLEAN,
+                    human_notified BOOLEAN,
+                    resolution_time_minutes INTEGER
+                )
+            """)
+            
+            conn.commit()
+            conn.close()
+            logger.info(f"✅ AutoLex Core database initialized: {self.db_path}")
+            
+        except sqlite3.OperationalError as e:
+            logger.warning(f"⚠️ AutoLex Core database initialization failed: {e}")
+            logger.warning("   Running in memory-only mode (data not persistent)")
+            # Create in-memory database as fallback
+            try:
+                self.db_path = ":memory:"
+                conn = sqlite3.connect(self.db_path)
+                cur = conn.cursor()
+                
+                # Data ingestion metrics table
+                cur.execute("""
+                    CREATE TABLE ingestion_metrics (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        sources_scanned INTEGER,
+                        sources_successful INTEGER,
+                        sources_failed INTEGER,
+                        documents_ingested INTEGER,
+                        avg_confidence_score REAL,
+                        failed_sources TEXT,
+                        processing_time_ms INTEGER
+                    )
+                """)
+                
+                # Tertiary verification logs
+                cur.execute("""
+                    CREATE TABLE tertiary_verifications (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        query TEXT,
+                        internal_confidence REAL,
+                        triggers TEXT,
+                        api_provider TEXT,
+                        api_cost REAL,
+                        verification_result TEXT,
+                        discrepancy_found BOOLEAN,
+                        resolution TEXT
+                    )
+                """)
+                
+                # System alerts and escalations
+                cur.execute("""
+                    CREATE TABLE system_alerts (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        timestamp DATETIME,
+                        alert_level TEXT,
+                        component TEXT,
+                        message TEXT,
+                        auto_resolved BOOLEAN,
+                        human_notified BOOLEAN,
+                        resolution_time_minutes INTEGER
+                    )
+                """)
+                
+                conn.commit()
+                conn.close()
+                logger.info("✅ AutoLex Core using in-memory database")
+            except Exception as mem_error:
+                logger.error(f"❌ Failed to create in-memory database: {mem_error}")
+                # Continue without database - app should still work
+                pass
 
     async def process_legal_query(self, query: str, context: Dict = None) -> Dict[str, Any]:
         """

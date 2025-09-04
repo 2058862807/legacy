@@ -1707,6 +1707,18 @@ async def get_autolex_status():
 @app.get("/api/ai-team/status")
 async def get_ai_team_status():
     """Get comprehensive status of all integrated AI systems"""
+    if not AUTOLEX_AVAILABLE or not autolex_core or not senior_ai_manager:
+        return {
+            "status": "disabled",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "message": "AI Team systems are disabled in this environment",
+            "systems": {
+                "autolex_core": {"status": "disabled", "reason": "AI services not enabled"},
+                "senior_ai_manager": {"status": "disabled", "reason": "AI services not enabled"},
+                "rag_engine": {"status": "available", "reason": "Basic functionality available"}
+            }
+        }
+    
     try:
         # Collect health metrics from Senior AI Manager
         health_metrics = await senior_ai_manager._collect_health_metrics()

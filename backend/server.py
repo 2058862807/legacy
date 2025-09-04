@@ -272,6 +272,26 @@ elif OPENAI_API_KEY:  # fallback to OpenAI
 
 # Database initialization already handled in main lifespan function above
 
+from fastapi import Request
+import time
+
+# Add request logging middleware for debugging
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    origin = request.headers.get("origin", "NO_ORIGIN")
+    
+    # Log incoming request
+    logger.info(f"🔍 {request.method} {request.url.path} - Origin: {origin}")
+    
+    response = await call_next(request)
+    
+    # Log response
+    process_time = time.time() - start_time
+    logger.info(f"✅ {request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.3f}s")
+    
+    return response
+
 # Add CORS middleware with environment-aware origins
 CORS_ORIGINS_ENV = os.getenv("CORS_ORIGINS", "")
 if CORS_ORIGINS_ENV:

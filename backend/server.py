@@ -1094,6 +1094,31 @@ Crisis Resources:
 Remember: You're here to support people through difficult times with compassion and practical help."""
         }
         
+        # Check if AutoLex Core is available
+        if not AUTOLEX_AVAILABLE or not autolex_core:
+            return {
+                "response": """I'm here to support you during this difficult time. While our AI legal assistant is being configured for this environment, I want you to know that help is available:
+
+🤗 **You're not alone in this difficult time.**
+
+**Immediate Support Resources:**
+• National Suicide Prevention Lifeline: **988** (24/7 support)
+• Crisis Text Line: Text HOME to **741741**
+• National Alliance on Mental Illness (NAMI): **1-800-950-6264**
+
+**Grief Support:**
+• GriefShare: Find local support groups at griefshare.org
+• What's Your Grief: whatsyourgrief.com
+• The Grief Recovery Institute: griefrecoverymethod.com
+
+For specific estate planning assistance, please contact our support team directly.""",
+                "confidence_score": 1.0,
+                "sources": [],
+                "requires_human_review": False,
+                "escalate": False,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+        
         # Process through AutoLex Core for integrated response
         autolex_result = await autolex_core.process_legal_query(
             query=request.message,

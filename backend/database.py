@@ -5,6 +5,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime, timezone
 from typing import Optional
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Database configuration
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///./app.db')

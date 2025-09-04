@@ -851,6 +851,53 @@ async def get_payment_status(session_id: str = Query(...)):
         logger.error(f"Payment status error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/payments/webhook")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    try:
+        payload = await request.body()
+        sig_header = request.headers.get('stripe-signature')
+        
+        if STRIPE_WEBHOOK_SECRET and sig_header:
+            try:
+                event = stripe.Webhook.construct_event(
+                    payload, sig_header, STRIPE_WEBHOOK_SECRET
+                )
+                logger.info(f"Received Stripe webhook: {event['type']}")
+                
+                # Handle specific events
+                if event['type'] == 'checkout.session.completed':
+                    session = event['data']['object']
+                    logger.info(f"Payment completed for session: {session['id']}")
+                    # TODO: Update user subscription status in database
+                    
+                elif event['type'] == 'invoice.payment_succeeded':
+                    invoice = event['data']['object']
+                    logger.info(f"Payment succeeded for invoice: {invoice['id']}")
+                    # TODO: Handle subscription renewal
+                    
+                elif event['type'] == 'customer.subscription.deleted':
+                    subscription = event['data']['object']
+                    logger.info(f"Subscription cancelled: {subscription['id']}")
+                    # TODO: Update user subscription status to cancelled
+                    
+                return {"status": "success"}
+                
+            except ValueError as e:
+                logger.error(f"Invalid payload: {e}")
+                raise HTTPException(status_code=400, detail="Invalid payload")
+            except stripe.error.SignatureVerificationError as e:
+                logger.error(f"Invalid signature: {e}")
+                raise HTTPException(status_code=400, detail="Invalid signature")
+        else:
+            # Development mode - accept all webhooks for testing
+            logger.info("Webhook received in development mode (no signature verification)")
+            return {"status": "success"}
+            
+    except Exception as e:
+        logger.error(f"Webhook error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Bot endpoints
 @app.post("/api/bot/help")
 async def esquire_ai_help(request: BotRequest, db: Session = Depends(get_db)):

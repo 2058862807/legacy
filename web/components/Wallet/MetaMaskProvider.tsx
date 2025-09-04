@@ -103,8 +103,8 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
       setNetwork(currentNetwork)
       setIsConnected(true)
 
-      // Auto-switch to Polygon Amoy if not already connected
-      if (currentNetwork.chainId !== BigInt(80002)) {
+      // Auto-switch to Polygon Mainnet if not already connected
+      if (currentNetwork.chainId !== BigInt(137)) {
         await switchToPolygon()
       }
 

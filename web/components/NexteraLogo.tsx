@@ -11,14 +11,18 @@ const sizeClasses = {
   sm: 'w-6 h-6',
   md: 'w-8 h-8', 
   lg: 'w-12 h-12',
-  xl: 'w-16 h-16'
+  xl: 'w-16 h-16',
+  '2xl': 'w-20 h-20',
+  '3xl': 'w-24 h-24'
 }
 
 const sizePixels = {
   sm: 24,
   md: 32,
   lg: 48,
-  xl: 64
+  xl: 64,
+  '2xl': 80,
+  '3xl': 96
 }
 
 export default function NexteraLogo({ 

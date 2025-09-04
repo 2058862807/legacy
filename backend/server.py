@@ -1668,6 +1668,14 @@ async def rag_system_status():
 @app.get("/api/autolex/status")
 async def get_autolex_status():
     """Get AutoLex Core system status and health metrics"""
+    if not AUTOLEX_AVAILABLE or not autolex_core or not senior_ai_manager:
+        return {
+            "status": "disabled",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "message": "AutoLex Core is disabled in this environment",
+            "reason": "AI services are not enabled for this deployment"
+        }
+    
     try:
         # Get current system health from Senior AI Manager
         health_metrics = await senior_ai_manager._collect_health_metrics()

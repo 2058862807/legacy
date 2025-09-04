@@ -141,7 +141,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
-            params: [POLYGON_AMOY],
+            params: [POLYGON_MAINNET],
           })
         } catch (addError) {
           console.error('Error adding Polygon network:', addError)

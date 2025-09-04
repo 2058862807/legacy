@@ -176,7 +176,17 @@ app = FastAPI(
 import openai
 from openai import OpenAI
 import google.generativeai as genai
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+# Import emergentintegrations with error handling
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    EMERGENT_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"EmergentIntegrations not available: {e}")
+    EMERGENT_AVAILABLE = False
+    LlmChat = None
+    UserMessage = None
+
 from eth_account import Account
 from eth_utils import to_hex
 from sqlalchemy.orm import Session

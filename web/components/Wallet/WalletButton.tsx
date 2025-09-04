@@ -61,7 +61,7 @@ export default function WalletButton() {
             {formatAddress(account!)}
           </span>
           <span className="text-xs text-gray-500">
-            {isPolygonAmoy ? 'Polygon Amoy' : network?.name || 'Unknown Network'}
+            {isPolygonMainnet ? 'Polygon Mainnet' : network?.name || 'Unknown Network'}
           </span>
         </div>
         <button

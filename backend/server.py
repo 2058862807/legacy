@@ -1196,7 +1196,7 @@ async def create_notarization(request: NotaryRequest):
         
         return {
             "transaction_hash": transaction_hash,
-            "polygonscan_url": f"https://amoy.polygonscan.com/tx/{transaction_hash}",
+            "polygonscan_url": f"https://polygonscan.com/tx/{transaction_hash}",
             "status": "pending",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "network": "Polygon Amoy Testnet"

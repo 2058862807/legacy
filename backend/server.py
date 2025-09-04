@@ -226,9 +226,22 @@ from fastapi.responses import FileResponse
 # Import gasless notary service
 from gasless_notary import gasless_notary
 
-# Import AutoLex Core system
-from autolex_core import autolex_core
-from senior_ai_manager import senior_ai_manager
+# Guard AI system imports for Railway deployment
+if AI_ENABLED:
+    try:
+        # Import AutoLex Core system
+        from autolex_core import autolex_core
+        from senior_ai_manager import senior_ai_manager
+        AUTOLEX_AVAILABLE = True
+    except ImportError as e:
+        logging.warning(f"AutoLex Core not available: {e}")
+        AUTOLEX_AVAILABLE = False
+        autolex_core = None
+        senior_ai_manager = None
+else:
+    AUTOLEX_AVAILABLE = False
+    autolex_core = None
+    senior_ai_manager = None
 
 # Import existing modules
 from database import get_db, User, Will, Document, ChatHistory, ComplianceRule, RateLimit, LiveEvent, PlanVersion, PlanAudit, UpdateProposal

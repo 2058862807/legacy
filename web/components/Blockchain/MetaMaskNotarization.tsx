@@ -41,7 +41,7 @@ export default function MetaMaskNotarization() {
       // Create result
       const notarizationResult: NotarizationResult = {
         txHash,
-        explorerUrl: `https://amoy.polygonscan.com/tx/${txHash}`,
+        explorerUrl: `https://polygonscan.com/tx/${txHash}`,
         timestamp: new Date().toISOString()
       }
 

@@ -84,6 +84,11 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 NexteraEstate: Starting integrated AI systems...")
     
     try:
+        # Step 0: Initialize database tables and indexes
+        logger.info("🗄️ Initializing database...")
+        from database import create_tables
+        create_tables()
+        
         # Step 1: Initialize base RAG engine
         logger.info("📚 Initializing RAG Engine...")
         if rag_engine:

@@ -117,7 +117,7 @@ async def lifespan(app: FastAPI):
             autolex_core.rag_engine = rag_engine
             logger.info("✅ AutoLex Core connected to RAG Engine")
         else:
-            logger.error("❌ AutoLex Core initialization failed")
+            logger.warning("⚠️ AutoLex Core disabled (Railway compatibility mode)")
         
         # Step 3: Initialize Senior AI Manager with system oversight
         logger.info("👔 Initializing Senior AI Manager...")

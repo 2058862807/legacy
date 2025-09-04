@@ -89,8 +89,18 @@ async def lifespan(app: FastAPI):
         else:
             logger.error("❌ Senior AI Manager initialization failed")
         
-        # Step 4: Initialize Gasless Notary
+        # Step 4: Initialize Gasless Notary with environment validation
         logger.info("⛓️ Initializing Gasless Notary...")
+        
+        # Check for required Polygon environment variables
+        polygon_private_key = os.environ.get('POLYGON_PRIVATE_KEY')
+        polygon_rpc_url = os.environ.get('POLYGON_RPC_URL')
+        
+        if not polygon_private_key or not polygon_rpc_url:
+            logger.warning("⚠️ Polygon variables missing - blockchain features will be limited")
+            logger.warning("   Missing: POLYGON_PRIVATE_KEY and/or POLYGON_RPC_URL")
+            logger.warning("   Blockchain notarization will use mock mode")
+        
         if gasless_notary:
             logger.info("✅ Gasless Notary ready")
         else:

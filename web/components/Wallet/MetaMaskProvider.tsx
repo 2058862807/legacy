@@ -130,7 +130,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
     if (!isMetaMaskInstalled()) return
 
     try {
-      // Try to switch to Polygon Amoy
+      // Try to switch to Polygon Mainnet
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: POLYGON_MAINNET.chainId }],

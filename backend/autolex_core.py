@@ -74,7 +74,7 @@ class AutoLexCore:
             logger.warning("⚠️ RAG engine not available - using fallback mode")
             self.rag_engine = None
         
-        self.db_path = "/app/backend/autolex_core.db"
+        self.db_path = os.path.join(os.getcwd(), "autolex_core.db")
         self.westlaw_api_key = os.getenv("WESTLAW_API_KEY")
         self.lexis_api_key = os.getenv("LEXIS_API_KEY")
         

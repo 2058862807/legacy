@@ -23,7 +23,7 @@ export default function NotaryPage() {
 
   const NOTARY_ADDRESS = process.env.NEXT_PUBLIC_NOTARY_ADDRESS || ''
   const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || '137'
-  const EXPLORER = process.env.NEXT_PUBLIC_EXPLORER || 'https://amoy.polygonscan.com'
+  const EXPLORER = process.env.NEXT_PUBLIC_EXPLORER || 'https://polygonscan.com'
 
   const connectWallet = async () => {
     if (!window.ethereum) {

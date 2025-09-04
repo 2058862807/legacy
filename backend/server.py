@@ -444,6 +444,16 @@ async def get_ai_response(message: str, system_prompt: str) -> str:
 # CORE API ENDPOINTS
 
 # Health check endpoint
+@app.get("/api/debug/cors")
+def debug_cors():
+    """Debug CORS configuration"""
+    return {
+        "allowed_origins": ALLOWED_ORIGINS,
+        "cors_origins_env": os.getenv("CORS_ORIGINS", "NOT_SET"),
+        "frontend_url": os.getenv("FRONTEND_URL", "NOT_SET"),
+        "credentials_allowed": True
+    }
+
 @app.get("/api/health")
 def health():
     return {"ok": True}

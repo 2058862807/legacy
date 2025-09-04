@@ -1,172 +1,96 @@
 <analysis>
-The trajectory details the AI engineer's work on NexteraEstate, an AI-powered estate planning platform. Initially, the focus was on stabilizing core features and implementing the Live Estate Plan. A major pivot involved integrating a Retrieval Augmented Generation (RAG) architecture for legally defensible AI guidance. This led to bug fixes in rate limiting and dashboard data. Subsequently, the engineer fixed a critical frontend build issue, enabled basic login/will creation, and implemented a gasless blockchain notarization system. A significant architectural shift occurred with the user's AutoLex Core design, incorporating a three-layer verification system with commercial API failsafes, which the engineer promptly integrated. The final phase involved addressing integration gaps between the newly introduced AI components and building direct communication interfaces for the user with their AI team, which is the current state.
+The AI engineer's trajectory shows a prolonged struggle to stabilize and deploy the NexteraEstate platform. Initially, the focus was on minor fixes and a significant UI redesign, which was successfully implemented. However, the core challenge revolved around persistent  connectivity issues for the user and recurring 502 errors during deployment to Railway. The AI engineer made several misdiagnoses, including a critical syntax error that repeatedly broke the frontend compilation, and incorrect assumptions about platform capabilities, leading to user frustration and wasted time. The trajectory culminates with the AI engineer acknowledging previous failures and making a concentrated effort to reconfigure for Railway, introducing robust error handling, Dockerfiles, and an emergency bypass for problematic AI components. The latest identified blocker is the  library, which requires a specific installation method not automatically handled by Railway's Nixpacks builder.
 </analysis>
 
 <product_requirements>
-The NexteraEstate application aims to solve the problem of inaccessible estate planning by providing a stable, feature-rich, and legally defensible platform. Initial requirements included a monorepo structure, NextAuth v5 (Google OAuth), Stripe payments, AI bots (Help, Grief), MetaMask notarization, and UI/UX modernization. Subsequent major features requested and partially/fully implemented include a 50-state Real-Time Compliance System, an Esquire AI (enhanced Help Bot), robust Backend Stability, core functionalities like document upload/listing and PDF generation, a Live Estate Plan for dynamic document updates, an Autonomous Tech Director for platform health monitoring, and a Retrieval Augmented Generation (RAG) architecture for source-verified AI legal guidance. The user's ultimate goal is a 100% functional, personally testable, production-ready platform with a strong, defensible legal position, now further enhanced by the AutoLex Core for triple-verified legal intelligence and gasless notarization.
+The NexteraEstate application aims to be an accessible, stable, legally defensible estate planning platform. Key features include a monorepo, NextAuth v5, Stripe payments, MetaMask notarization (later specified as gasless), a 50-state Real-Time Compliance System, an Esquire AI (enhanced Help Bot), robust backend stability, document upload/listing, PDF generation, and a Live Estate Plan for dynamic updates. The user explicitly prioritized a 100% functional, personally testable, production-ready platform, with primary focus on getting AI team operational and the ability to create a will. The platform later mandated AutoLex Core for triple-verified legal intelligence. The user expressed extreme frustration with persistent 502 errors, inability to create a will, and general non-functionality, demanding a fix for Vercel/Railway deployments and stable AI agent communication.
 </product_requirements>
 
 <key_technical_concepts>
-- **Next.js 14 (React)**: Frontend framework.
 - **FastAPI (Python)**: Backend API framework.
-- **SQLite/MongoDB**: Database.
-- **NextAuth v5**: Authentication (Google OAuth).
-- **Stripe**: Payment gateway.
-- **MetaMask (web3.py)**: Blockchain interaction (Polygon).
-- **Gemini 1.5 Flash**: LLM provider.
-- **SQLAlchemy**: ORM.
-- **Tailwind CSS**: UI styling.
-- **RAG**: AI architecture for grounded responses, using , , .
-- **AutoLex Core**: Autonomous legal intelligence with three-layer verification.
+- **Next.js (React/TypeScript)**: Frontend framework (originally, then evolved into a React SPA structure).
+- **MongoDB / SQLite**: Hybrid database approach (MongoDB for user/will data, SQLite for AI/compliance).
+- **JWT Authentication / NextAuth.js**: User authentication.
+- **MetaMask / Web3.py**: Blockchain interaction on Polygon Mainnet.
+- **Gemini 1.5 Flash**: LLM provider for AI.
+- **RAG / AutoLex Core**: AI for legal guidance and verification.
+- **Gasless Notarization**: Blockchain notarization without user crypto wallets.
+- **Tailwind CSS**: Frontend styling.
+- **Railway / Vercel**: Deployment platforms.
+- **Docker**: Containerization for deployment.
 </key_technical_concepts>
 
 <code_architecture>
 
 
 - ****: Core FastAPI app.
-  - Changes: Fixed  model attribute usage, dashboard statistics (Will model attributes), added NextAuth compatibility endpoints, integrated , , , and  modules/endpoints. Also updated email configuration and bot endpoints.
-- ****: SQLAlchemy models.
-  - Changes: Clarified  and  model attribute usage, ensuring consistency with API endpoints.
+    - **Importance:** Handles all API routes, AI services, orchestrates backend logic.
+    - **Changes:** Fixed  usage, integrated AI services, cleaned duplicate app instances. Added  endpoint, enhanced CORS for Railway. Added fail-fast for Polygon variables and retry mechanism for AI/web3. Added Stripe webhook. Added database index creation. Implemented  detection to disable  and  for Railway compatibility. Added error handling for  import.
+- ****: Implements three-layer AI verification.
+    - **Importance:** Autonomous, triple-verified legal intelligence.
+    - **Changes:** Modified database path from hardcoded to dynamic (), then to  with  fallback for Railway compatibility.
+- ****: System monitoring AI.
+    - **Importance:** Provides system health and optimization reports.
+    - **Changes:** Similar database path fixes and error handling as .
+- ****: Gasless blockchain notarization.
+    - **Importance:** Enables document notarization on Polygon network.
+    - **Changes:** Updated to use Polygon Mainnet RPC URL and chain ID (137). Added master wallet address and private key configuration via environment variables, with validation and a wallet status endpoint. Guarded  import.
+- ****: Retrieval Augmented Generation.
+    - **Importance:** Source-verified AI legal guidance.
+    - **Changes:** Guarded  import with text-based fallback search if ML is unavailable, to improve Railway free-tier compatibility.
+- ****: The main Next.js landing page.
+    - **Importance:** Primary user entry point.
+    - **Changes:** Redesigned hero section (H1, subhead), updated CTA labels.
+- ****: Handles pricing display.
+    - **Importance:** Displays subscription options.
+    - **Changes:** Restructured to show three plans (Free, Family, Founding Lifetime) with specific features and pricing. Multiple syntax errors in this file were identified and fixed, which were causing the entire frontend to fail.
+- ** (NEW)**: A simplified pricing component to replace the complex .
+- ****: Top navigation bar.
+    - **Importance:** Provides site navigation.
+    - **Changes:** Unified primary CTA, made sticky, added state coverage modal.
+- ****: Frontend MetaMask integration.
+    - **Importance:** Connects user wallets for blockchain features.
+    - **Changes:** Updated to connect to Polygon Mainnet (chain ID 137) instead of Mumbai testnet.
+- ** (NEW)**: Next.js API proxy route.
+    - **Importance:** Solves container networking issues by proxying frontend  requests to the backend.
 - ****: Python dependencies.
-  - Changes: Added , , , , , . Removed  due to Railway build issues.
-- ****: RAG system core logic.
-  - Changes: Added confidence scoring (95% threshold), human escalation logic, and ensured proper global instance initialization.
-- ** (NEW)**: Handles gasless blockchain notarization logic.
-  - Importance: Abstracts crypto complexity, enables NexteraEstate to pay gas fees.
-- ** (NEW)**: Implements the three-layer verification system for legal guidance.
-  - Importance: Provides autonomous, triple-verified legal intelligence, including Westlaw/LEXIS API integration for high-risk queries.
-- ** (NEW)**: Manages and monitors AutoLex Core and other AI agents.
-  - Importance: Implements Solve-Isolate-Escalate protocol for autonomous issue resolution.
-- ** (NEW)**: Provides direct communication endpoints for the AI team.
-  - Importance: Allows users to interact with AutoLex Core and Senior AI Manager.
+    - **Importance:** Lists all necessary Python packages.
+    - **Changes:** Added .
+- ** (NEW)**: Dockerfile for the backend service.
+- ** (NEW)**: Dockerfile for the frontend service.
+- ****: Railway deployment configuration.
+    - **Importance:** Specifies build and deploy commands for Railway.
+    - **Changes:** Configured Nixpacks builder, Python language,  build command,  start command. Healthcheck temporarily removed.
+- ** (NEW)**: Frontend environment variables for the preview environment, used for internal backend URL.
 - ****: Backend environment variables.
-  - Changes: Added placeholders for , , , , . Modified .
-- ****: Frontend pricing display.
-  - Changes: Implemented new multi-tier pricing strategy, including new mid-tier options.
-- ****: Global footer.
-  - Changes: Updated contact email address to .
-- ****: Contact page.
-  - Changes: Updated support email address.
-- ****: Frontend page.
-  - Changes: Temporarily moved/removed due to frontend build issues.
-- ** (NEW)** & ** (NEW)**: Temporary pages.
-  - Importance: Bypassed complex NextAuth/will flow to demonstrate core functionality after critical frontend build fixes.
-- ** (NEW)**: Client-side encryption utility.
-  - Importance: Implements Web Crypto API for document encryption before server transmission.
-- ** (NEW)**: Foundation for family communication portal.
-  - Importance: Addresses pain point of family tension in estate planning.
-- ** (NEW)**, **🚀 Starting NexteraEstate backend on Railway...
-📦 Installing Python dependencies...
-🔧 Installing emergentintegrations...
-Looking in indexes: https://pypi.org/simple, https://d33sy5i8bnduwe.cloudfront.net/simple/, https://d33sy5i8bnduwe.cloudfront.net/simple/
-Requirement already satisfied: emergentintegrations in /root/.venv/lib/python3.11/site-packages (0.1.0)
-Requirement already satisfied: openai==1.99.9 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (1.99.9)
-Requirement already satisfied: litellm>=1.0.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (1.76.1)
-Requirement already satisfied: fastapi>=0.100.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (0.115.3)
-Requirement already satisfied: uvicorn>=0.22.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (0.31.0)
-Requirement already satisfied: aiohttp>=3.8.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (3.12.15)
-Requirement already satisfied: google-generativeai>=0.3.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (0.8.3)
-Requirement already satisfied: Pillow>=10.0.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (11.3.0)
-Requirement already satisfied: google-genai in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (1.32.0)
-Requirement already satisfied: stripe>=4.0.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (11.5.0)
-Requirement already satisfied: requests>=2.25.0 in /root/.venv/lib/python3.11/site-packages (from emergentintegrations) (2.31.0)
-Requirement already satisfied: anyio<5,>=3.5.0 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (4.10.0)
-Requirement already satisfied: distro<2,>=1.7.0 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (1.9.0)
-Requirement already satisfied: httpx<1,>=0.23.0 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (0.28.1)
-Requirement already satisfied: jiter<1,>=0.4.0 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (0.10.0)
-Requirement already satisfied: pydantic<3,>=1.9.0 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (2.9.2)
-Requirement already satisfied: sniffio in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (1.3.1)
-Requirement already satisfied: tqdm>4 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (4.67.1)
-Requirement already satisfied: typing-extensions<5,>=4.11 in /root/.venv/lib/python3.11/site-packages (from openai==1.99.9->emergentintegrations) (4.15.0)
-Requirement already satisfied: idna>=2.8 in /root/.venv/lib/python3.11/site-packages (from anyio<5,>=3.5.0->openai==1.99.9->emergentintegrations) (3.10)
-Requirement already satisfied: certifi in /root/.venv/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai==1.99.9->emergentintegrations) (2025.8.3)
-Requirement already satisfied: httpcore==1.* in /root/.venv/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai==1.99.9->emergentintegrations) (1.0.9)
-Requirement already satisfied: h11>=0.16 in /root/.venv/lib/python3.11/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->openai==1.99.9->emergentintegrations) (0.16.0)
-Requirement already satisfied: annotated-types>=0.6.0 in /root/.venv/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai==1.99.9->emergentintegrations) (0.7.0)
-Requirement already satisfied: pydantic-core==2.23.4 in /root/.venv/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai==1.99.9->emergentintegrations) (2.23.4)
-Requirement already satisfied: aiohappyeyeballs>=2.5.0 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (2.6.1)
-Requirement already satisfied: aiosignal>=1.4.0 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (1.4.0)
-Requirement already satisfied: attrs>=17.3.0 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (25.3.0)
-Requirement already satisfied: frozenlist>=1.1.1 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (1.7.0)
-Requirement already satisfied: multidict<7.0,>=4.5 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (6.6.4)
-Requirement already satisfied: propcache>=0.2.0 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (0.3.2)
-Requirement already satisfied: yarl<2.0,>=1.17.0 in /root/.venv/lib/python3.11/site-packages (from aiohttp>=3.8.0->emergentintegrations) (1.20.1)
-Requirement already satisfied: starlette<0.42.0,>=0.40.0 in /root/.venv/lib/python3.11/site-packages (from fastapi>=0.100.0->emergentintegrations) (0.41.3)
-Requirement already satisfied: google-ai-generativelanguage==0.6.10 in /root/.venv/lib/python3.11/site-packages (from google-generativeai>=0.3.0->emergentintegrations) (0.6.10)
-Requirement already satisfied: google-api-core in /root/.venv/lib/python3.11/site-packages (from google-generativeai>=0.3.0->emergentintegrations) (2.25.1)
-Requirement already satisfied: google-api-python-client in /root/.venv/lib/python3.11/site-packages (from google-generativeai>=0.3.0->emergentintegrations) (2.179.0)
-Requirement already satisfied: google-auth>=2.15.0 in /root/.venv/lib/python3.11/site-packages (from google-generativeai>=0.3.0->emergentintegrations) (2.40.3)
-Requirement already satisfied: protobuf in /root/.venv/lib/python3.11/site-packages (from google-generativeai>=0.3.0->emergentintegrations) (4.25.8)
-Requirement already satisfied: proto-plus<2.0.0dev,>=1.22.3 in /root/.venv/lib/python3.11/site-packages (from google-ai-generativelanguage==0.6.10->google-generativeai>=0.3.0->emergentintegrations) (1.26.1)
-Requirement already satisfied: googleapis-common-protos<2.0.0,>=1.56.2 in /root/.venv/lib/python3.11/site-packages (from google-api-core->google-generativeai>=0.3.0->emergentintegrations) (1.70.0)
-Requirement already satisfied: grpcio<2.0.0,>=1.33.2 in /root/.venv/lib/python3.11/site-packages (from google-api-core[grpc]!=2.0.*,!=2.1.*,!=2.10.*,!=2.2.*,!=2.3.*,!=2.4.*,!=2.5.*,!=2.6.*,!=2.7.*,!=2.8.*,!=2.9.*,<3.0.0dev,>=1.34.1->google-ai-generativelanguage==0.6.10->google-generativeai>=0.3.0->emergentintegrations) (1.74.0)
-Requirement already satisfied: grpcio-status<2.0.0,>=1.33.2 in /root/.venv/lib/python3.11/site-packages (from google-api-core[grpc]!=2.0.*,!=2.1.*,!=2.10.*,!=2.2.*,!=2.3.*,!=2.4.*,!=2.5.*,!=2.6.*,!=2.7.*,!=2.8.*,!=2.9.*,<3.0.0dev,>=1.34.1->google-ai-generativelanguage==0.6.10->google-generativeai>=0.3.0->emergentintegrations) (1.62.3)
-Requirement already satisfied: cachetools<6.0,>=2.0.0 in /root/.venv/lib/python3.11/site-packages (from google-auth>=2.15.0->google-generativeai>=0.3.0->emergentintegrations) (5.5.2)
-Requirement already satisfied: pyasn1-modules>=0.2.1 in /root/.venv/lib/python3.11/site-packages (from google-auth>=2.15.0->google-generativeai>=0.3.0->emergentintegrations) (0.4.2)
-Requirement already satisfied: rsa<5,>=3.1.4 in /root/.venv/lib/python3.11/site-packages (from google-auth>=2.15.0->google-generativeai>=0.3.0->emergentintegrations) (4.9.1)
-Requirement already satisfied: charset-normalizer<4,>=2 in /root/.venv/lib/python3.11/site-packages (from requests>=2.25.0->emergentintegrations) (3.4.3)
-Requirement already satisfied: urllib3<3,>=1.21.1 in /root/.venv/lib/python3.11/site-packages (from requests>=2.25.0->emergentintegrations) (2.5.0)
-Requirement already satisfied: pyasn1>=0.1.3 in /root/.venv/lib/python3.11/site-packages (from rsa<5,>=3.1.4->google-auth>=2.15.0->google-generativeai>=0.3.0->emergentintegrations) (0.6.1)
-Requirement already satisfied: click in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (8.2.1)
-Requirement already satisfied: fastuuid>=0.12.0 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (0.12.0)
-Requirement already satisfied: importlib-metadata>=6.8.0 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (8.7.0)
-Requirement already satisfied: jinja2<4.0.0,>=3.1.2 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (3.1.6)
-Requirement already satisfied: jsonschema<5.0.0,>=4.22.0 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (4.25.1)
-Requirement already satisfied: python-dotenv>=0.2.0 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (1.0.1)
-Requirement already satisfied: tiktoken>=0.7.0 in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (0.11.0)
-Requirement already satisfied: tokenizers in /root/.venv/lib/python3.11/site-packages (from litellm>=1.0.0->emergentintegrations) (0.22.0)
-Requirement already satisfied: MarkupSafe>=2.0 in /root/.venv/lib/python3.11/site-packages (from jinja2<4.0.0,>=3.1.2->litellm>=1.0.0->emergentintegrations) (3.0.2)
-Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /root/.venv/lib/python3.11/site-packages (from jsonschema<5.0.0,>=4.22.0->litellm>=1.0.0->emergentintegrations) (2025.4.1)
-Requirement already satisfied: referencing>=0.28.4 in /root/.venv/lib/python3.11/site-packages (from jsonschema<5.0.0,>=4.22.0->litellm>=1.0.0->emergentintegrations) (0.36.2)
-Requirement already satisfied: rpds-py>=0.7.1 in /root/.venv/lib/python3.11/site-packages (from jsonschema<5.0.0,>=4.22.0->litellm>=1.0.0->emergentintegrations) (0.27.1)
-Requirement already satisfied: zipp>=3.20 in /root/.venv/lib/python3.11/site-packages (from importlib-metadata>=6.8.0->litellm>=1.0.0->emergentintegrations) (3.23.0)
-Requirement already satisfied: regex>=2022.1.18 in /root/.venv/lib/python3.11/site-packages (from tiktoken>=0.7.0->litellm>=1.0.0->emergentintegrations) (2025.8.29)
-Requirement already satisfied: httplib2<1.0.0,>=0.19.0 in /root/.venv/lib/python3.11/site-packages (from google-api-python-client->google-generativeai>=0.3.0->emergentintegrations) (0.30.0)
-Requirement already satisfied: google-auth-httplib2<1.0.0,>=0.2.0 in /root/.venv/lib/python3.11/site-packages (from google-api-python-client->google-generativeai>=0.3.0->emergentintegrations) (0.2.0)
-Requirement already satisfied: uritemplate<5,>=3.0.1 in /root/.venv/lib/python3.11/site-packages (from google-api-python-client->google-generativeai>=0.3.0->emergentintegrations) (4.2.0)
-Requirement already satisfied: pyparsing<4,>=3.0.4 in /root/.venv/lib/python3.11/site-packages (from httplib2<1.0.0,>=0.19.0->google-api-python-client->google-generativeai>=0.3.0->emergentintegrations) (3.2.3)
-Requirement already satisfied: tenacity<9.2.0,>=8.2.3 in /root/.venv/lib/python3.11/site-packages (from google-genai->emergentintegrations) (9.1.2)
-Requirement already satisfied: websockets<15.1.0,>=13.0.0 in /root/.venv/lib/python3.11/site-packages (from google-genai->emergentintegrations) (13.1)
-Requirement already satisfied: huggingface-hub<1.0,>=0.16.4 in /root/.venv/lib/python3.11/site-packages (from tokenizers->litellm>=1.0.0->emergentintegrations) (0.34.4)
-Requirement already satisfied: filelock in /root/.venv/lib/python3.11/site-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers->litellm>=1.0.0->emergentintegrations) (3.19.1)
-Requirement already satisfied: fsspec>=2023.5.0 in /root/.venv/lib/python3.11/site-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers->litellm>=1.0.0->emergentintegrations) (2025.7.0)
-Requirement already satisfied: packaging>=20.9 in /root/.venv/lib/python3.11/site-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers->litellm>=1.0.0->emergentintegrations) (25.0)
-Requirement already satisfied: pyyaml>=5.1 in /root/.venv/lib/python3.11/site-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers->litellm>=1.0.0->emergentintegrations) (6.0.2)
-Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /root/.venv/lib/python3.11/site-packages (from huggingface-hub<1.0,>=0.16.4->tokenizers->litellm>=1.0.0->emergentintegrations) (1.1.9)
-🚀 Starting FastAPI server... (NEW)**, ** (NEW)**: Railway deployment configuration files.
-  - Importance: Resolved  issues and provided a consistent build environment for Railway.
-- ** (NEW)** & ** (NEW)**: Simple system monitoring.
-  - Importance: Provides an unauthenticated dashboard for basic health checks after issues with the main Tech Director dashboard.
-- ** (NEW)**: Simple UI for communicating with the AI team.
-  - Importance: Provides a user interface for the new .
+    - **Importance:** Configures backend secrets and URLs.
+    - **Changes:** Added  for CORS, updated  to SQLite, added  and  placeholders for local testing.
 </code_architecture>
 
 <pending_tasks>
-- Fully implement the Email System (beyond basic configuration, needing templates and triggers).
-- Implement full Subscription Management (for users to manage plans/billing beyond initial checkout).
+- Fully implement the Email System (beyond basic configuration).
+- Implement full Subscription Management (beyond initial checkout).
 - Integrate Sentry for frontend and backend observability.
 - Complete comprehensive mobile responsiveness across all pages.
-- Final testing and successful deployment on the actual production environment (Railway).
-- Re-implement/fix production-grade NextAuth authentication.
-- Connect existing professional Will Creation UI to the working backend.
+- Final comprehensive testing and successful deployment on production environment (e.g., Railway Pro, after current fixes).
+- Connect existing professional Will Creation UI (within the React SPA) to the working backend with JWT auth.
 - Integrate the Family Communication Portal beyond its foundational component.
-- Set up a dedicated master wallet with real MATIC and remove mock mode for gasless notarization.
+- Implement actual monitoring logic for the Senior AI Manager (currently disabled in Railway compatibility mode).
+- Implement a strategy for installing  on Railway.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was focused on integrating the newly designed AutoLex Core and Senior AI Manager with the existing NexteraEstate platform, specifically ensuring that all AI agents work cohesively and that the user can directly communicate with them.
+Immediately before this summary, the AI engineer was deep into a debugging loop for Railway deployment. The build process (installing Python dependencies, including heavy ML libraries) was successfully completing after ~12-15 minutes, but the application was crashing during startup.
 
-This involved:
-1.  **Addressing Integration Gaps**: Identifying and fixing issues where the AutoLex Core, Senior AI Manager, and existing bot endpoints (, ) were not communicating flawlessly.
-2.  **Updating Bot Endpoints**: Modifying  to ensure the  (and verifying ) properly utilize the integrated AutoLex system for legal guidance.
-3.  **Adding System Status Endpoints**: Creating new API endpoints in  to provide a comprehensive overview of the integrated AI team's status and perform internal tests.
-4.  **Fixing RAG Engine Initialization**: Resolving a  object issue in  that caused the RAG engine to not initialize correctly within the integrated flow, ensuring 100% operational status.
-5.  **Developing Communication Interfaces**: Creating  to house the backend logic for direct communication with AutoLex Core and Senior AI Manager, and  for a simple frontend UI to facilitate this interaction.
-6.  **Troubleshooting Integration**: Fixing router import issues related to the new communication modules within  to ensure they are properly recognized and function correctly.
+The root cause of the crashes was initially diagnosed as , stemming from hardcoded database paths in  and . The AI engineer attempted to fix this by making paths relative and then moving to the  directory with an in-memory database fallback. However, these fixes seemed to not deploy or were bypassed, as the same SQLite error persisted.
 
-The system is now reported as 100% OPERATIONAL regarding AI team integration, with the last action being an attempt to properly integrate communication modules.
+To overcome this, an emergency bypass was implemented:  and  were conditionally disabled on Railway by checking for a  variable in . This successfully bypassed the SQLite issue, allowing the app to proceed further in startup.
+
+The very latest error encountered, after the SQLite bypass, was a , which meant a crucial dependency was missing. The AI engineer added  to  and also added error handling for its import in .
+
+However, the final message indicates a Docker build failure, reporting . This means  is a private package requiring a specific  for , which is not automatically used by Railway's Nixpacks build process.
 </current_work>
 
 <optional_next_step>
-Properly integrate the AI team communication system by ensuring all modules are imported and functioning correctly within .
+Remove  from  and explore how to install it using  in Railway's build command.
 </optional_next_step>

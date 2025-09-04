@@ -12,9 +12,9 @@ echo [INFO] Testing connection patterns for your Emergent setup...
 echo.
 
 REM Test multiple URL patterns for Emergent
-set URL1=https://estate-planner-4.preview.emergentagent.com/api/8001
-set URL2=https://estate-planner-4.preview.emergentagent.com:8001/api  
-set URL3=https://estate-planner-4.preview.emergentagent.com/api
+set URL1=https://deploy-rescue-13.preview.emergentagent.com/api/8001
+set URL2=https://deploy-rescue-13.preview.emergentagent.com:8001/api  
+set URL3=https://deploy-rescue-13.preview.emergentagent.com/api
 set BACKEND_URL=
 
 echo [TEST 1] Trying: %URL1%/health
@@ -49,11 +49,11 @@ echo 1. In Emergent, check if you have multiple preview URLs
 echo 2. Look for a URL ending with port 8001 or containing "8001"
 echo 3. Or try accessing your frontend and check browser console for API calls
 echo.
-echo Your frontend URL: https://estate-planner-4.preview.emergentagent.com/
+echo Your frontend URL: https://deploy-rescue-13.preview.emergentagent.com/
 echo Expected backend URL patterns:
-echo   - https://estate-planner-4.preview.emergentagent.com:8001/api
-echo   - https://estate-planner-4.preview.emergentagent.com/api  
-echo   - https://estate-planner-4.preview.emergentagent.com/api/8001
+echo   - https://deploy-rescue-13.preview.emergentagent.com:8001/api
+echo   - https://deploy-rescue-13.preview.emergentagent.com/api  
+echo   - https://deploy-rescue-13.preview.emergentagent.com/api/8001
 echo.
 pause
 exit /b 1

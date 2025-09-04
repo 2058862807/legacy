@@ -133,7 +133,7 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
       // Try to switch to Polygon Amoy
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: POLYGON_AMOY.chainId }],
+        params: [{ chainId: POLYGON_MAINNET.chainId }],
       })
     } catch (switchError: any) {
       // If network doesn't exist, add it

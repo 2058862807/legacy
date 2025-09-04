@@ -183,7 +183,9 @@ ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://nexteraestate.vercel.app", 
     "https://*.vercel.app",
-    "https://nexteraestate-frontend.vercel.app"
+    "https://nexteraestate-frontend.vercel.app",
+    "https://*.up.railway.app",
+    "https://*.railway.app"
 ]
 
 # Add dynamic origin for production

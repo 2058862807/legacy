@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     question: 'What is blockchain proof?',
-    answer: 'We store a hash of your file on Polygon to prove existence and timestamp. This creates an immutable record of when your document was created.'
+    answer: 'We store a hash of your file on Blockchain to prove existence and timestamp. This creates an immutable record of when your document was created.'
   },
   {
     question: 'Can I export my documents?',

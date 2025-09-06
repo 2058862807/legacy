@@ -10,6 +10,7 @@ import Trust from '../components/Home/Trust'
 import SimplePricingCards from '../components/Pricing/SimplePricingCards'
 import HomeCTA from '../components/Home/HomeCTA'
 import Footer from '../components/Footer'
+import Bot from '../components/Bot'
 
 export default function HomePage() {
   return (

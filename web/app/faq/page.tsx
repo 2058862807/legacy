@@ -3,6 +3,12 @@ import React, { useState } from 'react'
 import Navbar from '../../components/Layout/Navbar'
 import Footer from '../../components/Footer'
 
+interface FAQItem {
+  question: string
+  answer: string
+  id?: string
+}
+
 const faqs = [
   {
     question: 'What is MetaMask?',

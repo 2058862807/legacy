@@ -309,6 +309,14 @@ export default function DebugPage() {
               </pre>
             </div>
           </div>
+          
+          <div className="mt-6">
+            <h3 className="text-lg font-medium text-gray-900 mb-3">List Endpoints Test Results</h3>
+            <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+              {Object.keys(listEndpoints).length > 0 ? JSON.stringify(listEndpoints, null, 2) : 'No data'}
+            </pre>
+          </div>
+          </div>
         </div>
 
         {/* Quick Actions */}

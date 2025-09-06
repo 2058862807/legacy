@@ -864,7 +864,7 @@ async def create_checkout(payment: PaymentRequest):
             raise HTTPException(status_code=400, detail="Invalid plan selected")
         
         # Determine if this is a subscription or one-time payment
-        is_subscription = plan_key not in ['founding']
+        is_subscription = plan_key not in ['founding', 'lifetime']
         
         # Create line item
         line_item = {

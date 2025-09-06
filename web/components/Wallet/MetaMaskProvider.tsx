@@ -141,30 +141,32 @@ export function MetaMaskProvider({ children }: MetaMaskProviderProps) {
     setIsConnected(false)
   }
 
-  // Switch to Polygon Mainnet network
+  // Switch to Polygon network
   const switchToPolygon = async () => {
-    if (!isMetaMaskInstalled()) return
+    if (!isMetaMaskInstalled()) {
+      throw new Error('MetaMask is not installed')
+    }
 
     try {
-      // Try to switch to Polygon Mainnet
-      await window.ethereum.request({
+      // Try to switch to the network
+      await (window.ethereum as any).request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: POLYGON_MAINNET.chainId }],
+        params: [{ chainId: POLYGON_NETWORK.chainId }],
       })
     } catch (switchError: any) {
-      // If network doesn't exist, add it
+      // This error code indicates that the chain has not been added to MetaMask
       if (switchError.code === 4902) {
         try {
-          await window.ethereum.request({
+          await (window.ethereum as any).request({
             method: 'wallet_addEthereumChain',
-            params: [POLYGON_MAINNET],
+            params: [POLYGON_NETWORK],
           })
         } catch (addError) {
           console.error('Error adding Polygon network:', addError)
           throw addError
         }
       } else {
-        console.error('Error switching network:', switchError)
+        console.error('Error switching to Polygon network:', switchError)
         throw switchError
       }
     }

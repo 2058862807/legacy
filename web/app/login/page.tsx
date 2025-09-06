@@ -172,7 +172,7 @@ function LoginContent() {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading || !hasGoogleProvider}
-                className="group relative w-full flex items-center justify-center px-8 py-5 bg-white hover:bg-gray-50 text-gray-800 font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
+                className="group relative w-full flex items-center justify-center px-8 py-5 bg-white hover:bg-gray-50 text-gray-800 font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden mb-4"
               >
                 {/* Button Background Animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -203,6 +203,19 @@ function LoginContent() {
                     <span className="text-lg">Continue with Google</span>
                   </div>
                 )}
+              </button>
+
+              {/* DEMO MODE BUTTON */}
+              <button
+                onClick={() => router.push('/demo/dashboard')}
+                className="group relative w-full flex items-center justify-center px-8 py-5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20 hover:scale-[1.02] overflow-hidden"
+              >
+                <div className="relative flex items-center">
+                  <svg className="w-6 h-6 mr-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-lg">Try Demo (No Login Required)</span>
+                </div>
               </button>
 
               {/* Security Badges */}

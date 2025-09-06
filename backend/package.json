@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "postinstall": "echo ok"
+    "postinstall": "npm run build",
+    "railway:start": "npm run build && npm start"
   },
   "dependencies": {
     "express": "^4.18.0",

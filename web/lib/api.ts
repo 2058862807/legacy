@@ -96,11 +96,11 @@ export type WillProfile = {
 }
 
 export async function getWill() {
-  return request<WillProfile>("/api/will")
+  return request<WillProfile>("/v1/will")
 }
 
 export async function saveWill(input: { answers: Record<string, any> }) {
-  return request<WillProfile>("/api/will", {
+  return request<WillProfile>("/v1/will", {
     method: "POST",
     body: JSON.stringify(input)
   })

@@ -1,48 +1,43 @@
-import { auth } from './auth'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl
-  const session = req.auth
-
-  // List of protected routes that require authentication
-  const protectedRoutes = [
+// Simple auth guard middleware without NextAuth dependency.
+// If you use NextAuth, you can replace this with next-auth/middleware.
+export function middleware(req: NextRequest) {
+  const protectedPaths = [
     '/dashboard',
-    '/will',
-    '/will/personal',
-    '/will/assets', 
-    '/will/beneficiaries',
-    '/will/executors',
-    '/will/witnesses',
-    '/will/pet-trust',
     '/vault',
-    '/vault/upload',
-    '/live-estate',
-    '/live-estate/settings',
-    '/compliance',
-    '/compliance/status',
-    '/notary'
+    '/will',
+    '/notary',
+    '/compliance'
   ]
 
-  // Check if the current path is protected
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname === route || pathname.startsWith(route + '/')
-  )
+  const { pathname } = req.nextUrl
+  const needsAuth = protectedPaths.some(p => pathname === p || pathname.startsWith(`${p}/`))
 
-  // If it's a protected route and user is not authenticated, redirect to login
-  if (isProtectedRoute && !session) {
-    const loginUrl = new URL('/login', req.url)
-    loginUrl.searchParams.set('callbackUrl', pathname)
-    return NextResponse.redirect(loginUrl)
+  if (!needsAuth) return NextResponse.next()
+
+  const hasSession =
+    req.cookies.get('__Secure-next-auth.session-token') ||
+    req.cookies.get('next-auth.session-token') ||
+    req.cookies.get('auth_token')
+
+  if (!hasSession) {
+    const url = req.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('next', pathname)
+    return NextResponse.redirect(url)
   }
 
-  // Allow the request to continue
   return NextResponse.next()
-})
+}
 
 export const config = {
   matcher: [
-    // Match all routes except API routes, static files, and public assets
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|logo.svg|nextera-logo.png).*)' 
-  ],
+    '/dashboard/:path*',
+    '/vault/:path*',
+    '/will/:path*',
+    '/notary/:path*',
+    '/compliance/:path*'
+  ]
 }

@@ -78,11 +78,11 @@ export type DocumentItem = {
 }
 
 export async function listDocuments() {
-  return request<DocumentItem[]>("/api/documents")
+  return request<DocumentItem[]>("/v1/documents")
 }
 
 export async function createDocument(input: { title: string; content: string }) {
-  return request<DocumentItem>("/api/documents", {
+  return request<DocumentItem>("/v1/documents", {
     method: "POST",
     body: JSON.stringify(input)
   })

@@ -1250,6 +1250,27 @@ async def ai_chat_history(thread_id: str = None):
         raise HTTPException(status_code=500, detail=str(e))
 
 # DOCUMENT ENDPOINTS (matching frontend expectations)
+
+# Frontend expects GET /api/documents - add alias for list
+@app.get("/api/documents")
+async def list_documents_alias(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """List user documents (frontend alias)"""
+    return await list_documents(user_email, db)
+
+# Frontend expects POST /api/documents - add alias for upload
+@app.post("/api/documents")
+async def create_document_alias(request: Request, db: Session = Depends(get_db)):
+    """Create document (frontend alias)"""
+    # Extract form data from request
+    form = await request.form()
+    file = form.get("file")
+    user_email = form.get("user_email") or request.query_params.get("user_email")
+    
+    if not file or not user_email:
+        raise HTTPException(status_code=400, detail="File and user_email are required")
+    
+    return await upload_document(file, user_email, db)
+
 @app.get("/api/documents/list")
 async def list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
     """List user documents"""

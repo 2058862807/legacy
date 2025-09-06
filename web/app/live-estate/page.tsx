@@ -153,7 +153,7 @@ export default function LiveEstatePage() {
               <div className="bg-purple-50 rounded-lg p-4">
                 <div className="text-purple-600 text-2xl mb-2">🔗</div>
                 <h3 className="font-semibold text-gray-900">Blockchain Audit</h3>
-                <p className="text-sm text-gray-600">Immutable record on Polygon</p>
+                <p className="text-sm text-gray-600">Immutable record on Blockchain</p>
               </div>
             </div>
             

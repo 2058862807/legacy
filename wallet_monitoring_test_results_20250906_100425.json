@@ -1,0 +1,95 @@
+{
+  "test_summary": {
+    "total_tests": 12,
+    "passed_tests": 1,
+    "failed_tests": 11,
+    "success_rate": 8.333333333333332,
+    "timestamp": "2025-09-06T10:04:25.050892"
+  },
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: OK",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:23.920235"
+    },
+    {
+      "test": "Monitoring Status",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.024152"
+    },
+    {
+      "test": "Wallet Monitoring",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.126217"
+    },
+    {
+      "test": "Price Monitoring",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.228227"
+    },
+    {
+      "test": "Manual Monitoring Check",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.330303"
+    },
+    {
+      "test": "Configuration Update",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.432473"
+    },
+    {
+      "test": "Alert History",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.535001"
+    },
+    {
+      "test": "Environment Variable Loading",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.638795"
+    },
+    {
+      "test": "CoinGecko API Integration",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.741007"
+    },
+    {
+      "test": "Alert Threshold Logic 1",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.843137"
+    },
+    {
+      "test": "Alert Threshold Logic 2",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:24.948478"
+    },
+    {
+      "test": "Monitoring Cycle Execution",
+      "success": false,
+      "details": "HTTP 404",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:04:25.050753"
+    }
+  ]
+}

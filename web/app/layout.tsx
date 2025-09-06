@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'NexteraEstate - Estate Planning Made Simple | AI & Blockchain Powered',
-  description: 'Create your estate plan, notarize on Polygon, meet your state rules. Professional estate planning with 50-state compliance, AI assistance, and blockchain security.',
-  keywords: 'estate planning, will, trust, legal documents, blockchain notarization, AI assistant, compliance, NexteraEstate, Polygon, Stripe payments',
+  description: 'Create your estate plan, notarize on Blockchain, meet your state rules. Professional estate planning with 50-state compliance, AI assistance, and blockchain security.',
+  keywords: 'estate planning, will, trust, legal documents, blockchain notarization, AI assistant, compliance, NexteraEstate, blockchain, Stripe payments',
   authors: [{ name: 'NexteraEstate LLC' }],
   creator: 'NexteraEstate LLC',
   publisher: 'NexteraEstate LLC',

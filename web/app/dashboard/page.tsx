@@ -7,6 +7,7 @@ import ComplianceBadge from '../../components/Compliance/ComplianceBadge'
 import BlockchainStatus from '../../components/Blockchain/BlockchainStatus'
 import DocumentList from '../../components/Documents/DocumentList'
 import LiveEstateBanner from '../../components/LiveEstate/LiveEstateBanner'
+import AIChat from '@/components/AI/AIChat'
 
 interface DashboardStats {
   totalDocuments: number

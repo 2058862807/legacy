@@ -44,3 +44,7 @@ Thumbs.db
 # Build outputs
 build/
 out/
+-e 
+# Environment files
+*.env
+*.env.*

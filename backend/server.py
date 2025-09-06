@@ -462,16 +462,39 @@ async def get_ai_response(message: str, system_prompt: str) -> str:
         logger.error(f"AI response error: {str(e)}")
         return "I apologize, but I'm having trouble processing your request right now. Please try again later or contact our support team for assistance."
 
+# STANDARD ERROR RESPONSE SHAPE
+class ErrorResponse(BaseModel):
+    ok: bool = False
+    code: str
+    message: str
+
+class SuccessResponse(BaseModel):
+    ok: bool = True
+    data: dict = {}
+
 # ROOT HEALTH ENDPOINTS (for smoke tests)
 @app.get("/health")
 async def root_health():
     """Root health endpoint for smoke testing"""
-    return {"status": "ok", "service": "nexteraestate", "version": "1.0"}
+    return {
+        "ok": True,
+        "status": "healthy",
+        "service": "nexteraestate",
+        "version": "1.0",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
 
 @app.get("/v1/health") 
 async def v1_health():
     """V1 health endpoint for smoke testing"""
-    return {"status": "ok", "service": "nexteraestate", "version": "1.0", "api_version": "v1"}
+    return {
+        "ok": True,
+        "status": "healthy", 
+        "service": "nexteraestate",
+        "version": "1.0",
+        "api_version": "v1",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
 
 # Simple test endpoint to verify routing
 @app.get("/api/test")

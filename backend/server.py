@@ -16,6 +16,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 import stripe
 from dotenv import load_dotenv
+from wallet_monitor import WalletPriceMonitor
 
 # Load environment variables
 load_dotenv()

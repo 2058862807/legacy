@@ -37,23 +37,14 @@ if (NODE_ENV === "development") {
   app.use(morgan("combined"));
 }
 
-// Request logging middleware
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    console.log(`${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
-  });
-  next();
-});
-
 // COMPATIBILITY LAYER - Handle /api/* routes by redirecting to /v1/*
+// This must be BEFORE the main route definitions
 app.use("/api", (req, res, next) => {
   console.log(`🔄 API Compatibility: ${req.method} /api${req.url} -> /v1${req.url}`);
   
   // Map /api routes to /v1 routes
   const mappings = {
-    '/documents/list': '/v1/list',
+    '/documents/list': '/v1/documents/list',
     '/documents': '/v1/documents', 
     '/users': '/v1/users',
     '/wills': '/v1/wills',
@@ -63,18 +54,40 @@ app.use("/api", (req, res, next) => {
   };
   
   // Check if we have a direct mapping
-  const mappedPath = mappings[req.url.split('?')[0]];
+  const basePath = req.url.split('?')[0];
+  const mappedPath = mappings[basePath];
+  
   if (mappedPath) {
     const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
-    req.url = mappedPath + queryString;
-    console.log(`✅ Mapped to: ${req.method} ${req.url}`);
-    next();
-    return;
+    const newUrl = mappedPath + queryString;
+    console.log(`✅ Mapped /api${req.url} to ${newUrl}`);
+    
+    // Forward to the actual handler
+    return req.app._router.handle({
+      ...req,
+      url: newUrl,
+      originalUrl: newUrl
+    }, res, next);
   }
   
-  // Default: prepend /v1 to the path
-  req.url = '/v1' + req.url;
-  console.log(`✅ Default mapping to: ${req.method} ${req.url}`);
+  // Default: prepend /v1 to the path  
+  const defaultPath = '/v1' + req.url;
+  console.log(`✅ Default mapping /api${req.url} to ${defaultPath}`);
+  
+  return req.app._router.handle({
+    ...req,
+    url: defaultPath,
+    originalUrl: defaultPath
+  }, res, next);
+});
+
+// Request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.path} - ${res.statusCode} - ${duration}ms`);
+  });
   next();
 });
 

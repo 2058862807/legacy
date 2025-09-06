@@ -14,7 +14,7 @@ export default function Footer() {
               <span className="text-xl font-bold">NexteraEstate™</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
-              Estate planning made simple. Create your plan, notarize on Polygon, meet your state rules.
+              Estate planning made simple. Create your plan, notarize on Blockchain, meet your state rules.
             </p>
             <div className="space-y-2 text-sm text-gray-400">
               <p>NexteraEstate LLC</p>

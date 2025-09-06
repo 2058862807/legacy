@@ -200,5 +200,6 @@ export default function LiveEstateFeature() {
         </div>
       </div>
     </section>
+    </>
   )
 }

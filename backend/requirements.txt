@@ -11,7 +11,6 @@ openai==1.99.9
 google-generativeai==0.8.3
 httpx>=0.23.0,<0.29.0
 eth-account==0.13.4
-
 reportlab==4.4.3
 fpdf2==2.8.4
 aiohttp==3.9.5

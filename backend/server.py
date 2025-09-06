@@ -553,7 +553,35 @@ async def get_user(email: str, db: Session = Depends(get_db)):
         logger.error(f"Error fetching user: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Compliance endpoints
+# COMPLIANCE ENDPOINTS (with frontend aliases)
+
+# Frontend expects GET /api/compliance/status - add alias  
+@app.get("/api/compliance/status")
+async def get_compliance_status_alias(db: Session = Depends(get_db)):
+    """Get compliance status (frontend alias)"""
+    try:
+        result = await get_compliance_summary(db)
+        
+        # Convert to format expected by frontend
+        compliance_items = []
+        if isinstance(result, dict):
+            compliance_data = result.get("compliance", {})
+            for key, value in compliance_data.items():
+                status = "pass" if value.get("compliant", False) else "fail"
+                compliance_items.append({
+                    "key": key,
+                    "label": key.replace("_", " ").title(),
+                    "status": status,
+                    "details": value.get("details", "")
+                })
+        
+        return compliance_items
+        
+    except Exception as e:
+        logger.error(f"Compliance status error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# EXISTING COMPLIANCE ENDPOINTS
 @app.get("/api/compliance/rules")
 async def get_compliance_rules(state: str = Query("CA"), doc_type: str = Query("will"), db: Session = Depends(get_db)):
     """Get compliance rules for a specific state and document type"""

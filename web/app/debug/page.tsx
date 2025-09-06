@@ -330,8 +330,8 @@ export default function DebugPage() {
           </div>
           
           <div className="mt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">List Endpoints Test Results</h3>
-            <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+            <h3 className="text-lg font-medium text-gray-900 mb-3">All Endpoint Test Results</h3>
+            <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto max-h-96">
               {Object.keys(listEndpoints).length > 0 ? JSON.stringify(listEndpoints, null, 2) : 'No data'}
             </pre>
           </div>

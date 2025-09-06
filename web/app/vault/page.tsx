@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getDocuments, uploadDocument, DocumentItem } from '../../lib/api'
+import { listDocuments, createDocument, DocumentItem } from '../../lib/api'
 
 export default function VaultPage() {
   const [documents, setDocuments] = useState<DocumentItem[]>([])

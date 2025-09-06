@@ -248,10 +248,10 @@ app.listen(PORT, "0.0.0.0", () => {
   // Log all registered routes
   const routes = app._router.stack
     .map((r: any) => r.route && `${Object.keys(r.route.methods)[0].toUpperCase()} ${r.route.path}`)
-    .filter(Boolean);
+    .filter((route: any) => route !== null && route !== undefined);
   
   console.log("📋 Registered routes:");
-  routes.forEach(route => console.log(`   ${route}`));
+  routes.forEach((route: string) => console.log(`   ${route}`));
 });
 
 export default app;

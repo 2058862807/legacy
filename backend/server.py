@@ -480,7 +480,8 @@ async def root_list_documents(user_email: str = Query(...), db: Session = Depend
     try:
         user = db.query(User).filter(User.email == user_email).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            # Return empty array instead of 404 for better UX
+            return {"documents": []}
         
         documents = db.query(Document).filter(Document.user_id == user.id).all()
         
@@ -508,7 +509,8 @@ async def v1_list_documents(user_email: str = Query(...), db: Session = Depends(
     try:
         user = db.query(User).filter(User.email == user_email).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            # Return empty array instead of 404 for better UX
+            return {"documents": []}
         
         documents = db.query(Document).filter(Document.user_id == user.id).all()
         

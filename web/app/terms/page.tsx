@@ -100,7 +100,7 @@ export default function Terms() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Blockchain Services</h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Our blockchain notarization services store document hashes on the Polygon network. This provides timestamped proof of document existence but does not constitute legal notarization in all jurisdictions. Check your state's requirements for valid notarization.
+              Our blockchain notarization services store document hashes on the Blockchain network. This provides timestamped proof of document existence but does not constitute legal notarization in all jurisdictions. Check your state's requirements for valid notarization.
             </p>
           </section>
 

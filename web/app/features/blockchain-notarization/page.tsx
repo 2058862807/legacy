@@ -14,9 +14,22 @@ export default function BlockchainNotarizationPage() {
         <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
           Blockchain Notarization
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
           Secure document timestamps on Blockchain for immutable proof of authenticity and legal validity
         </p>
+        
+        {/* No Wallet Required Banner */}
+        <div className="bg-green-50 border border-green-200 rounded-xl p-6 max-w-2xl mx-auto mb-16">
+          <div className="flex items-center justify-center space-x-3">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-green-800 mb-1">No Crypto Wallet Required</h3>
+              <p className="text-green-700 text-sm">All blockchain fees included in your plan • Zero additional costs • Completely hassle-free</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Key Features */}

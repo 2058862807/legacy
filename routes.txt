@@ -1,0 +1,67 @@
+# NexteraEstate API Routes Documentation
+# Generated: 2025-09-06
+# All available API endpoints with methods
+
+# Health & Diagnostics
+GET /health
+GET /v1/health
+GET /v1/diagnostics
+
+# Critical List Endpoints (502 Fix)
+GET /list
+GET /v1/list
+GET /api/list
+GET /api/v1/list
+
+# Document Management
+GET /api/documents
+POST /api/documents
+GET /api/documents/list
+POST /api/documents/upload
+
+# User Management
+GET /api/users
+POST /api/users
+
+# Will Management
+GET /api/wills
+POST /api/wills
+GET /api/will
+POST /api/will
+
+# AI Chat & Support
+POST /api/ai-chat
+GET /api/ai/history
+POST /api/ai/chat
+POST /api/bot
+
+# Compliance & Legal
+GET /api/compliance
+GET /api/compliance/rules
+GET /api/compliance/summary
+POST /api/compliance/refresh
+
+# Notary & Blockchain
+POST /api/notary
+GET /api/notary/status
+
+# Payment & Billing
+POST /api/create-checkout-session
+POST /api/webhook
+
+# Monitoring & Wallet
+GET /api/wallet/balance
+GET /api/wallet/price
+
+# Debug & Testing
+GET /api/debug/cors
+GET /api/test
+GET /api/health
+
+# Live Estate & Updates
+GET /api/live-estate/events
+POST /api/live-estate/update
+GET /api/live-estate/status
+
+# Admin Monitoring
+GET /api/admin/monitoring

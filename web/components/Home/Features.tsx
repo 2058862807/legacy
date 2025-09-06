@@ -25,7 +25,7 @@ const features = [
   {
     icon: '🔗',
     title: 'Blockchain proof',
-    description: 'Your documents are timestamped on Blockchain for permanent verification.'
+    description: 'Your documents are timestamped on Blockchain for permanent verification. No crypto wallet required - all fees included.'
   },
   {
     icon: '⚖️',

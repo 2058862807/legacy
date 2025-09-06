@@ -473,6 +473,63 @@ async def v1_health():
     """V1 health endpoint for smoke testing"""
     return {"status": "ok", "service": "nexteraestate", "version": "1.0", "api_version": "v1"}
 
+# CRITICAL MISSING ENDPOINTS (Production API compatibility)
+@app.get("/list")
+async def root_list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Root list endpoint (production compatibility)"""
+    try:
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            return {"error": "User not found", "documents": []}, 404
+        
+        documents = db.query(Document).filter(Document.user_id == user.id).all()
+        
+        return {
+            "documents": [
+                {
+                    "id": doc.id,
+                    "filename": doc.filename,
+                    "file_type": doc.file_type,
+                    "file_size": doc.file_size,
+                    "upload_date": doc.upload_date.isoformat(),
+                    "blockchain_hash": doc.blockchain_hash,
+                    "notarized": bool(doc.blockchain_hash)
+                }
+                for doc in documents
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Root list documents error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.get("/v1/list")
+async def v1_list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """V1 list endpoint (production compatibility)"""
+    try:
+        user = db.query(User).filter(User.email == user_email).first()
+        if not user:
+            return {"error": "User not found", "documents": []}, 404
+        
+        documents = db.query(Document).filter(Document.user_id == user.id).all()
+        
+        return {
+            "documents": [
+                {
+                    "id": doc.id,
+                    "filename": doc.filename,
+                    "file_type": doc.file_type,
+                    "file_size": doc.file_size,
+                    "upload_date": doc.upload_date.isoformat(),
+                    "blockchain_hash": doc.blockchain_hash,
+                    "notarized": bool(doc.blockchain_hash)
+                }
+                for doc in documents
+            ]
+        }
+    except Exception as e:
+        logger.error(f"V1 list documents error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 # CORE API ENDPOINTS
 
 # Health check endpoint

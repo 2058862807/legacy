@@ -226,7 +226,7 @@ export default function SimplePricingCards() {
         </div>
 
         {/* Trust and Compliance Block */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-8">
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h4 className="font-bold text-gray-900 mb-4">Security</h4>
@@ -245,6 +245,19 @@ export default function SimplePricingCards() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* See All Plans CTA */}
+        <div className="text-center">
+          <a
+            href="/pricing"
+            className="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+          >
+            See All Plans & Features
+            <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>

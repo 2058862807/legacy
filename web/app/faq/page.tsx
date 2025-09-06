@@ -21,6 +21,10 @@ const faqs = [
     answer: 'We use Stripe for secure payments. You see the exact price and terms before you pay. No hidden fees or surprises.'
   },
   {
+    question: 'Do I need a crypto wallet for blockchain features?',
+    answer: 'No! You don\'t need any cryptocurrency wallet or technical knowledge. We handle all blockchain operations behind the scenes, and all fees are included in your plan. It\'s completely automatic and hassle-free.'
+  },
+  {
     question: 'What is blockchain proof?',
     answer: 'We store a hash of your file on Blockchain to prove existence and timestamp. This creates an immutable record of when your document was created. No crypto wallet required - all blockchain fees are included in your plan.'
   },

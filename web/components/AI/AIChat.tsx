@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { postChat, getChatHistory, ChatMessage, ChatMeta } from '@/lib/api'
+import { postChat, getChatHistory, ChatMessage, ChatMeta } from '../../lib/api'
 
 type Props = {
   userId?: string

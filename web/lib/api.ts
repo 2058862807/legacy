@@ -133,5 +133,5 @@ export type ComplianceItem = {
 }
 
 export async function getComplianceStatus() {
-  return request<ComplianceItem[]>("/api/compliance/status")
+  return request<ComplianceItem[]>("/v1/compliance/status")
 }

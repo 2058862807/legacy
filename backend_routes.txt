@@ -1,0 +1,112 @@
+NexteraEstate Backend Route Inventory
+=====================================
+
+Current Backend Routes (FastAPI):
+All routes use /api/ prefix
+
+HEALTH & DEBUG:
+GET  /api/debug/cors
+GET  /api/health
+GET  /api/ready
+
+USERS:
+POST /api/users
+GET  /api/users
+
+COMPLIANCE:
+GET  /api/compliance/rules
+GET  /api/compliance/summary
+POST /api/compliance/refresh
+
+WILLS:
+POST /api/wills
+GET  /api/wills
+GET  /api/wills/{will_id}
+GET  /api/wills/{will_id}/pdf
+
+PET TRUST:
+POST /api/pet-trust/pdf
+
+PAYMENTS:
+POST /api/payments/create-checkout
+GET  /api/payments/status
+POST /api/payments/webhook
+
+BOTS:
+POST /api/bot/help
+POST /api/bot/grief
+
+DOCUMENTS:
+GET  /api/documents/list
+POST /api/documents/upload
+
+NOTARY:
+POST /api/notary/hash
+POST /api/notary/create
+GET  /api/notary/status
+GET  /api/notary/pricing
+GET  /api/gasless-notary/wallet-status
+POST /api/notary/gasless-create
+GET  /api/notary/gasless-status
+
+AI TEAM:
+POST /api/ai-team/test
+GET  /api/ai-team/status
+
+RAG:
+POST /api/rag/legal-analysis
+GET  /api/rag/status
+
+AUTOLEX:
+GET  /api/autolex/status
+
+AUTH:
+GET  /api/auth/session
+GET  /api/auth/providers
+
+USER:
+GET  /api/user/dashboard-stats
+
+LIVE ESTATE:
+GET  /api/live/status
+POST /api/live/event
+POST /api/live/propose
+POST /api/live/accept
+
+MONITORING:
+GET  /api/monitoring/status
+GET  /api/monitoring/wallet
+GET  /api/monitoring/price
+POST /api/monitoring/run-check
+POST /api/monitoring/config
+GET  /api/monitoring/alerts/history
+
+SPECIAL:
+GET  /ai-chat (redirects to AI chat page)
+
+Frontend API Calls (from lib/api.ts):
+====================================
+POST /api/ai/chat          -> MISSING (404)
+GET  /api/ai/history        -> MISSING (404)
+GET  /api/documents         -> MISSING (404) - should be /api/documents/list
+POST /api/documents         -> MISSING (404) - should be /api/documents/upload
+GET  /api/will              -> MISSING (404) - should be /api/wills
+POST /api/will              -> MISSING (404) - should be /api/wills
+GET  /api/notary/status     -> EXISTS ✓
+POST /api/notary/request    -> MISSING (404) - should be /api/notary/create
+GET  /api/compliance/status -> MISSING (404) - should be /api/compliance/summary
+
+MISMATCHES:
+==========
+1. Frontend expects /api/ai/* but backend has no AI chat routes
+2. Frontend expects /api/documents but backend has /api/documents/list and /api/documents/upload
+3. Frontend expects /api/will but backend has /api/wills (plural)
+4. Frontend expects /api/notary/request but backend has /api/notary/create
+5. Frontend expects /api/compliance/status but backend has /api/compliance/summary
+
+URL Configuration Issues:
+========================
+1. Frontend uses NEXT_PUBLIC_API_BASE but api.ts calls getBase()
+2. No /v1/ prefix anywhere - all routes are direct /api/
+3. Need health endpoints at root level and /v1/ level
+4. Need to add missing routes or fix frontend calls

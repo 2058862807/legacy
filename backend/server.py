@@ -840,7 +840,8 @@ async def create_checkout(payment: PaymentRequest):
             # Core plans
             "free": 0,                     # Free plan
             "essential": 16900,            # $169.00 yearly
-            "lifetime": 12900,             # $129.00 one-time
+            "lifetime": 12900,             # $129.00 one-time (Early Bird - first 200 users)
+            "lifetime_regular": 49900,     # $499.00 one-time (Regular price after 200 users)
             
             # Legacy plans for compatibility
             "basic": 2999,                 # $29.99

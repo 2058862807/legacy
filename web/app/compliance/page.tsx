@@ -43,9 +43,10 @@ export default function CompliancePage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">{item.label || `Compliance Item ${idx + 1}`}</h2>
               <span className={`px-3 py-1 rounded-full text-sm ${
-                item.status === 'compliant' ? 'bg-green-100 text-green-800' :
-                item.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
+                item.status === 'pass' ? 'bg-green-100 text-green-800' :
+                item.status === 'warn' ? 'bg-yellow-100 text-yellow-800' :
+                item.status === 'fail' ? 'bg-red-100 text-red-800' :
+                'bg-gray-100 text-gray-800'
               }`}>
                 {item.status}
               </span>

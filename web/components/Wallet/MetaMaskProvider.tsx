@@ -18,7 +18,7 @@ interface WalletContextType {
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined)
 
-// Polygon Mainnet configuration
+// Polygon Network configurations
 const POLYGON_MAINNET = {
   chainId: '0x89', // 137 in hex (Polygon Mainnet)
   chainName: 'Polygon Mainnet',
@@ -30,6 +30,22 @@ const POLYGON_MAINNET = {
   rpcUrls: ['https://polygon-rpc.com/'],
   blockExplorerUrls: ['https://polygonscan.com/']
 }
+
+// Polygon Amoy Testnet configuration
+const POLYGON_AMOY = {
+  chainId: '0x13882', // 80002 in hex (Polygon Amoy Testnet)
+  chainName: 'Polygon Amoy Testnet',
+  nativeCurrency: {
+    name: 'MATIC',
+    symbol: 'MATIC',
+    decimals: 18
+  },
+  rpcUrls: ['https://rpc-amoy.polygon.technology/'],
+  blockExplorerUrls: ['https://amoy.polygonscan.com/']
+}
+
+// Use testnet for development, mainnet for production
+const POLYGON_NETWORK = process.env.NODE_ENV === 'production' ? POLYGON_MAINNET : POLYGON_AMOY
 
 interface MetaMaskProviderProps {
   children: ReactNode

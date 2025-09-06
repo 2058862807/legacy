@@ -255,4 +255,4 @@ app.listen(PORT, "0.0.0.0", () => {
   routes.forEach((route: string) => console.log(`   ${route}`));
 });
 
-export default app;
+module.exports = app;

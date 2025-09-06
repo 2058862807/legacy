@@ -186,10 +186,10 @@ export default function DebugPage() {
           </div>
         </div>
 
-        {/* API Endpoint Tests */}
+        {/* TypeScript Backend API Tests */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">API Endpoint Tests</h2>
-          <p className="text-gray-600 mb-6">Testing all critical endpoints for 502 error fixes and Railway deployment status.</p>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">TypeScript Backend API Tests</h2>
+          <p className="text-gray-600 mb-6">Testing the new TypeScript/Express backend with all routes under /v1.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(listEndpoints).map(([name, result]) => (

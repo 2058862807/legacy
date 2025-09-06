@@ -114,11 +114,11 @@ export type NotaryStatus = {
 }
 
 export async function getNotaryStatus() {
-  return request<NotaryStatus>("/api/notary/status")
+  return request<NotaryStatus>("/v1/notary/status")
 }
 
 export async function requestNotary(input: { docId: string }) {
-  return request<{ requestId: string }>("/api/notary/request", {
+  return request<{ requestId: string }>("/v1/notary/request", {
     method: "POST",
     body: JSON.stringify(input)
   })

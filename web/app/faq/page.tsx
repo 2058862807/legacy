@@ -74,7 +74,7 @@ export default function FAQ() {
         
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg">
+            <div key={index} id={faq.id || `faq-${index}`} className="border border-gray-200 rounded-lg">
               <button
                 onClick={() => toggleFAQ(index)}
                 className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"

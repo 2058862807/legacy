@@ -37,7 +37,10 @@ export default function VaultPage() {
 
     setUploading(true)
     try {
-      const result = await uploadDocument(file)
+      const result = await createDocument({
+        title: file.name,
+        content: 'File uploaded: ' + file.name
+      })
       setDocuments(prev => [...prev, result])
     } catch (e: any) {
       alert('Upload failed: ' + (e.message || 'Unknown error'))

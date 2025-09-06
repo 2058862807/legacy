@@ -50,7 +50,8 @@ const PRICING_PLANS: PricingPlan[] = [
       'Lifetime access',
       'All updates included',
       'Priority support',
-      'All future features'
+      'All future features',
+      'Limited: First 200 users only'
     ]
   }
 ]

@@ -1,0 +1,7 @@
+nixpacks.toml.backup
+package.json.backup
+package-lock.json.backup
+tsconfig.json.backup
+node_modules.backup/
+src.backup/
+dist.backup/

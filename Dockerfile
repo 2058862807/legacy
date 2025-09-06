@@ -1,35 +1,33 @@
-# Simple backend-only Dockerfile for Railway deployment
-FROM python:3.11-slim
+# Use official Node.js runtime as base image
+FROM node:18-alpine
 
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package files
+COPY package*.json ./
+COPY yarn.lock* ./
 
-# Copy backend requirements and install Python dependencies
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN npm ci --only=production
 
-# Copy backend code
-COPY backend/ ./backend/
+# Copy TypeScript config and source code
+COPY tsconfig.json ./
+COPY src/ ./src/
 
-# Create uploads directory
-RUN mkdir -p /app/uploads
+# Install dev dependencies and build
+RUN npm install typescript tsx @types/node @types/express @types/cors @types/compression @types/morgan
+RUN npm run build
 
-# Set environment variables
-ENV PYTHONPATH=/app/backend
-ENV PORT=8000
+# Remove dev dependencies
+RUN npm prune --production
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8001/health || exit 1
 
-# Start command - Railway will override with railway.toml
-CMD cd backend && python -m uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}
+# Start the application
+CMD ["npm", "start"]

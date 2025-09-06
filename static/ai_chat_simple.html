@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexteraEstate AI Team - Simple Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-2xl mx-auto py-8 px-4">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">🤖 NexteraEstate AI Team</h1>
+            <p class="text-gray-600">Talk directly to your AI agents</p>
+            <div id="connectionStatus" class="mt-4 p-3 bg-blue-50 rounded-lg">
+                <p class="text-blue-700">🔧 Connecting to backend...</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">AI Agent:</label>
+                    <select id="recipient" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="autolex">🧠 AutoLex Core</option>
+                        <option value="senior_manager">👔 Senior AI Manager</option>
+                        <option value="team">👥 Full AI Team</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority:</label>
+                    <select id="priority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Your Message:</label>
+                <textarea id="message" rows="4" 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Ask about estate planning, system status, development help, or anything else..."></textarea>
+            </div>
+
+            <button onclick="sendMessage()" id="sendBtn"
+                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 font-semibold transition-colors">
+                💬 Talk to AI Team
+            </button>
+        </div>
+
+        <!-- Quick Questions -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h3 class="text-lg font-semibold mb-4">💡 Quick Questions:</h3>
+            <div class="grid gap-2">
+                <button onclick="quickQuestion('What is the current system status?')" 
+                        class="text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg text-sm">
+                    📊 What is the current system status?
+                </button>
+                <button onclick="quickQuestion('What are the requirements for a valid will in California?')" 
+                        class="text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg text-sm">
+                    ⚖️ What are the requirements for a valid will in California?
+                </button>
+                <button onclick="quickQuestion('Help me optimize my platform for production launch')" 
+                        class="text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg text-sm">
+                    🚀 Help me optimize my platform for production launch
+                </button>
+                <button onclick="quickQuestion('How can I improve my estate planning platform?')" 
+                        class="text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg text-sm">
+                    💼 How can I improve my estate planning platform?
+                </button>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"></div>
+            <p class="mt-4 text-gray-600 font-medium">🤖 AI is thinking...</p>
+        </div>
+
+        <div id="response" class="hidden bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-900">🤖 AI Team Response</h3>
+            <div id="responseContent" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        // Backend URL detection
+        function getBackendURL() {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            
+            console.log('🔧 Detecting backend URL...');
+            console.log('Current hostname:', hostname);
+            console.log('Current protocol:', protocol);
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:8001/api';
+            }
+            
+            // For Emergent platform - try multiple patterns
+            let backendURL;
+            
+            if (hostname.includes('3001-')) {
+                backendURL = `${protocol}//${hostname.replace('3001-', '8001-')}/api`;
+            } else if (hostname.includes('.emergent')) {
+                backendURL = `${protocol}//${hostname.replace('3001', '8001')}/api`;
+            } else {
+                backendURL = `${protocol}//${hostname}:8001/api`;
+            }
+            
+            console.log('🎯 Backend URL:', backendURL);
+            return backendURL;
+        }
+
+        const API_BASE = getBackendURL();
+        
+        // Test connection on page load
+        async function testConnection() {
+            const statusEl = document.getElementById('connectionStatus');
+            try {
+                const response = await fetch(`${API_BASE.replace('/api', '')}/api/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    statusEl.innerHTML = '<p class="text-green-700">✅ Connected to AI team successfully!</p>';
+                    statusEl.className = 'mt-4 p-3 bg-green-50 rounded-lg';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Connection test failed:', error);
+                statusEl.innerHTML = `
+                    <p class="text-red-700">❌ Cannot connect to AI team</p>
+                    <p class="text-red-600 text-sm mt-1">Trying: ${API_BASE}</p>
+                    <p class="text-red-600 text-sm">Error: ${error.message}</p>
+                `;
+                statusEl.className = 'mt-4 p-3 bg-red-50 rounded-lg';
+            }
+        }
+
+        async function sendMessage() {
+            const message = document.getElementById('message').value.trim();
+            const recipient = document.getElementById('recipient').value;
+            const priority = document.getElementById('priority').value;
+            
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('response').classList.add('hidden');
+            document.getElementById('sendBtn').disabled = true;
+
+            try {
+                console.log('🚀 Sending message to:', `${API_BASE}/ai-team/communicate`);
+                
+                const response = await fetch(`${API_BASE}/ai-team/communicate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify({
+                        message: message,
+                        recipient: recipient,
+                        priority: priority
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ AI response:', data);
+                displayResponse(data);
+
+            } catch (error) {
+                console.error('❌ Communication error:', error);
+                displayError(error);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        function quickQuestion(question) {
+            document.getElementById('message').value = question;
+            sendMessage();
+        }
+
+        function displayResponse(data) {
+            const responseContent = document.getElementById('responseContent');
+            let html = '';
+
+            // Communication info
+            html += `
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                    <div class="text-sm text-blue-700">
+                        <strong>Communication ID:</strong> ${data.communication_id}<br>
+                        <strong>Time:</strong> ${new Date(data.timestamp).toLocaleString()}
+                    </div>
+                </div>
+            `;
+
+            // Agent responses
+            if (data.responses) {
+                Object.entries(data.responses).forEach(([agentName, response]) => {
+                    if (response.response && response.response.trim() !== 'No response') {
+                        const confidence = Math.round((response.confidence || 0) * 100);
+                        const agentIcon = agentName.includes('autolex') ? '🧠' : 
+                                        agentName.includes('senior') ? '👔' : '🤖';
+                        
+                        html += `
+                            <div class="border border-gray-200 rounded-lg p-6 mb-4 bg-gray-50">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-gray-900">
+                                        ${agentIcon} ${response.agent || agentName}
+                                    </h4>
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        ${confidence}% confidence
+                                    </span>
+                                </div>
+                                <div class="prose prose-gray max-w-none">
+                                    <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">${response.response}</p>
+                                </div>
+                                ${response.recommendations && response.recommendations.length > 0 ? `
+                                    <div class="mt-4 pt-4 border-t border-gray-300">
+                                        <h5 class="font-medium text-gray-900 mb-2">💡 Recommendations:</h5>
+                                        <ul class="text-gray-700 space-y-1">
+                                            ${response.recommendations.map(rec => `<li class="flex items-start"><span class="mr-2">•</span><span>${rec}</span></li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            responseContent.innerHTML = html;
+            document.getElementById('response').classList.remove('hidden');
+            
+            // Scroll to response
+            document.getElementById('response').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayError(error) {
+            const responseContent = document.getElementById('responseContent');
+            responseContent.innerHTML = `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                    <h4 class="font-semibold text-red-800 mb-2">❌ Connection Error</h4>
+                    <p class="text-red-700 mb-3">Could not connect to your AI team.</p>
+                    <div class="text-sm text-red-600 space-y-1">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Backend URL:</strong> ${API_BASE}</p>
+                        <p><strong>Suggestion:</strong> Make sure both frontend and backend are running in Emergent</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('response').classList.remove('hidden');
+        }
+
+        // Enter key support
+        document.getElementById('message').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                sendMessage();
+            }
+        });
+
+        // Test connection when page loads
+        testConnection();
+    </script>
+</body>
+</html>

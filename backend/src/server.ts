@@ -18,12 +18,13 @@ app.use(helmet());
 app.use(compression());
 
 // CORS configuration
-app.use(cors({ 
-  origin: ORIGIN, 
+const corsOptions = {
+  origin: ORIGIN,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Authorization", "Content-Type"]
-}));
+};
+app.use(cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json({ limit: "2mb" }));

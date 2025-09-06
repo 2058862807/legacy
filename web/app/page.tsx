@@ -25,6 +25,9 @@ export default function HomePage() {
       <SimplePricingCards />
       <HomeCTA />
       <Footer />
+      
+      {/* Esquire AI Chat Bot */}
+      <Bot type="help" />
     </div>
   )
 }

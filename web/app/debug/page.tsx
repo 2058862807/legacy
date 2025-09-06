@@ -316,7 +316,6 @@ export default function DebugPage() {
               {Object.keys(listEndpoints).length > 0 ? JSON.stringify(listEndpoints, null, 2) : 'No data'}
             </pre>
           </div>
-          </div>
         </div>
 
         {/* Quick Actions */}

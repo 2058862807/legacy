@@ -58,6 +58,7 @@ const PRICING_PLANS: PricingPlan[] = [
 
 export default function SimplePricingCards() {
   const [countdown, setCountdown] = useState({ days: 5, hours: 12, minutes: 34, seconds: 56 })
+  const [spotsLeft, setSpotsLeft] = useState(147) // Track remaining spots out of 200
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,7 +85,18 @@ export default function SimplePricingCards() {
       })
     }, 1000)
 
-    return () => clearInterval(timer)
+    // Simulate spots being taken (optional - for demo purposes)
+    const spotsTimer = setInterval(() => {
+      setSpotsLeft(prev => {
+        const newSpots = Math.max(1, prev - Math.floor(Math.random() * 2)) // Decrease by 0-1 randomly
+        return newSpots
+      })
+    }, 180000) // Update every 3 minutes
+
+    return () => {
+      clearInterval(timer)
+      clearInterval(spotsTimer)
+    }
   }, [])
 
   const handleUpgrade = async (planId: string) => {

@@ -206,10 +206,18 @@ export default function PricingCards() {
                   <p className="text-gray-600 text-sm mb-4">{plan.description}</p>
                   
                   <div className="mb-4">
-                    <span className="text-3xl font-bold text-gray-900">
-                      {getDisplayPrice(plan)}
-                    </span>
-                    {savings && billingPeriod === 'yearly' && (
+                    {plan.founding ? (
+                      <div className="text-center">
+                        <div className="text-lg text-gray-500 line-through mb-1">$499 once</div>
+                        <span className="text-3xl font-bold text-gray-900">$129 once</span>
+                        <div className="text-sm text-green-600 font-medium mt-1">Save $370 (74% off)</div>
+                      </div>
+                    ) : (
+                      <span className="text-3xl font-bold text-gray-900">
+                        {getDisplayPrice(plan)}
+                      </span>
+                    )}
+                    {savings && billingPeriod === 'yearly' && !plan.founding && (
                       <div className="text-sm text-green-600 font-medium">
                         Save ${savings.amount} ({savings.percentage}%)
                       </div>

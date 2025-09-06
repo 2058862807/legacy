@@ -16,6 +16,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <Hero />
+      <HowItWorks />
       <LiveEstateFeature />
       <Features />
       <StateBadge />

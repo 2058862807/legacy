@@ -1,0 +1,119 @@
+NexteraEstate Backend API Route Map
+===================================
+
+HEALTH ENDPOINTS:
+GET  /health                    - Root health check (smoke test)
+GET  /v1/health                 - V1 health check (smoke test) 
+GET  /api/health                - API health check
+GET  /api/ready                 - Readiness probe
+
+CORS & DEBUG:
+GET  /api/debug/cors            - CORS debug information
+
+AI CHAT (NEW - Frontend Aliases):
+POST /api/ai/chat               - AI chat endpoint for frontend
+GET  /api/ai/history            - AI chat history retrieval
+
+USERS:
+POST /api/users                 - Create user
+GET  /api/users                 - List users
+
+DOCUMENTS (with Frontend Aliases):
+GET  /api/documents             - List documents (alias for list)
+POST /api/documents             - Upload document (alias for upload)
+GET  /api/documents/list        - List user documents (original)
+POST /api/documents/upload      - Upload document (original)
+
+WILLS (with Frontend Aliases):
+GET  /api/will                  - Get user will (alias - singular)
+POST /api/will                  - Save user will (alias - singular)
+POST /api/wills                 - Create will (original - plural)
+GET  /api/wills                 - List wills (original - plural)
+GET  /api/wills/{will_id}       - Get specific will
+GET  /api/wills/{will_id}/pdf   - Generate will PDF
+
+PET TRUST:
+POST /api/pet-trust/pdf         - Generate pet trust PDF
+
+COMPLIANCE (with Frontend Aliases):
+GET  /api/compliance/status     - Compliance status (alias)
+GET  /api/compliance/rules      - Compliance rules (original)
+GET  /api/compliance/summary    - Compliance summary (original)
+POST /api/compliance/refresh    - Refresh compliance data
+
+NOTARY (with Frontend Aliases):
+POST /api/notary/request        - Request notary (alias)
+POST /api/notary/hash           - Generate hash (original)
+POST /api/notary/create         - Create notary (original)
+GET  /api/notary/status         - Get notary status
+GET  /api/notary/pricing        - Get notary pricing
+
+GASLESS NOTARY:
+GET  /api/gasless-notary/wallet-status  - Wallet status
+POST /api/notary/gasless-create          - Create gasless notary
+GET  /api/notary/gasless-status          - Get gasless status
+
+PAYMENTS:
+POST /api/payments/create-checkout  - Create checkout session
+GET  /api/payments/status          - Payment status
+POST /api/payments/webhook         - Stripe webhook
+
+BOTS:
+POST /api/bot/help                 - Esquire AI help bot
+POST /api/bot/grief                - Grief support bot
+
+AI TEAM:
+POST /api/ai-team/test             - Test AI team communication
+GET  /api/ai-team/status           - AI team status
+
+RAG ENGINE:
+POST /api/rag/legal-analysis       - Legal analysis
+GET  /api/rag/status               - RAG status
+
+AUTOLEX:
+GET  /api/autolex/status           - AutoLex status
+
+AUTH:
+GET  /api/auth/session             - Get session
+GET  /api/auth/providers           - Get auth providers
+
+USER DASHBOARD:
+GET  /api/user/dashboard-stats     - Dashboard statistics
+
+LIVE ESTATE:
+GET  /api/live/status              - Live estate status
+POST /api/live/event               - Live estate event
+POST /api/live/propose             - Propose changes
+POST /api/live/accept              - Accept changes
+
+MONITORING:
+GET  /api/monitoring/status        - Monitoring status
+GET  /api/monitoring/wallet        - Wallet status
+GET  /api/monitoring/price         - MATIC price
+POST /api/monitoring/run-check     - Run monitoring check
+POST /api/monitoring/config        - Update config
+GET  /api/monitoring/alerts/history - Alert history
+
+SPECIAL ROUTES:
+GET  /ai-chat                      - Redirect to AI chat page
+
+ROUTE PATTERNS:
+===============
+All API routes use /api/ prefix
+Health routes available at root (/, /v1/) and API (/api/) levels
+Frontend aliases added for common mismatches:
+- /api/documents vs /api/documents/list
+- /api/will vs /api/wills (singular vs plural)
+- /api/notary/request vs /api/notary/create
+- /api/compliance/status vs /api/compliance/summary
+
+CORS CONFIGURATION:
+==================
+Allowed Origins:
+- https://www.nexteraestate.com
+- https://nexteraestate.vercel.app
+- http://localhost:3000 (development)
+- http://127.0.0.1:3000 (development)
+
+Allowed Methods: GET, POST, PUT, DELETE, OPTIONS
+Allowed Headers: Authorization, Content-Type, Accept, Origin, X-Requested-With

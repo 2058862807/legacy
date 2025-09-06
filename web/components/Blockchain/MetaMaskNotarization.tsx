@@ -146,7 +146,7 @@ export default function MetaMaskNotarization() {
             <div className="text-green-500 text-2xl">✅</div>
             <div>
               <h4 className="font-semibold text-green-800">Document Successfully Notarized!</h4>
-              <p className="text-green-700 text-sm">Your document has been timestamped on the Polygon blockchain.</p>
+              <p className="text-green-700 text-sm">Your document has been timestamped on the Blockchain.</p>
             </div>
           </div>
 

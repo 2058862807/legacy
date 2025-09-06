@@ -302,6 +302,8 @@ else:
         "http://localhost:3000",
         "http://localhost:8001",
         "https://nexteraestate.vercel.app", 
+        "https://www.nexteraestate.com",  # Production domain
+        "https://nexteraestate.com",      # Production domain without www
         "https://*.vercel.app",
         "https://nexteraestate-frontend.vercel.app",
         "https://*.up.railway.app",
@@ -317,7 +319,7 @@ app.add_middleware(
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"],  # Specific headers as requested
 )
 
 # Pydantic models

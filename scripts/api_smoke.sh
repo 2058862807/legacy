@@ -44,12 +44,21 @@ check "health" "/health"
 check "health_v1" "/v1/health"
 check "diagnostics" "/v1/diagnostics"
 
-# Business endpoints
-check "list" "/v1/list?user_email=test%40example.com"
-check "users" "/v1/users?email=test%40example.com"  
-check "wills" "/v1/wills?user_email=test%40example.com"
-check "compliance" "/v1/compliance"
-check "test" "/v1/test"
+# V1 Business endpoints
+check "v1_list" "/v1/list?user_email=test%40example.com"
+check "v1_users" "/v1/users?email=test%40example.com"  
+check "v1_wills" "/v1/wills?user_email=test%40example.com"
+check "v1_compliance" "/v1/compliance"
+check "v1_test" "/v1/test"
+
+# Compatibility layer (/api -> /v1 mapping)
+check "api_documents_list" "/api/documents/list?user_email=test%40example.com"
+check "api_documents" "/api/documents?user_email=test%40example.com"
+check "api_users" "/api/users?email=test%40example.com"
+check "api_wills" "/api/wills?user_email=test%40example.com"
+check "api_compliance" "/api/compliance"
+check "api_test" "/api/test"
+check "api_debug_cors" "/api/debug/cors"
 
 echo "=================================="
 echo "📊 SMOKE TEST SUMMARY"

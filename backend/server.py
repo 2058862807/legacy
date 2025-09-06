@@ -837,21 +837,20 @@ async def create_checkout(payment: PaymentRequest):
         
         # Enhanced plan pricing with annual options
         plan_prices = {
-            # Monthly prices
-            "core": 2900,      # $29.00
-            "plus": 4900,      # $49.00
-            "pro": 9900,       # $99.00
-            "enterprise": 29900, # $299.00
+            # Core plans
+            "free": 0,                     # Free plan
+            "essential": 16900,            # $169.00 yearly
+            "lifetime": 12900,             # $129.00 one-time
             
-            # Annual prices (30-33% discount)
-            "core_yearly": 19900,     # $199.00 (30% off)
-            "plus_yearly": 34900,     # $349.00 (30% off)
-            "pro_yearly": 79900,      # $799.00 (33% off)
-            "enterprise_yearly": 239900, # $2399.00 (33% off)
-            
-            # Special offers
-            "founding": 12900,         # $129.00 one-time
-            "core_first_month": 900,   # $9.00 promotional first month
+            # Legacy plans for compatibility
+            "basic": 2999,                 # $29.99
+            "premium": 4999,               # $49.99
+            "full": 9999,                  # $99.99
+            "core": 2999,                  # $29.99
+            "plus": 4999,                  # $49.99
+            "pro": 9999,                   # $99.99
+            "family": 19900,               # $199.00 yearly (legacy)
+            "founding": 12900,             # $129.00 one-time (legacy)
         }
         
         plan_key = payment.plan.lower()

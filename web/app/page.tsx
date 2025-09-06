@@ -19,6 +19,7 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <HowItWorks />
+      <ChatBots />
       <LiveEstateFeature />
       <Features />
       <StateBadge />

@@ -77,7 +77,7 @@ export default function MetaMaskNotarization() {
           Blockchain Notarization
         </h2>
         <p className="text-gray-600">
-          Secure your document with an immutable timestamp on the Polygon blockchain using your MetaMask wallet.
+          Secure your document with an immutable timestamp on the Blockchain using your MetaMask wallet.
         </p>
       </div>
 

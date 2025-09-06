@@ -36,7 +36,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'NexteraEstate - Estate Planning Made Simple',
-    description: 'Create your plan, notarize on Polygon, meet your state rules.',
+    description: 'Create your plan, notarize on Blockchain, meet your state rules.',
     images: ['/logo.svg'],
   },
   icons: {

@@ -42,9 +42,9 @@ export default function BlockchainNotarizationPage() {
 
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <div className="text-2xl mb-4">🌐</div>
-          <h3 className="text-lg font-semibold mb-3">Polygon Network</h3>
+          <h3 className="text-lg font-semibold mb-3">Blockchain Network</h3>
           <p className="text-gray-600 mb-4">
-            Lightning-fast, low-cost transactions on Polygon blockchain with full Ethereum compatibility and security.
+            Lightning-fast, low-cost transactions on secure blockchain with full security and immutability.
           </p>
         </div>
 

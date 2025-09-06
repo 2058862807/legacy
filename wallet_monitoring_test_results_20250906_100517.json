@@ -1,0 +1,200 @@
+{
+  "test_summary": {
+    "total_tests": 27,
+    "passed_tests": 26,
+    "failed_tests": 1,
+    "success_rate": 96.29629629629629,
+    "timestamp": "2025-09-06T10:05:17.232394"
+  },
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": true,
+      "details": "Status: OK",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.760003"
+    },
+    {
+      "test": "Monitoring Status",
+      "success": true,
+      "details": "Status report complete - Wallet: ok, Price: stable",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.858373"
+    },
+    {
+      "test": "Wallet Balance Info",
+      "success": true,
+      "details": "Wallet in mock mode (no real wallet configured)",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.858411"
+    },
+    {
+      "test": "Price Info",
+      "success": true,
+      "details": "MATIC Price: $0.2766, Status: stable",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.858421"
+    },
+    {
+      "test": "Wallet Monitoring - Mock Mode",
+      "success": true,
+      "details": "Wallet monitoring in mock mode (no real wallet configured)",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.861067"
+    },
+    {
+      "test": "Price Monitoring",
+      "success": true,
+      "details": "MATIC: $0.2766, 24h: -3.44%, Status: stable",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.938254"
+    },
+    {
+      "test": "Business Impact Calculations",
+      "success": true,
+      "details": "Per txn: $0.001383, Daily: $0.14, Monthly: $4.15",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.938322"
+    },
+    {
+      "test": "Alert Thresholds",
+      "success": true,
+      "details": "Spike: 25.0%, Drop: 20.0%",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.938332"
+    },
+    {
+      "test": "Alert Trigger Check",
+      "success": true,
+      "details": "Current change (-3.44%) within normal range",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.938340"
+    },
+    {
+      "test": "Price Status Logic",
+      "success": true,
+      "details": "Price status correctly calculated: stable",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:16.938346"
+    },
+    {
+      "test": "Manual Monitoring Check",
+      "success": true,
+      "details": "Monitoring cycle completed: Monitoring cycle completed successfully",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.014305"
+    },
+    {
+      "test": "Monitoring Timestamp",
+      "success": true,
+      "details": "Timestamp is recent: 0.0s ago",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.014363"
+    },
+    {
+      "test": "Configuration Update",
+      "success": true,
+      "details": "Updated 3 fields",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.018582"
+    },
+    {
+      "test": "Configuration Verification",
+      "success": true,
+      "details": "All configuration values correctly applied",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.018620"
+    },
+    {
+      "test": "Partial Configuration Update",
+      "success": true,
+      "details": "Partial config update successful",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.021312"
+    },
+    {
+      "test": "Alert History",
+      "success": true,
+      "details": "Monitoring active: True, Price history: 1 entries",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023581"
+    },
+    {
+      "test": "Balance Alert History",
+      "success": true,
+      "details": "No balance alerts sent yet (expected for new system)",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023618"
+    },
+    {
+      "test": "Price Alert History",
+      "success": true,
+      "details": "No price alerts sent yet (expected for new system)",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023624"
+    },
+    {
+      "test": "Recent Price History",
+      "success": true,
+      "details": "Recent prices available: 1 entries",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023630"
+    },
+    {
+      "test": "Price Data Structure",
+      "success": true,
+      "details": "Price history entries have correct structure",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023636"
+    },
+    {
+      "test": "Monitoring Active Status",
+      "success": true,
+      "details": "Monitoring system is active",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.023641"
+    },
+    {
+      "test": "Environment Variable Loading",
+      "success": true,
+      "details": "Monitoring thresholds loaded from environment variables",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.097093"
+    },
+    {
+      "test": "CoinGecko API Integration",
+      "success": false,
+      "details": "Unable to fetch MATIC price from CoinGecko",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.155989"
+    },
+    {
+      "test": "Alert Threshold Logic 1",
+      "success": true,
+      "details": "Threshold configuration applied correctly",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.158577"
+    },
+    {
+      "test": "Alert Threshold Logic 2",
+      "success": true,
+      "details": "Threshold configuration applied correctly",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.161087"
+    },
+    {
+      "test": "Monitoring Cycle Execution",
+      "success": true,
+      "details": "Cycle completed in 0.07s",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.232270"
+    },
+    {
+      "test": "Monitoring Performance",
+      "success": true,
+      "details": "Monitoring cycle performance acceptable: 0.07s",
+      "response_data": null,
+      "timestamp": "2025-09-06T10:05:17.232307"
+    }
+  ]
+}

@@ -36,14 +36,8 @@ export default function NotaryPage() {
     
     setCreating(true)
     try {
-      const request: NotaryRequest = {
-        documentType: 'will',
-        documentHash: 'sample_hash_' + Date.now(),
-        userAddress: '0x1234567890123456789012345678901234567890'
-      }
-      
-      const result = await createNotaryRequest(request)
-      alert('Notary request created: ' + result.transactionHash)
+      const result = await requestNotary({ docId: 'sample_doc_' + Date.now() })
+      alert('Notary request created successfully')
     } catch (e: any) {
       alert('Error: ' + (e.message || 'Failed to create request'))
     } finally {

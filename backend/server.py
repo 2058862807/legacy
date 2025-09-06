@@ -532,6 +532,17 @@ async def v1_list_documents(user_email: str = Query(...), db: Session = Depends(
         logger.error(f"V1 list documents error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+# API prefixed versions for Railway routing
+@app.get("/api/list") 
+async def api_list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """API list endpoint (Railway routing compatibility)"""
+    return await root_list_documents(user_email, db)
+
+@app.get("/api/v1/list")
+async def api_v1_list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """API V1 list endpoint (Railway routing compatibility)"""
+    return await v1_list_documents(user_email, db)
+
 # CORE API ENDPOINTS
 
 # Health check endpoint

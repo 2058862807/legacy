@@ -1,9 +1,9 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import compression from "compression";
-import morgan from "morgan";
-import dotenv from "dotenv";
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+const dotenv = require("dotenv");
 
 // Load environment variables
 dotenv.config();

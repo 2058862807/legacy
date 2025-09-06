@@ -163,6 +163,57 @@ app.get("/v1/list", (req, res) => {
   }
 });
 
+// Documents endpoint (for /api/documents/list compatibility)
+app.get("/v1/documents/list", (req, res) => {
+  try {
+    const email = String(req.query.user_email || "").trim();
+    
+    if (!email) {
+      return res.status(400).json({ 
+        ok: false, 
+        code: "BAD_INPUT", 
+        message: "user_email parameter is required" 
+      });
+    }
+
+    // TODO: Replace with real database query
+    res.json([
+      // Empty array for now - matches original API format
+    ]);
+  } catch (error) {
+    console.error("Error in /v1/documents/list:", error);
+    res.status(500).json({
+      ok: false,
+      code: "SERVER_ERROR", 
+      message: "Internal server error"
+    });
+  }
+});
+
+app.get("/v1/documents", (req, res) => {
+  try {
+    const email = String(req.query.user_email || "").trim();
+    
+    if (!email) {
+      return res.status(400).json({ 
+        ok: false, 
+        code: "BAD_INPUT", 
+        message: "user_email parameter is required" 
+      });
+    }
+
+    // TODO: Replace with real database query  
+    res.json([]);
+  } catch (error) {
+    console.error("Error in /v1/documents:", error);
+    res.status(500).json({
+      ok: false,
+      code: "SERVER_ERROR", 
+      message: "Internal server error"
+    });
+  }
+});
+
 // User lookup endpoint
 app.get("/v1/users", (req, res) => {
   try {

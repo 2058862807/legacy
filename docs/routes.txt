@@ -1,0 +1,38 @@
+# NexteraEstate API Routes Documentation
+# TypeScript/Express Backend - All routes under /v1
+# Generated: 2025-09-06
+
+# Health & Diagnostics
+GET /health
+GET /v1/health
+GET /v1/diagnostics
+
+# Core Business Endpoints
+GET /v1/list
+GET /v1/users
+GET /v1/wills
+GET /v1/compliance
+GET /v1/test
+
+# Future Endpoints (to be implemented)
+POST /v1/users
+POST /v1/wills
+POST /v1/documents
+GET /v1/documents
+POST /v1/ai-chat
+POST /v1/notary
+GET /v1/wallet/balance
+
+# Error Responses
+# All endpoints return standard error shape:
+# { ok: false, code: "ERR_CODE", message: "text" }
+
+# Success Responses  
+# All endpoints return:
+# { ok: true, data: {...}, timestamp: "ISO string" }
+
+# Authentication (Future)
+# POST /v1/auth/login
+# POST /v1/auth/register
+# POST /v1/auth/refresh
+# DELETE /v1/auth/logout

@@ -14,7 +14,7 @@ export default function VaultPage() {
 
     async function load() {
       try {
-        const result = await getDocuments()
+        const result = await listDocuments()
         if (!cancelled) {
           setDocuments(result)
           setLoading(false)

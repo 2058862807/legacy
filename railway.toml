@@ -8,3 +8,4 @@ restartPolicyMaxRetries = 10
 
 [env]
 NODE_ENV = "production"
+CORS_ORIGIN = "https://www.nexteraestate.com"

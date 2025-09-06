@@ -238,6 +238,12 @@ export default function DashboardPage() {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Blockchain Security</h2>
           <BlockchainStatus />
         </div>
+
+        {/* AI Chat Assistant */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">AI Assistant</h2>
+          <AIChat userId={session?.user?.id} />
+        </div>
       </div>
     </DashboardLayout>
   )

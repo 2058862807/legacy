@@ -30,7 +30,7 @@ export default function Trust() {
               <div className="w-6 h-6 bg-purple-100 rounded flex items-center justify-center">
                 <span className="text-purple-600 text-sm">🔗</span>
               </div>
-              <span className="text-gray-700 font-medium">Blockchain notarization</span>
+              <span className="text-gray-700 font-medium">Gasless blockchain notarization</span>
             </div>
           </div>
           

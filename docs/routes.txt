@@ -1,5 +1,5 @@
 # NexteraEstate API Routes Documentation
-# TypeScript/Express Backend - All routes under /v1
+# TypeScript/Express Backend - All routes under /v1 + /api compatibility
 # Generated: 2025-09-06
 
 # Health & Diagnostics
@@ -7,18 +7,28 @@ GET /health
 GET /v1/health
 GET /v1/diagnostics
 
-# Core Business Endpoints
+# V1 Business Endpoints (Primary)
 GET /v1/list
+GET /v1/documents/list
+GET /v1/documents
 GET /v1/users
 GET /v1/wills
 GET /v1/compliance
 GET /v1/test
 
+# API Compatibility Layer (Redirects to /v1)
+GET /api/documents/list    -> /v1/documents/list
+GET /api/documents         -> /v1/documents
+GET /api/users            -> /v1/users
+GET /api/wills            -> /v1/wills
+GET /api/compliance       -> /v1/compliance
+GET /api/test             -> /v1/test
+GET /api/debug/cors       -> Debug endpoint
+
 # Future Endpoints (to be implemented)
 POST /v1/users
 POST /v1/wills
 POST /v1/documents
-GET /v1/documents
 POST /v1/ai-chat
 POST /v1/notary
 GET /v1/wallet/balance

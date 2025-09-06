@@ -35,7 +35,7 @@ export default function Bot() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(api('/ai/esquire'), {
+      const response = await fetch(apiUrl('/ai/esquire'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

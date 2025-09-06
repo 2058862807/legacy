@@ -80,19 +80,17 @@ export default function DebugPage() {
         })
       }
 
-      // Test the critical list endpoints that were added to fix 502 errors
+      // Test the new TypeScript backend endpoints under /v1
       const testUserEmail = 'test@example.com'
       const endpointsToTest = [
         { path: '/health', name: 'Health' },
         { path: '/v1/health', name: 'V1 Health' },
         { path: '/v1/diagnostics', name: 'V1 Diagnostics' },
-        { path: '/list', name: 'Root List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
         { path: '/v1/list', name: 'V1 List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
-        { path: '/api/list', name: 'API List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
-        { path: '/api/v1/list', name: 'API V1 List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
-        { path: '/api/documents/list', name: 'Documents List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
-        { path: '/api/test', name: 'API Test' },
-        { path: '/api/debug/cors', name: 'CORS Debug' }
+        { path: '/v1/users', name: 'V1 Users', params: `?email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/v1/wills', name: 'V1 Wills', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/v1/compliance', name: 'V1 Compliance' },
+        { path: '/v1/test', name: 'V1 Test' }
       ]
 
       const endpointResults: {[key: string]: any} = {}

@@ -8,6 +8,7 @@ import BlockchainStatus from '../../components/Blockchain/BlockchainStatus'
 import DocumentList from '../../components/Documents/DocumentList'
 import LiveEstateBanner from '../../components/LiveEstate/LiveEstateBanner'
 import AIChat from '../../components/AI/AIChat'
+import Bot from '../../components/Bot'
 
 interface DashboardStats {
   totalDocuments: number

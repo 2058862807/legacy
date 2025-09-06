@@ -473,6 +473,12 @@ async def v1_health():
     """V1 health endpoint for smoke testing"""
     return {"status": "ok", "service": "nexteraestate", "version": "1.0", "api_version": "v1"}
 
+# Simple test endpoint to verify routing
+@app.get("/api/test")
+async def api_test():
+    """Test endpoint for routing verification"""
+    return {"status": "ok", "message": "API routing is working", "timestamp": datetime.now(timezone.utc).isoformat()}
+
 # CRITICAL MISSING ENDPOINTS (Production API compatibility)
 @app.get("/list")
 async def root_list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):

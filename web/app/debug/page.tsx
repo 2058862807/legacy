@@ -1,106 +1,270 @@
 'use client'
+import React, { useState, useEffect } from 'react'
+
+interface HealthStatus {
+  status: string
+  service?: string
+  version?: string
+  api_version?: string
+  error?: string
+}
 
 export default function DebugPage() {
-  const runDiagnostics = async () => {
-    const base = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-    console.log('🔍 DIAGNOSTICS STARTING')
-    console.log('BASE URL:', base)
-    
-    try {
-      console.log('🏥 Testing health endpoint...')
-      const healthResponse = await fetch(`${base}/api/health`, { 
-        credentials: 'include',
-        mode: 'cors'
-      })
-      console.log('Health Status:', healthResponse.status)
-      console.log('Health Response:', await healthResponse.text())
-    } catch (e) { 
-      console.error('❌ Health error:', e) 
+  const [baseUrl, setBaseUrl] = useState<string>('')
+  const [rootHealth, setRootHealth] = useState<HealthStatus | null>(null)
+  const [v1Health, setV1Health] = useState<HealthStatus | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Get base URL from environment
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'Not set'
+    setBaseUrl(apiUrl)
+
+    // Test health endpoints
+    const testHealthEndpoints = async () => {
+      setLoading(true)
+
+      try {
+        // Test root health endpoint
+        const rootResponse = await fetch(`${apiUrl}/health`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        if (rootResponse.ok) {
+          const rootData = await rootResponse.json()
+          setRootHealth(rootData)
+        } else {
+          setRootHealth({
+            status: 'error',
+            error: `HTTP ${rootResponse.status}: ${rootResponse.statusText}`
+          })
+        }
+      } catch (error) {
+        setRootHealth({
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Network error'
+        })
+      }
+
+      try {
+        // Test v1 health endpoint
+        const v1Response = await fetch(`${apiUrl}/v1/health`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        
+        if (v1Response.ok) {
+          const v1Data = await v1Response.json()
+          setV1Health(v1Data)
+        } else {
+          setV1Health({
+            status: 'error', 
+            error: `HTTP ${v1Response.status}: ${v1Response.statusText}`
+          })
+        }
+      } catch (error) {
+        setV1Health({
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Network error'
+        })
+      }
+
+      setLoading(false)
     }
-    
-    try {
-      console.log('📋 Testing wills endpoint...')
-      const willsResponse = await fetch(`${base}/api/wills`, { 
-        credentials: 'include',
-        mode: 'cors'
-      })
-      console.log('Wills Status:', willsResponse.status)
-    } catch (e) { 
-      console.error('❌ Wills error:', e) 
-    }
-    
-    try {
-      console.log('👤 Testing users endpoint...')
-      const usersResponse = await fetch(`${base}/api/users`, { 
-        credentials: 'include',
-        mode: 'cors'
-      })
-      console.log('Users Status:', usersResponse.status)
-    } catch (e) { 
-      console.error('❌ Users error:', e) 
-    }
-    
-    try {
-      console.log('🤖 Testing AI team endpoint...')
-      const aiResponse = await fetch(`${base}/api/ai-team/communicate`, { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: 'ping',
-          recipient: 'team',
-          priority: 'normal'
-        }),
-        credentials: 'include',
-        mode: 'cors'
-      })
-      console.log('AI Team Status:', aiResponse.status)
-    } catch (e) { 
-      console.error('❌ AI Team error:', e) 
-    }
-    
-    console.log('🔍 DIAGNOSTICS COMPLETE - Check console for full results')
+
+    testHealthEndpoints()
+  }, [])
+
+  const getStatusColor = (status: HealthStatus | null) => {
+    if (!status) return 'text-gray-500'
+    if (status.status === 'ok') return 'text-green-600'
+    return 'text-red-600'
   }
-  
+
+  const getStatusBg = (status: HealthStatus | null) => {
+    if (!status) return 'bg-gray-100'
+    if (status.status === 'ok') return 'bg-green-50 border-green-200'
+    return 'bg-red-50 border-red-200'
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">🔧 NexteraEstate Debug Page</h1>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Environment Configuration</h2>
-          <div className="space-y-2 font-mono text-sm">
-            <div><strong>Backend Base URL:</strong> {process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'NOT SET'}</div>
-            <div><strong>Environment:</strong> {process.env.NODE_ENV}</div>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4">Quick Diagnostics</h2>
-          <button 
-            onClick={runDiagnostics}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-          >
-            🚀 Run API Connection Tests
-          </button>
-          <p className="text-sm text-gray-600 mt-2">
-            Results will appear in browser console (F12 → Console)
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">API Debug Page</h1>
+          <p className="text-xl text-gray-600">
+            Debug information for NexteraEstate API connectivity
           </p>
         </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Manual Test Commands</h2>
-          <div className="space-y-2 text-sm font-mono bg-gray-100 p-4 rounded">
-            <div>// Run this in browser console:</div>
-            <div className="text-blue-600">
-              {`(async () => {
-  const base = process.env.NEXT_PUBLIC_BACKEND_BASE_URL
-  console.log('BASE', base)
-  try {
-    const r = await fetch(\`\${base}/api/health\`, { credentials: 'include' })
-    console.log('health', r.status, await r.text())
-  } catch (e) { console.error('health error', e) }
-})() `}
+
+        {/* Configuration */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Configuration</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-600">Base API URL</label>
+              <div className="mt-1 p-3 bg-gray-50 rounded-lg font-mono text-sm">
+                {baseUrl}
+              </div>
             </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-600">Environment Variables</label>
+              <div className="mt-1 space-y-2">
+                <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <span className="font-mono text-sm">NEXT_PUBLIC_API_URL</span>
+                  <span className="text-sm text-gray-600">{process.env.NEXT_PUBLIC_API_URL || 'Not set'}</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  <span className="font-mono text-sm">NODE_ENV</span>
+                  <span className="text-sm text-gray-600">{process.env.NODE_ENV || 'Not set'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Health Check Results */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Root Health */}
+          <div className={`rounded-xl shadow-sm border p-6 ${getStatusBg(rootHealth)}`}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Root Health Check
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Endpoint</span>
+                <span className="font-mono text-sm">/health</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Status</span>
+                <span className={`font-semibold ${getStatusColor(rootHealth)}`}>
+                  {loading ? 'Testing...' : rootHealth?.status || 'No response'}
+                </span>
+              </div>
+
+              {rootHealth && rootHealth.status === 'ok' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">Service</span>
+                    <span className="text-sm">{rootHealth.service}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">Version</span>
+                    <span className="text-sm">{rootHealth.version}</span>
+                  </div>
+                </>
+              )}
+
+              {rootHealth?.error && (
+                <div className="mt-3 p-3 bg-red-100 border border-red-200 rounded">
+                  <p className="text-sm text-red-800">{rootHealth.error}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* V1 Health */}
+          <div className={`rounded-xl shadow-sm border p-6 ${getStatusBg(v1Health)}`}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              V1 Health Check
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Endpoint</span>
+                <span className="font-mono text-sm">/v1/health</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Status</span>
+                <span className={`font-semibold ${getStatusColor(v1Health)}`}>
+                  {loading ? 'Testing...' : v1Health?.status || 'No response'}
+                </span>
+              </div>
+
+              {v1Health && v1Health.status === 'ok' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">Service</span>
+                    <span className="text-sm">{v1Health.service}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">Version</span>
+                    <span className="text-sm">{v1Health.version}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-600">API Version</span>
+                    <span className="text-sm">{v1Health.api_version}</span>
+                  </div>
+                </>
+              )}
+
+              {v1Health?.error && (
+                <div className="mt-3 p-3 bg-red-100 border border-red-200 rounded">
+                  <p className="text-sm text-red-800">{v1Health.error}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Raw Response Data */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Raw Response Data</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Root Health (/health)</h3>
+              <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+                {rootHealth ? JSON.stringify(rootHealth, null, 2) : 'No data'}
+              </pre>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">V1 Health (/v1/health)</h3>
+              <pre className="bg-gray-50 p-4 rounded-lg text-sm overflow-x-auto">
+                {v1Health ? JSON.stringify(v1Health, null, 2) : 'No data'}
+              </pre>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-blue-900 mb-4">Quick Actions</h3>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Refresh Tests
+            </button>
+            <a
+              href={`${baseUrl}/health`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Open /health in Browser
+            </a>
+            <a
+              href={`${baseUrl}/v1/health`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Open /v1/health in Browser
+            </a>
           </div>
         </div>
       </div>

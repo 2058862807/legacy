@@ -1,83 +1,103 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getNotaryStatus, requestNotary, NotaryStatus, listDocuments, DocumentItem } from '@/lib/api'
+import { getNotaryStatus, createNotaryRequest, NotaryRequest } from '../../lib/api'
 
 export default function NotaryPage() {
-  const [status, setStatus] = useState<NotaryStatus | null>(null)
-  const [docs, setDocs] = useState<DocumentItem[]>([])
-  const [docId, setDocId] = useState<string>('')
+  const [status, setStatus] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-
-  async function load() {
-    setLoading(true)
-    setError(null)
-    try {
-      const s = await getNotaryStatus()
-      const d = await listDocuments()
-      setStatus(s)
-      setDocs(d)
-      if (d.length > 0) setDocId(d[0].id)
-    } catch (e: any) {
-      setError(e.message || 'Failed to load')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const [creating, setCreating] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        const result = await getNotaryStatus()
+        if (!cancelled) {
+          setStatus(result)
+          setLoading(false)
+        }
+      } catch (e: any) {
+        if (!cancelled) {
+          setError(e.message || 'Failed to load')
+          setLoading(false)
+        }
+      }
+    }
+
     load()
+    return () => { cancelled = true }
   }, [])
 
-  async function onRequest() {
-    if (!docId) return
-    setSubmitting(true)
-    setError(null)
+  const handleCreateRequest = async () => {
+    if (creating) return
+    
+    setCreating(true)
     try {
-      await requestNotary({ docId })
-      await load()
+      const request: NotaryRequest = {
+        documentType: 'will',
+        documentHash: 'sample_hash_' + Date.now(),
+        userAddress: '0x1234567890123456789012345678901234567890'
+      }
+      
+      const result = await createNotaryRequest(request)
+      alert('Notary request created: ' + result.transactionHash)
     } catch (e: any) {
-      setError(e.message || 'Request failed')
+      alert('Error: ' + (e.message || 'Failed to create request'))
     } finally {
-      setSubmitting(false)
+      setCreating(false)
     }
   }
 
+  if (loading) return <div className="p-8">Loading notary status...</div>
+  if (error) return <div className="p-8 text-red-600">Error: {error}</div>
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-semibold mb-4">Notary</h1>
-
-      {loading && <div>Loading...</div>}
-      {error && <div className="text-red-600">{error}</div>}
-
-      {status && (
-        <div className="mb-4">
-          <div className="text-sm">Enabled {status.enabled ? 'Yes' : 'No'}</div>
-          <div className="text-sm">State {status.state}</div>
+    <div className="container mx-auto p-8">
+      <h1 className="text-3xl font-bold mb-6">Blockchain Notary</h1>
+      
+      <div className="grid gap-6">
+        <div className="border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Notary Status</h2>
+          
+          {status && (
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span>Network:</span>
+                <span className="font-medium">{status.network || 'Polygon'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Status:</span>
+                <span className={`font-medium ${status.available ? 'text-green-600' : 'text-red-600'}`}>
+                  {status.available ? 'Available' : 'Unavailable'}
+                </span>
+              </div>
+              {status.walletAddress && (
+                <div className="flex justify-between">
+                  <span>Wallet:</span>
+                  <span className="font-mono text-sm">{status.walletAddress}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
 
-      <div className="grid gap-2 max-w-md">
-        <label className="text-sm">Select document</label>
-        <select
-          className="rounded-md border p-2"
-          value={docId}
-          onChange={e => setDocId(e.target.value)}
-        >
-          {docs.map(d => (
-            <option key={d.id} value={d.id}>{d.title}</option>
-          ))}
-        </select>
-
-        <button
-          onClick={onRequest}
-          disabled={submitting || !docId}
-          className="rounded-md border px-3 py-2 disabled:opacity-50"
-        >
-          {submitting ? 'Requesting...' : 'Request notarization'}
-        </button>
+        <div className="border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Create Notary Request</h2>
+          <p className="text-gray-600 mb-4">
+            Create a blockchain notarization request for your documents.
+          </p>
+          
+          <button
+            onClick={handleCreateRequest}
+            disabled={creating || !status?.available}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {creating ? 'Creating...' : 'Create Request'}
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -1,150 +1,167 @@
-'use client'
-import { useState } from 'react'
+import React, { useState, useRef } from 'react'
+import { Maximize2, Minimize2, Send, X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import { apiFetch } from '../lib/api'
-import LegalDisclaimer from './Legal/LegalDisclaimer'
+import { api } from '@/lib/api'
 
-interface BotMessage {
-  id: string
-  text: string
-  isUser: boolean
-  timestamp: Date
-}
-
-interface HelpBotProps {
-  type: 'help' | 'grief'
-}
-
-export default function Bot({ type }: HelpBotProps) {
-  const { data: session } = useSession()
-  const [messages, setMessages] = useState<BotMessage[]>([])
-  const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+export default function Bot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
+  const [isMinimized, setIsMinimized] = useState(false)
+  const [messages, setMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([])
+  const [inputValue, setInputValue] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { data: session } = useSession()
 
-  const addMessage = (text: string, isUser: boolean) => {
-    const message: BotMessage = {
-      id: Date.now().toString(),
-      text,
-      isUser,
-      timestamp: new Date()
+  // Feature flags
+  const AI_ENABLED = process.env.NEXT_PUBLIC_AI_ENABLED !== 'false'
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return
+    if (!AI_ENABLED) {
+      setMessages(prev => [...prev, 
+        { role: 'user', content: inputValue },
+        { role: 'assistant', content: 'AI features are currently disabled. Coming soon!' }
+      ])
+      setInputValue('')
+      return
     }
-    setMessages(prev => [...prev, message])
-  }
 
-  const handleSend = async () => {
-    if (!input.trim()) return
-    
-    const userMessage = input.trim()
-    setInput('')
-    addMessage(userMessage, true)
+    const userMessage = inputValue.trim()
+    setInputValue('')
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
 
     try {
-      // Show crisis resources on first grief bot message
-      if (type === 'grief' && messages.length === 0) {
-        addMessage(
-          'I understand you may be going through a difficult time. Here are some crisis resources:\n\n' +
-          '• National Suicide Prevention Lifeline: 988\n' +
-          '• Crisis Text Line: Text HOME to 741741\n' +
-          '• National Alliance on Mental Illness: 1-800-950-6264\n\n' +
-          'Please note: I cannot provide medical advice. For emergencies, call 911.',
-          false
-        )
-      }
-
-      const endpoint = type === 'help' ? '/api/bot/help' : '/api/bot/grief'
-      const userEmail = session?.user?.email || 'anonymous@example.com'
-      const response = await apiFetch<{ reply: string; escalate?: boolean }>(`${endpoint}?user_email=${encodeURIComponent(userEmail)}`, {
+      const response = await fetch(api('/ai/esquire'), {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ 
-          message: userMessage, 
-          session_id: sessionId,
-          history: messages 
-        })
+          prompt: userMessage,
+          user_context: session?.user?.email || 'anonymous'
+        }),
       })
 
-      addMessage(response.reply, false)
-
-      if (response.escalate) {
-        addMessage(
-          'Based on your message, I recommend speaking with a professional. Would you like me to provide some resources?',
-          false
-        )
+      const data = await response.json()
+      
+      if (data.status === 'success') {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.answer }])
+      } else {
+        setMessages(prev => [...prev, { role: 'assistant', content: data.error || 'Sorry, I encountered an error. Please try again.' }])
       }
     } catch (error) {
-      addMessage('Sorry, I encountered an error. Please try again later.', false)
-    } finally {
-      setIsLoading(false)
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I\'m currently unavailable. Please try again later.' }])
+    }
+
+    setIsLoading(false)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
     }
   }
 
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 group"
+        aria-label="Open Esquire AI"
+      >
+        <span className="text-xl">⚖️</span>
+        <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          Esquire AI Legal Assistant
+        </div>
+      </button>
+    )
+  }
+
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      {!isOpen ? (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700"
-        >
-          {type === 'help' ? '⚖️' : '💬'} {type === 'help' ? 'Esquire AI' : 'Support'}
-        </button>
-      ) : (
-        <div className="bg-white rounded-lg shadow-xl w-80 h-96 flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="font-semibold">
-              {type === 'help' ? 'Esquire AI' : 'Grief Support'}
-            </h3>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              ×
-            </button>
-          </div>
-          
-          <div className="flex-1 p-4 overflow-y-auto space-y-3">
-            <LegalDisclaimer type="ai" className="mb-4" />
-            {messages.map(message => (
+    <div className={`fixed bottom-6 right-6 bg-white rounded-lg shadow-2xl border z-50 transition-all duration-300 ${
+      isMinimized ? 'w-80 h-12' : 'w-96 h-[32rem]'
+    }`}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">⚖️</span>
+          <h3 className="font-semibold text-gray-800">Esquire AI</h3>
+          {!AI_ENABLED && <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Coming Soon</span>}
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setIsMinimized(!isMinimized)}
+            className="p-1 hover:bg-gray-200 rounded"
+          >
+            {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1 hover:bg-gray-200 rounded"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      </div>
+
+      {!isMinimized && (
+        <>
+          {/* Messages */}
+          <div className="flex-1 p-4 h-80 overflow-y-auto space-y-3">
+            {messages.length === 0 && (
+              <div className="text-center text-gray-500 space-y-2">
+                <p className="font-medium">👋 Hi! I'm Esquire AI</p>
+                <p className="text-sm">I can help with estate planning questions, but please consult a licensed attorney for specific legal advice.</p>
+              </div>
+            )}
+            {messages.map((message, index) => (
               <div
-                key={message.id}
-                className={`${
-                  message.isUser 
-                    ? 'ml-8 bg-blue-600 text-white' 
-                    : 'mr-8 bg-gray-100'
-                } p-3 rounded-lg whitespace-pre-wrap`}
+                key={index}
+                className={`p-3 rounded-lg max-w-[85%] ${
+                  message.role === 'user'
+                    ? 'bg-blue-500 text-white ml-auto'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
               >
-                {message.text}
+                {message.content}
               </div>
             ))}
             {isLoading && (
-              <div className="mr-8 bg-gray-100 p-3 rounded-lg">
-                Thinking...
+              <div className="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-[85%]">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
               </div>
             )}
           </div>
 
+          {/* Input */}
           <div className="p-4 border-t">
             <div className="flex gap-2">
               <input
+                ref={inputRef}
                 type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Type your message..."
-                className="flex-1 border rounded-lg px-3 py-2"
-                disabled={isLoading}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={AI_ENABLED ? "Ask about estate planning..." : "Coming soon..."}
+                disabled={!AI_ENABLED || isLoading}
+                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
               />
               <button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                onClick={handleSendMessage}
+                disabled={!inputValue.trim() || isLoading || !AI_ENABLED}
+                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
-                Send
+                <Send size={16} />
               </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )

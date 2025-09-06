@@ -61,6 +61,7 @@ const PRICING_PLANS: PricingPlan[] = [
     features: [
       'Lifetime access',
       'All updates included',
+      'Gasless blockchain notarization',
       'Priority support',
       'All future features',
       'Limited: First 200 users only'

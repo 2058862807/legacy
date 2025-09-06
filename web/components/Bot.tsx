@@ -1,7 +1,10 @@
 import React, { useState, useRef } from 'react'
 import { Maximize2, Minimize2, Send, X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import { api } from '@/lib/api'
+
+// Simple API helper
+const getApiBase = () => process.env.NEXT_PUBLIC_API_URL || ""
+const apiUrl = (path: string) => `${getApiBase()}/v1${path}`
 
 export default function Bot() {
   const [isOpen, setIsOpen] = useState(false)

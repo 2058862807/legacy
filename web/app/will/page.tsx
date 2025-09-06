@@ -49,8 +49,8 @@ export default function WillPage() {
 
     setSaving(true)
     try {
-      const result = await saveWill(will)
-      setWill(result)
+      const result = await saveWill({ answers: will.answers })
+      setWill({ ...will, ...result })
       alert('Will saved successfully!')
     } catch (e: any) {
       alert('Save failed: ' + (e.message || 'Unknown error'))

@@ -1,7 +1,7 @@
 {
   "name": "nexteraestate-api",
   "version": "1.0.0",
-  "description": "NexteraEstate API Backend",
+  "description": "NexteraEstate API Backend - TypeScript/Express",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",

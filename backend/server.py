@@ -1402,7 +1402,29 @@ async def upload_document(file: UploadFile = File(...), user_email: str = Query(
         logger.error(f"Error uploading document: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Blockchain/Notary endpoints
+# NOTARY ENDPOINTS (with frontend aliases)
+
+# Frontend expects POST /api/notary/request - add alias
+@app.post("/api/notary/request")
+async def request_notary_alias(request: Request, db: Session = Depends(get_db)):
+    """Request notary (frontend alias)"""
+    try:
+        body = await request.json()
+        doc_id = body.get("docId")
+        
+        if not doc_id:
+            raise HTTPException(status_code=400, detail="docId is required")
+        
+        # Create a hash request from the doc_id
+        hash_request = HashRequest(content=doc_id)
+        result = await generate_hash(hash_request)
+        return {"requestId": result.get("hash", f"req_{uuid.uuid4().hex[:8]}")}
+        
+    except Exception as e:
+        logger.error(f"Notary request error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# EXISTING NOTARY ENDPOINTS
 @app.post("/api/notary/hash")
 async def generate_hash(request: HashRequest):
     """Generate SHA256 hash of content"""

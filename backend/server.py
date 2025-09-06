@@ -603,7 +603,68 @@ async def refresh_compliance_data(db: Session = Depends(get_db)):
         logger.error(f"Error refreshing compliance data: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Will endpoints
+# WILL ENDPOINTS (matching frontend expectations)
+
+# Frontend expects GET /api/will - add alias
+@app.get("/api/will")
+async def get_will_alias(user_email: str = Query(...), db: Session = Depends(get_db)):
+    """Get user will (frontend alias)"""
+    try:
+        # Find user's will
+        wills = await get_user_wills(user_email, db)
+        if wills:
+            latest_will = wills[0]  # Get most recent
+            return {
+                "id": latest_will.id,
+                "status": "in_progress",
+                "answers": latest_will.personal_info
+            }
+        else:
+            # Return empty will profile
+            return {
+                "id": f"will_{uuid.uuid4().hex[:8]}",
+                "status": "empty",
+                "answers": {}
+            }
+    except Exception as e:
+        logger.error(f"Get will error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Frontend expects POST /api/will - add alias
+@app.post("/api/will")
+async def save_will_alias(request: Request, db: Session = Depends(get_db)):
+    """Save user will (frontend alias)"""
+    try:
+        body = await request.json()
+        answers = body.get("answers", {})
+        user_email = body.get("user_email") or request.query_params.get("user_email")
+        
+        if not user_email:
+            raise HTTPException(status_code=400, detail="user_email is required")
+        
+        # Create will data using existing WillCreate model
+        will_data = WillCreate(
+            state=answers.get("state", "CA"),
+            personal_info=answers,
+            beneficiaries=answers.get("beneficiaries", []),
+            assets=answers.get("assets", []),
+            witnesses=answers.get("witnesses", []),
+            executor=answers.get("executor", {})
+        )
+        
+        # Use existing create_will function
+        result = await create_will(will_data, user_email, db)
+        return {
+            "id": result.id,
+            "status": "in_progress",
+            "answers": answers
+        }
+        
+    except Exception as e:
+        logger.error(f"Save will error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# EXISTING WILL ENDPOINTS
 @app.post("/api/wills", response_model=WillResponse)
 async def create_will(will: WillCreate, user_email: str = Query(...), db: Session = Depends(get_db)):
     """Create a new will"""

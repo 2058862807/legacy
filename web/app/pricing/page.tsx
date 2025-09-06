@@ -1,149 +1,94 @@
-'use client'
-import { useState } from 'react'
-import Link from 'next/link'
+import PricingCards from '../../components/Pricing/PricingCards'
 import Bot from '../../components/Bot'
 
-const plans = [
-  { 
-    id: 'basic', 
-    name: 'Basic Will', 
-    price: 2999, 
-    desc: 'Essential will creation',
-    features: [
-      'Last Will & Testament',
-      'Basic legal templates',
-      'PDF download',
-      'Email support'
-    ]
-  },
-  { 
-    id: 'premium', 
-    name: 'Premium Will', 
-    price: 4999, 
-    desc: 'Will with blockchain verification',
-    features: [
-      'Everything in Basic',
-      'Blockchain notarization',
-      'Compliance checking',
-      'Priority support',
-      'Document vault'
-    ]
-  },
-  { 
-    id: 'full', 
-    name: 'Full Estate Plan', 
-    price: 9999, 
-    desc: 'Complete estate planning suite',
-    features: [
-      'Everything in Premium',
-      'Trust creation',
-      'Power of Attorney',
-      'Healthcare directives',
-      'Tax optimization',
-      'Legal consultation',
-      'AI-powered guidance'
-    ]
-  }
-]
-
 export default function Pricing() {
-  const [loading, setLoading] = useState<string | null>(null)
-
-  async function upgrade(id: string) {
-    console.log('Upgrade function called with ID:', id)
-    setLoading(id)
-    try {
-      console.log('Making checkout request...')
-      const res = await fetch('/api/checkout', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ planId: id }) 
-      })
-      
-      console.log('Checkout response status:', res.status)
-      const data = await res.json()
-      console.log('Checkout response data:', data)
-      
-      if (data.url) {
-        console.log('Redirecting to:', data.url)
-        window.location.href = data.url
-      } else {
-        console.error('No URL in response:', data)
-        alert('Checkout failed: No checkout URL received')
-      }
-    } catch (error) {
-      console.error('Checkout error:', error)
-      alert('Checkout failed. Please try again.')
-    } finally {
-      setLoading(null)
-    }
-  }
-
   return (
     <>
-      <main className="max-w-6xl mx-auto p-8 space-y-12">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">Choose Your Estate Plan</h1>
-          <p className="text-xl text-gray-600">
-            Select the perfect plan to secure your family's future
-          </p>
-        </div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Complete Pricing Details
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose the perfect estate planning solution for your family. All plans include our cutting-edge AI legal assistance, 50-state compliance, and secure document management.
+            </p>
+          </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <div key={plan.id} className={`card relative ${
-              index === 1 ? 'ring-2 ring-blue-500 scale-105' : ''
-            }`}>
-              {index === 1 && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm">
-                  Most Popular
-                </div>
-              )}
+          {/* Pricing Cards */}
+          <PricingCards />
+
+          {/* FAQ Section */}
+          <div className="mt-24 max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+              Frequently Asked Questions
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">What's included in the Essential plan?</h3>
+                <p className="text-gray-600 text-sm">
+                  All core estate planning documents including wills, healthcare directives, power of attorney, automatic legal updates when laws change, secure document storage, and 24/7 AI legal assistant.
+                </p>
+              </div>
               
-              <div className="text-center space-y-4">
-                <h2 className="text-2xl font-bold">{plan.name}</h2>
-                <div className="text-4xl font-bold text-blue-600">
-                  ${(plan.price/100).toFixed(2)}
-                </div>
-                <p className="text-gray-600">{plan.desc}</p>
-                
-                <ul className="space-y-2 text-left">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                <button 
-                  onClick={() => upgrade(plan.id)} 
-                  disabled={loading === plan.id}
-                  className={`w-full py-3 rounded-lg font-semibold transition-colors ${
-                    index === 1 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50'
-                  }`}
-                >
-                  {loading === plan.id ? 'Processing...' : 'Get Started'}
-                </button>
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">How does the Lifetime plan work?</h3>
+                <p className="text-gray-600 text-sm">
+                  Pay once, own forever. You get lifetime access to all current and future features, priority support, and all legal updates. No recurring fees, ever.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">Is my data secure?</h3>
+                <p className="text-gray-600 text-sm">
+                  Yes. We use bank-level encryption, secure data centers, and blockchain technology for document verification. Your sensitive information is protected with the highest security standards.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibent text-gray-900 mb-3">Can I upgrade or downgrade plans?</h3>
+                <p className="text-gray-600 text-sm">
+                  You can upgrade to the Lifetime plan at any time. The Free plan has no limitations on duration. All paid plans include a 60-day money-back guarantee.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">What makes NexteraEstate different?</h3>
+                <p className="text-gray-600 text-sm">
+                  We're the only platform combining AI legal guidance, automatic compliance updates, gasless blockchain notarization, and live estate monitoring - all in one integrated solution.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-3">Do you offer refunds?</h3>
+                <p className="text-gray-600 text-sm">
+                  Yes! All paid plans include a 60-day money-back guarantee. If you're not completely satisfied, contact us for a full refund, no questions asked.
+                </p>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className="text-center space-y-4">
-          <p className="text-gray-600">
-            Need help choosing? <Link href="/login" className="text-blue-600 underline">Talk to our experts</Link>
-          </p>
-          <div className="flex justify-center gap-8 text-sm text-gray-500">
-            <span>✓ 30-day money back guarantee</span>
-            <span>✓ Bank-level security</span>
-            <span>✓ 24/7 support</span>
+          {/* Contact CTA */}
+          <div className="mt-24 text-center bg-white rounded-2xl p-12 shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Still have questions?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Our estate planning experts are here to help you choose the right plan.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                Schedule Free Consultation
+              </button>
+              <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                Chat with Support
+              </button>
+            </div>
           </div>
         </div>
-      </main>
-
+      </div>
+      
       <Bot type="help" />
     </>
   )

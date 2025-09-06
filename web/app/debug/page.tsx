@@ -9,10 +9,16 @@ interface HealthStatus {
   error?: string
 }
 
+interface ListResponse {
+  documents: any[]
+  error?: string
+}
+
 export default function DebugPage() {
   const [baseUrl, setBaseUrl] = useState<string>('')
   const [rootHealth, setRootHealth] = useState<HealthStatus | null>(null)
   const [v1Health, setV1Health] = useState<HealthStatus | null>(null)
+  const [listEndpoints, setListEndpoints] = useState<{[key: string]: ListResponse | null}>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

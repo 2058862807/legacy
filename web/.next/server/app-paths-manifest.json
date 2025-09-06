@@ -1,3 +1,6 @@
 {
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/api/compliance/rules/route": "app/api/compliance/rules/route.js",
+  "/start/page": "app/start/page.js",
+  "/login/page": "app/login/page.js"
 }

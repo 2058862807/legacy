@@ -52,7 +52,7 @@ export default function BlockchainNotarizationPage() {
           <div className="text-2xl mb-4">🔍</div>
           <h3 className="text-lg font-semibold mb-3">Public Verification</h3>
           <p className="text-gray-600 mb-4">
-            Anyone can verify document authenticity using transaction hash on Polygonscan blockchain explorer.
+            Anyone can verify document authenticity using transaction hash on blockchain explorer.
           </p>
         </div>
 

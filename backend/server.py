@@ -898,9 +898,11 @@ async def create_checkout(payment: PaymentRequest):
         }
         
         # Add special features for certain plans
-        if plan_key == 'founding':
-            session_params['metadata']['founding_member'] = 'true'
-            session_params['metadata']['locked_renewal_price'] = '19900'  # $199/year locked
+        if plan_key in ['founding', 'lifetime']:
+            session_params['metadata']['lifetime_member'] = 'true'
+            if plan_key == 'founding':
+                session_params['metadata']['founding_member'] = 'true'
+                session_params['metadata']['locked_renewal_price'] = '19900'  # $199/year locked
         
         checkout_session = stripe.checkout.Session.create(**session_params)
         

@@ -56,8 +56,8 @@ class BackendTester:
             response = self.session.get(f"{self.base_url}/api/health", timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                if 'status' in data and data['status'] == 'ok':
-                    self.log_result("Health Check", True, f"Status: {data['status']}")
+                if 'ok' in data and data['ok'] == True:
+                    self.log_result("Health Check", True, f"Status: OK")
                     return True
                 else:
                     self.log_result("Health Check", False, "Invalid response format", data)

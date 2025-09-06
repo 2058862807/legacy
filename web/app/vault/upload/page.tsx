@@ -352,7 +352,7 @@ export default function VaultUploadPage() {
                     <span className="text-2xl">🔗</span>
                     <div>
                       <h4 className="font-medium">Blockchain Notarization</h4>
-                      <p className="text-sm text-gray-600">Create an immutable timestamp on Polygon blockchain</p>
+                      <p className="text-sm text-gray-600">Create an immutable timestamp on Blockchain</p>
                     </div>
                   </div>
                   <input 

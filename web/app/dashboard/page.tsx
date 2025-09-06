@@ -246,6 +246,9 @@ export default function DashboardPage() {
           <AIChat userId={session?.user?.id} />
         </div>
       </div>
+      
+      {/* Chat Bots - Floating */}
+      <Bot type="help" />
     </DashboardLayout>
   )
 }

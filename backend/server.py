@@ -496,6 +496,50 @@ async def v1_health():
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+@app.get("/v1/diagnostics")
+async def v1_diagnostics():
+    """V1 diagnostics endpoint for debugging"""
+    try:
+        port = os.environ.get("PORT", "8001")
+        cors_origins = os.environ.get("CORS_ORIGINS", "").split(",")
+        
+        return {
+            "ok": True,
+            "version": "v1",
+            "env": {
+                "runtime": "python3.9",
+                "portBound": True,
+                "port": port,
+                "corsOrigins": cors_origins,
+                "aiEnabled": AI_ENABLED,
+                "web3Enabled": WEB3_ENABLED,
+                "railwayEnv": RAILWAY
+            },
+            "routes": [
+                "GET /health",
+                "GET /v1/health", 
+                "GET /v1/diagnostics",
+                "GET /v1/list",
+                "GET /api/list",
+                "GET /api/v1/list",
+                "GET /api/documents/list",
+                "POST /api/documents",
+                "GET /api/users",
+                "POST /api/users",
+                "GET /api/wills",
+                "POST /api/wills",
+                "POST /api/ai-chat",
+                "GET /api/compliance"
+            ],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        return {
+            "ok": False,
+            "code": "DIAGNOSTICS_ERROR",
+            "message": f"Diagnostics failed: {str(e)}"
+        }
+
 # Simple test endpoint to verify routing
 @app.get("/api/test")
 async def api_test():

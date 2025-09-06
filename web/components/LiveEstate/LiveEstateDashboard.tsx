@@ -291,7 +291,7 @@ export default function LiveEstateDashboard() {
               <span className="text-purple-600 font-bold">4</span>
             </div>
             <h4 className="font-semibold mb-2">Verify</h4>
-            <p className="text-sm text-gray-600">Create blockchain audit trail on Polygon</p>
+            <p className="text-sm text-gray-600">Create blockchain audit trail</p>
           </div>
         </div>
       </div>

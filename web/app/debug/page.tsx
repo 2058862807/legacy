@@ -82,42 +82,55 @@ export default function DebugPage() {
 
       // Test the critical list endpoints that were added to fix 502 errors
       const testUserEmail = 'test@example.com'
-      const listEndpointsToTest = [
-        '/list',
-        '/v1/list', 
-        '/api/list',
-        '/api/v1/list'
+      const endpointsToTest = [
+        { path: '/health', name: 'Health' },
+        { path: '/v1/health', name: 'V1 Health' },
+        { path: '/v1/diagnostics', name: 'V1 Diagnostics' },
+        { path: '/list', name: 'Root List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/v1/list', name: 'V1 List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/api/list', name: 'API List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/api/v1/list', name: 'API V1 List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/api/documents/list', name: 'Documents List', params: `?user_email=${encodeURIComponent(testUserEmail)}` },
+        { path: '/api/test', name: 'API Test' },
+        { path: '/api/debug/cors', name: 'CORS Debug' }
       ]
 
-      const listResults: {[key: string]: ListResponse | null} = {}
+      const endpointResults: {[key: string]: any} = {}
       
-      for (const endpoint of listEndpointsToTest) {
+      for (const endpoint of endpointsToTest) {
+        const fullUrl = `${endpoint.path}${endpoint.params || ''}`
         try {
-          const listResponse = await fetch(`${apiUrl}${endpoint}?user_email=${encodeURIComponent(testUserEmail)}`, {
+          const response = await fetch(`${apiUrl}${fullUrl}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
           })
           
-          if (listResponse.ok) {
-            const listData = await listResponse.json()
-            listResults[endpoint] = listData
-          } else {
-            listResults[endpoint] = {
-              documents: [],
-              error: `HTTP ${listResponse.status}: ${listResponse.statusText}`
-            }
+          let responseData
+          try {
+            responseData = await response.json()
+          } catch {
+            responseData = { raw_response: await response.text() }
+          }
+          
+          endpointResults[endpoint.name] = {
+            status: response.status,
+            ok: response.ok,
+            data: responseData,
+            url: fullUrl
           }
         } catch (error) {
-          listResults[endpoint] = {
-            documents: [],
-            error: error instanceof Error ? error.message : 'Network error'
+          endpointResults[endpoint.name] = {
+            status: 0,
+            ok: false,
+            data: { error: error instanceof Error ? error.message : 'Network error' },
+            url: fullUrl
           }
         }
       }
       
-      setListEndpoints(listResults)
+      setListEndpoints(endpointResults)
       setLoading(false)
     }
 

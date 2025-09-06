@@ -101,7 +101,13 @@ export default function PricingCards() {
 
   const getDisplayPrice = (plan: PricingPlan) => {
     if (plan.price === 0) return 'Free'
-    if (plan.founding) return '$129 once'
+    if (plan.founding) return (
+      <div className="text-center">
+        <div className="text-lg text-gray-500 line-through mb-1">$499 once</div>
+        <span className="text-3xl font-bold text-gray-900">$129 once</span>
+        <div className="text-sm text-green-600 font-medium mt-1">Save $370 (74% off)</div>
+      </div>
+    )
     
     const price = billingPeriod === 'yearly' ? plan.yearlyPrice : plan.price
     const period = billingPeriod === 'yearly' ? '/year' : '/month'

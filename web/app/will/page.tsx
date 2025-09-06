@@ -26,18 +26,11 @@ export default function WillPage() {
           // If no will exists, start with empty one
           if (e.message?.includes('not found')) {
             setWill({
+              id: '',
               title: '',
-              personalInfo: {
-                fullName: '',
-                address: '',
-                city: '',
-                state: '',
-                zip: ''
-              },
-              beneficiaries: [],
-              assets: [],
-              witnesses: [],
-              executor: {}
+              answers: {},
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
             })
           } else {
             setError(e.message || 'Failed to load')

@@ -26,21 +26,22 @@ const PRICING_PLANS: PricingPlan[] = [
     ]
   },
   {
-    id: 'family',
-    name: 'Family',
+    id: 'essential',
+    name: 'Essential',
     description: 'All core documents. Automatic updates. Secure sharing.',
-    price: '$199 per year',
+    price: '$169 per year',
     popular: true,
     moneyBack: true,
     features: [
       'All core documents',
       'Automatic updates',
-      'Secure sharing'
+      'Secure sharing',
+      '60-day money back'
     ]
   },
   {
-    id: 'founding',
-    name: 'Founding Lifetime',
+    id: 'lifetime',
+    name: 'Lifetime',
     description: 'Lifetime access. All updates included. Priority support.',
     price: '$129 once',
     founding: true,
@@ -48,7 +49,8 @@ const PRICING_PLANS: PricingPlan[] = [
     features: [
       'Lifetime access',
       'All updates included',
-      'Priority support'
+      'Priority support',
+      'All future features'
     ]
   }
 ]

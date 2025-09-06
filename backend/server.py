@@ -899,11 +899,14 @@ async def create_checkout(payment: PaymentRequest):
         }
         
         # Add special features for certain plans
-        if plan_key in ['founding', 'lifetime']:
+        if plan_key in ['founding', 'lifetime', 'lifetime_regular']:
             session_params['metadata']['lifetime_member'] = 'true'
             if plan_key == 'founding':
                 session_params['metadata']['founding_member'] = 'true'
                 session_params['metadata']['locked_renewal_price'] = '19900'  # $199/year locked
+            elif plan_key == 'lifetime':
+                session_params['metadata']['early_bird_member'] = 'true'
+                session_params['metadata']['spots_remaining'] = '147'  # Track early bird spots
         
         checkout_session = stripe.checkout.Session.create(**session_params)
         

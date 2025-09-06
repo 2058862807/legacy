@@ -160,7 +160,7 @@ export default function SimplePricingCards() {
               {plan.founding && plan.countdown && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <span className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    Early Bird: 147 spots left
+                    Early Bird: {spotsLeft} spots left
                   </span>
                 </div>
               )}

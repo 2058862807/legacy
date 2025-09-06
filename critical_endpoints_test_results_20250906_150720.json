@@ -1,0 +1,156 @@
+{
+  "test_summary": {
+    "total_tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "success_rate": 100.0,
+    "test_date": "2025-09-06T15:07:20.632793"
+  },
+  "endpoint_tests": [
+    {
+      "endpoint": "/api/test",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "status": "ok",
+        "message": "API routing is working",
+        "timestamp": "2025-09-06T15:07:20.640887+00:00"
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.642143"
+    },
+    {
+      "endpoint": "/list",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "documents": []
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.676151"
+    },
+    {
+      "endpoint": "/v1/list",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "documents": []
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.681298"
+    },
+    {
+      "endpoint": "/api/list",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "documents": []
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.686041"
+    },
+    {
+      "endpoint": "/api/v1/list",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "documents": []
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.690847"
+    },
+    {
+      "endpoint": "/api/health",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "ok": true
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.693531"
+    },
+    {
+      "endpoint": "/health",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "status": "ok",
+        "service": "nexteraestate",
+        "version": "1.0"
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.695901"
+    },
+    {
+      "endpoint": "/v1/health",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "status": "ok",
+        "service": "nexteraestate",
+        "version": "1.0",
+        "api_version": "v1"
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.698306"
+    },
+    {
+      "endpoint": "/api/list",
+      "method": "GET",
+      "expected_status": 422,
+      "actual_status": 422,
+      "response_data": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "query",
+              "user_email"
+            ],
+            "msg": "Field required",
+            "input": null
+          }
+        ]
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.701240"
+    },
+    {
+      "endpoint": "/api/list",
+      "method": "GET",
+      "expected_status": 200,
+      "actual_status": 200,
+      "response_data": {
+        "documents": []
+      },
+      "success": true,
+      "error_message": null,
+      "timestamp": "2025-09-06T15:07:20.705365"
+    }
+  ],
+  "critical_issues": [],
+  "recommendations": [
+    {
+      "priority": "LOW",
+      "action": "Excellent success rate - API endpoints are working correctly",
+      "details": "All critical endpoints are responding as expected"
+    }
+  ]
+}

@@ -140,7 +140,7 @@ export default function BlockchainNotarizationPage() {
               <span className="text-purple-600 font-bold">3</span>
             </div>
             <h3 className="font-semibold mb-2">Blockchain Recording</h3>
-            <p className="text-sm text-gray-600">Hash is permanently recorded on Polygon blockchain via MetaMask transaction</p>
+            <p className="text-sm text-gray-600">Hash is permanently recorded on Blockchain via MetaMask transaction</p>
           </div>
           
           <div className="text-center">

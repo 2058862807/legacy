@@ -188,27 +188,33 @@ export default function DebugPage() {
           </div>
         </div>
 
-        {/* Critical List Endpoints */}
+        {/* API Endpoint Tests */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Critical List Endpoints (502 Fix)</h2>
-          <p className="text-gray-600 mb-6">Testing the newly added endpoints that were causing 502 errors in production.</p>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">API Endpoint Tests</h2>
+          <p className="text-gray-600 mb-6">Testing all critical endpoints for 502 error fixes and Railway deployment status.</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(listEndpoints).map(([endpoint, result]) => (
-              <div key={endpoint} className={`p-4 border rounded-lg ${
-                result?.error ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Object.entries(listEndpoints).map(([name, result]) => (
+              <div key={name} className={`p-4 border rounded-lg ${
+                result?.ok ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
               }`}>
-                <h3 className="font-medium text-gray-900 mb-2">{endpoint}</h3>
+                <h3 className="font-medium text-gray-900 mb-2">{name}</h3>
+                <p className="text-xs text-gray-500 mb-2">{result?.url}</p>
                 {loading ? (
                   <p className="text-gray-500">Testing...</p>
-                ) : result?.error ? (
-                  <p className="text-red-600 text-sm">{result.error}</p>
                 ) : (
                   <div>
-                    <p className="text-green-600 text-sm">✅ Working</p>
-                    <p className="text-gray-600 text-xs mt-1">
-                      Documents: {result?.documents?.length || 0}
+                    <p className={`text-sm font-medium ${result?.ok ? 'text-green-600' : 'text-red-600'}`}>
+                      {result?.ok ? '✅' : '❌'} Status: {result?.status}
                     </p>
+                    {result?.data?.error && (
+                      <p className="text-red-600 text-xs mt-1">{result.data.error}</p>
+                    )}
+                    {result?.data?.documents !== undefined && (
+                      <p className="text-gray-600 text-xs mt-1">
+                        Documents: {result.data.documents?.length || 0}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

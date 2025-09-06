@@ -47,6 +47,37 @@ app.use((req, res, next) => {
   next();
 });
 
+// COMPATIBILITY LAYER - Handle /api/* routes by redirecting to /v1/*
+app.use("/api", (req, res, next) => {
+  console.log(`🔄 API Compatibility: ${req.method} /api${req.url} -> /v1${req.url}`);
+  
+  // Map /api routes to /v1 routes
+  const mappings = {
+    '/documents/list': '/v1/list',
+    '/documents': '/v1/documents', 
+    '/users': '/v1/users',
+    '/wills': '/v1/wills',
+    '/compliance': '/v1/compliance',
+    '/test': '/v1/test',
+    '/health': '/v1/health'
+  };
+  
+  // Check if we have a direct mapping
+  const mappedPath = mappings[req.url.split('?')[0]];
+  if (mappedPath) {
+    const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+    req.url = mappedPath + queryString;
+    console.log(`✅ Mapped to: ${req.method} ${req.url}`);
+    next();
+    return;
+  }
+  
+  // Default: prepend /v1 to the path
+  req.url = '/v1' + req.url;
+  console.log(`✅ Default mapping to: ${req.method} ${req.url}`);
+  next();
+});
+
 // Health endpoints
 app.get("/health", (_req, res) => {
   res.json({ 

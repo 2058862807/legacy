@@ -2278,6 +2278,156 @@ async def ai_chat_interface():
 # Mount static files for AI team interfaces
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# WALLET & PRICE MONITORING ENDPOINTS
+
+# Initialize monitoring system
+wallet_monitor = WalletPriceMonitor()
+
+@app.get("/api/monitoring/status")
+async def get_monitoring_status():
+    """Get current wallet and price monitoring status"""
+    try:
+        status_report = await wallet_monitor.generate_status_report()
+        return status_report
+    except Exception as e:
+        logger.error(f"Error generating monitoring status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/monitoring/wallet")
+async def get_wallet_status():
+    """Get master wallet balance and status"""
+    try:
+        balance = await wallet_monitor.get_wallet_balance()
+        
+        if balance is None:
+            return {
+                "error": "Unable to fetch wallet balance",
+                "wallet_address": wallet_monitor.master_wallet,
+                "configured": bool(wallet_monitor.master_wallet)
+            }
+        
+        estimated_txns = int(balance * 300) if balance else 0
+        estimated_days = estimated_txns / 100 if estimated_txns > 0 else 0
+        
+        status = "low" if balance < wallet_monitor.min_wallet_balance else "ok"
+        
+        return {
+            "wallet_address": wallet_monitor.master_wallet,
+            "balance_matic": balance,
+            "balance_status": status,
+            "min_threshold": wallet_monitor.min_wallet_balance,
+            "estimated_transactions": estimated_txns,
+            "estimated_days_remaining": estimated_days,
+            "cost_per_transaction": 0.005,  # Average MATIC per notarization
+            "network": "Polygon Mainnet",
+            "chain_id": 137
+        }
+    except Exception as e:
+        logger.error(f"Error fetching wallet status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/monitoring/price")
+async def get_matic_price():
+    """Get current MATIC price and change information"""
+    try:
+        price_data = await wallet_monitor.get_matic_price()
+        
+        if not price_data:
+            return {
+                "error": "Unable to fetch MATIC price",
+                "last_update": None
+            }
+        
+        # Calculate business impact
+        avg_gas_cost = 0.005  # MATIC per transaction
+        daily_txns = 100  # Estimate
+        daily_cost_usd = daily_txns * avg_gas_cost * price_data['price']
+        
+        return {
+            "price_usd": price_data['price'],
+            "change_24h": price_data['change_24h'],
+            "price_status": "volatile" if abs(price_data['change_24h']) > 10 else "stable",
+            "last_update": price_data['timestamp'].isoformat(),
+            "business_impact": {
+                "cost_per_transaction_usd": avg_gas_cost * price_data['price'],
+                "daily_cost_estimate_usd": daily_cost_usd,
+                "monthly_cost_estimate_usd": daily_cost_usd * 30
+            },
+            "alert_thresholds": {
+                "spike_threshold": wallet_monitor.price_spike_threshold,
+                "drop_threshold": wallet_monitor.price_drop_threshold
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error fetching MATIC price: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/monitoring/run-check")
+async def run_monitoring_check():
+    """Manually trigger a monitoring cycle"""
+    try:
+        await wallet_monitor.run_monitoring_cycle()
+        return {
+            "status": "success",
+            "message": "Monitoring cycle completed successfully",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error running monitoring check: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class AlertConfigRequest(BaseModel):
+    min_wallet_balance: Optional[float] = None
+    price_spike_threshold: Optional[float] = None
+    price_drop_threshold: Optional[float] = None
+
+@app.post("/api/monitoring/config")
+async def update_monitoring_config(config: AlertConfigRequest):
+    """Update monitoring configuration and thresholds"""
+    try:
+        updated_fields = []
+        
+        if config.min_wallet_balance is not None:
+            wallet_monitor.min_wallet_balance = config.min_wallet_balance
+            updated_fields.append(f"min_wallet_balance: {config.min_wallet_balance} MATIC")
+        
+        if config.price_spike_threshold is not None:
+            wallet_monitor.price_spike_threshold = config.price_spike_threshold
+            updated_fields.append(f"price_spike_threshold: {config.price_spike_threshold}%")
+        
+        if config.price_drop_threshold is not None:
+            wallet_monitor.price_drop_threshold = config.price_drop_threshold
+            updated_fields.append(f"price_drop_threshold: {config.price_drop_threshold}%")
+        
+        return {
+            "status": "success",
+            "message": "Monitoring configuration updated",
+            "updated_fields": updated_fields,
+            "current_config": {
+                "min_wallet_balance": wallet_monitor.min_wallet_balance,
+                "price_spike_threshold": wallet_monitor.price_spike_threshold,
+                "price_drop_threshold": wallet_monitor.price_drop_threshold
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error updating monitoring config: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/monitoring/alerts/history")
+async def get_alerts_history():
+    """Get history of recent alerts sent"""
+    try:
+        return {
+            "last_balance_alert": wallet_monitor.last_balance_alert.isoformat() if wallet_monitor.last_balance_alert else None,
+            "last_price_alert": wallet_monitor.last_price_alert.isoformat() if wallet_monitor.last_price_alert else None,
+            "price_history_count": len(wallet_monitor.price_history),
+            "recent_prices": wallet_monitor.price_history[-10:] if len(wallet_monitor.price_history) > 0 else [],
+            "monitoring_active": True
+        }
+    except Exception as e:
+        logger.error(f"Error fetching alerts history: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include AI team communication router after all endpoints are defined
 if ai_team_router is not None:
     app.include_router(ai_team_router)

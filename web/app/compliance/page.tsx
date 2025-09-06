@@ -53,23 +53,6 @@ export default function CompliancePage() {
             </div>
             
             <p className="text-gray-600 mb-4">{item.details}</p>
-            
-            {item.requirements && (
-              <div>
-                <h3 className="font-medium mb-2">Requirements:</h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {item.requirements.map((req, i) => (
-                    <li key={i} className="text-sm text-gray-700">{req}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {item.lastChecked && (
-              <p className="text-xs text-gray-500 mt-4">
-                Last checked: {new Date(item.lastChecked).toLocaleString()}
-              </p>
-            )}
           </div>
         ))}
       </div>

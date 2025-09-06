@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getWill, saveWill, WillData } from '../../lib/api'
+import { getWill, saveWill, WillProfile } from '../../lib/api'
+
+type WillData = WillProfile
 
 export default function WillPage() {
   const [will, setWill] = useState<WillData | null>(null)

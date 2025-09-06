@@ -46,6 +46,7 @@ const PRICING_PLANS: PricingPlan[] = [
       'All core documents',
       'Automatic updates',
       'Secure sharing',
+      'Gasless blockchain notarization',
       '60 day money back'
     ]
   },

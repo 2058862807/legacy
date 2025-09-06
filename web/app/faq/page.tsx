@@ -87,7 +87,11 @@ export default function FAQ() {
               
               {openIndex === index && (
                 <div className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                  <div className="text-gray-600 leading-relaxed space-y-3">
+                    {faq.answer.split('\n\n').map((paragraph, pIndex) => (
+                      <p key={pIndex}>{paragraph}</p>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -15,7 +15,7 @@ export default function BlockchainNotarizationPage() {
           Blockchain Notarization
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Secure document timestamps on Polygon blockchain for immutable proof of authenticity and legal validity
+          Secure document timestamps on Blockchain for immutable proof of authenticity and legal validity
         </p>
       </div>
 

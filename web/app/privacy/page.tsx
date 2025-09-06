@@ -70,7 +70,7 @@ export default function Privacy() {
               <li>Encrypted storage of sensitive documents and information</li>
               <li>Secure authentication through Google OAuth</li>
               <li>PCI-compliant payment processing through Stripe</li>
-              <li>Blockchain-based document verification on Polygon network</li>
+              <li>Blockchain-based document verification on secure network</li>
               <li>Regular security audits and monitoring</li>
             </ul>
           </section>

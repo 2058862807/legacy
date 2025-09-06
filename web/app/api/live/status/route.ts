@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     
     // Proxy to backend
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:8001'
-    const response = await fetch(`${backendUrl}/api/live/status?user_email=${encodeURIComponent(userEmail)}`, {
+    const response = await fetch(`${backendUrl}/v1/live/status?user_email=${encodeURIComponent(userEmail)}`, {
       headers: {
         'Content-Type': 'application/json',
       },

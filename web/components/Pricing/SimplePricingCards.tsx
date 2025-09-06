@@ -196,13 +196,13 @@ export default function SimplePricingCards() {
         </div>
 
         {/* Pricing Grid - Only 3 cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-16 max-w-6xl mx-auto">
           {PRICING_PLANS.map((plan) => (
             <div
               key={plan.id}
-              className={`relative bg-white rounded-2xl border-2 p-6 ${
+              className={`relative bg-white rounded-2xl border-2 p-4 sm:p-6 ${
                 plan.popular
-                  ? 'border-blue-500 shadow-xl scale-105'
+                  ? 'border-blue-500 shadow-xl lg:scale-105'
                   : plan.founding
                   ? 'border-purple-500 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50'
                   : 'border-gray-200 shadow-lg hover:shadow-xl transition-shadow'

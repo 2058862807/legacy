@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react'
+import { UNIVERSAL_ADDONS } from "@/constants/addons"
 
 interface PricingPlan {
   id: string

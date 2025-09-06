@@ -1,33 +1,38 @@
-# Use official Node.js runtime as base image
-FROM node:18-alpine
+FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY yarn.lock* ./
+# Prevent Python from writing .pyc files and buffer stdout/stderr
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
-RUN npm ci --only=production
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy TypeScript config and source code
-COPY tsconfig.json ./
-COPY src/ ./src/
+# Copy requirements first for better caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install dev dependencies and build
-RUN npm install typescript tsx @types/node @types/express @types/cors @types/compression @types/morgan
-RUN npm run build
+# Copy application code
+COPY server.py .
+COPY scripts/ scripts/
 
-# Remove dev dependencies
-RUN npm prune --production
+# Create data directory
+ENV DATA_DIR=/data
+RUN mkdir -p /data
+
+# Set default port
+ENV PORT=8001
 
 # Expose port
 EXPOSE 8001
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8001/health || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/health || exit 1
 
-# Start the application
-CMD ["npm", "start"]
+# Start command
+CMD ["sh", "-c", "uvicorn server:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips '*'"]

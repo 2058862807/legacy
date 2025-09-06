@@ -1204,7 +1204,52 @@ Please contact our support team for additional assistance, and remember that you
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
-# Document endpoints
+# AI CHAT ENDPOINTS
+@app.post("/api/ai/chat")
+async def ai_chat_endpoint(request: Request):
+    """AI Chat endpoint for frontend AIChat component"""
+    try:
+        body = await request.json()
+        message = body.get("message", "")
+        thread_id = body.get("threadId")
+        user_id = body.get("userId")
+        
+        if not message:
+            raise HTTPException(status_code=400, detail="Message is required")
+        
+        # Generate thread ID if not provided
+        if not thread_id:
+            thread_id = f"chat_{int(time.time())}_{uuid.uuid4().hex[:8]}"
+        
+        # Get AI response (using the same logic as help bot)
+        ai_response = await get_ai_response(message, "You are a helpful AI assistant for estate planning.")
+        
+        # In a real implementation, you'd save to database here
+        return {
+            "threadId": thread_id,
+            "messageId": f"msg_{uuid.uuid4().hex[:8]}"
+        }
+        
+    except Exception as e:
+        logger.error(f"AI chat error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/ai/history")
+async def ai_chat_history(thread_id: str = None):
+    """Get AI chat history for a thread"""
+    try:
+        if not thread_id:
+            raise HTTPException(status_code=400, detail="threadId parameter is required")
+        
+        # In a real implementation, you'd fetch from database
+        # For now, return empty history
+        return []
+        
+    except Exception as e:
+        logger.error(f"AI chat history error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# DOCUMENT ENDPOINTS (matching frontend expectations)
 @app.get("/api/documents/list")
 async def list_documents(user_email: str = Query(...), db: Session = Depends(get_db)):
     """List user documents"""

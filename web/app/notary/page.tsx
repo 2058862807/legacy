@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getNotaryStatus, createNotaryRequest, NotaryRequest } from '../../lib/api'
+import { getNotaryStatus, requestNotary, NotaryStatus } from '../../lib/api'
 
 export default function NotaryPage() {
   const [status, setStatus] = useState<any>(null)

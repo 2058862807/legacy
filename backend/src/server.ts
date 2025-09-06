@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT || 8001);
-const ORIGIN = process.env.CORS_ORIGIN || "https://www.nexteraestate.com";
+const ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 const NODE_ENV = process.env.NODE_ENV || "development";
 
 // Security middleware

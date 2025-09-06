@@ -148,7 +148,7 @@ export default function BlockchainNotarizationPage() {
               <span className="text-orange-600 font-bold">4</span>
             </div>
             <h3 className="font-semibold mb-2">Verification Link</h3>
-            <p className="text-sm text-gray-600">Receive Polygonscan link for permanent public verification of your document</p>
+            <p className="text-sm text-gray-600">Receive blockchain link for permanent public verification of your document</p>
           </div>
         </div>
       </div>

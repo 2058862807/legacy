@@ -11,14 +11,14 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host ""
 
 # Your exact backend URL
-$BackendUrl = "https://legal-guardian.preview.emergentagent.com:8001/api"
+$BackendUrl = "https://estate-api-bridge.preview.emergentagent.com:8001/api"
 Write-Host "[INFO] Backend URL: $BackendUrl" -ForegroundColor Green
 
 # Test connection
 Write-Host "[TEST] Testing connection to your AI team..." -ForegroundColor Yellow
 
 try {
-    $healthUrl = "https://legal-guardian.preview.emergentagent.com:8001/api/health"
+    $healthUrl = "https://estate-api-bridge.preview.emergentagent.com:8001/api/health"
     $healthResponse = Invoke-RestMethod -Uri $healthUrl -Method Get -TimeoutSec 15
     Write-Host "[SUCCESS] ✅ Connected to AI team!" -ForegroundColor Green
     Write-Host "[STATUS] $($healthResponse.status)" -ForegroundColor Green
@@ -26,16 +26,16 @@ try {
 catch {
     Write-Host "[WARNING] Port 8001 failed, trying alternative..." -ForegroundColor Yellow
     try {
-        $healthUrl = "https://legal-guardian.preview.emergentagent.com/api/health"
-        $BackendUrl = "https://legal-guardian.preview.emergentagent.com/api"
+        $healthUrl = "https://estate-api-bridge.preview.emergentagent.com/api/health"
+        $BackendUrl = "https://estate-api-bridge.preview.emergentagent.com/api"
         $healthResponse = Invoke-RestMethod -Uri $healthUrl -Method Get -TimeoutSec 15
         Write-Host "[SUCCESS] ✅ Connected to AI team!" -ForegroundColor Green
     }
     catch {
         Write-Host "[ERROR] ❌ Cannot connect to AI team." -ForegroundColor Red
         Write-Host "[DEBUG] Tried URLs:" -ForegroundColor Gray
-        Write-Host "  - https://legal-guardian.preview.emergentagent.com:8001/api/health" -ForegroundColor Gray
-        Write-Host "  - https://legal-guardian.preview.emergentagent.com/api/health" -ForegroundColor Gray
+        Write-Host "  - https://estate-api-bridge.preview.emergentagent.com:8001/api/health" -ForegroundColor Gray
+        Write-Host "  - https://estate-api-bridge.preview.emergentagent.com/api/health" -ForegroundColor Gray
         Write-Host "[SOLUTION] Make sure your Emergent environment is running" -ForegroundColor Yellow
         Read-Host "Press Enter to exit"
         exit 1

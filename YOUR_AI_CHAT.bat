@@ -11,7 +11,7 @@ echo ================================================
 echo.
 
 REM Your exact backend URL based on your Emergent setup
-set BACKEND_URL=https://legal-guardian.preview.emergentagent.com:8001/api
+set BACKEND_URL=https://estate-api-bridge.preview.emergentagent.com:8001/api
 
 echo [INFO] Connecting to your AI team at:
 echo [URL] %BACKEND_URL%
@@ -25,8 +25,8 @@ if errorlevel 1 (
     echo [INFO] Trying alternative URL patterns...
     
     REM Try without port
-    set BACKEND_URL=https://legal-guardian.preview.emergentagent.com/api/8001
-    curl -s "https://legal-guardian.preview.emergentagent.com/api/health" -o nul --connect-timeout 10
+    set BACKEND_URL=https://estate-api-bridge.preview.emergentagent.com/api/8001
+    curl -s "https://estate-api-bridge.preview.emergentagent.com/api/health" -o nul --connect-timeout 10
     if errorlevel 1 (
         echo [ERROR] Still cannot connect.
         echo [DEBUG] Please check that your Emergent environment is running.

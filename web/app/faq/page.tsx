@@ -5,6 +5,11 @@ import Footer from '../../components/Footer'
 
 const faqs = [
   {
+    question: 'What is MetaMask?',
+    answer: 'MetaMask is a secure digital wallet used by millions to manage cryptocurrency and blockchain assets.\n\nYou do not need MetaMask to use our service. Your estate plan will always be notarized on the blockchain, and all blockchain fees are already included in your package.\n\nMetaMask is optional. Only connect it if you want to link your crypto holdings and include them in your estate plan.\n\nOnce connected, your wallet address will appear in your dashboard and your estate plan will include your crypto assets.\n\nBottom line: Most users skip this step. MetaMask is there for advanced users who want to add digital assets.',
+    id: 'metamask'
+  },
+  {
     question: 'What is NexteraEstate?',
     answer: 'An online tool to create estate documents, pay, and complete notarization where allowed.'
   },

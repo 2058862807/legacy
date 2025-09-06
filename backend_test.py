@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-NexteraEstate Backend API Testing Suite - RAG SYSTEM FIXES VERIFICATION
-Testing RAG system fixes that were just implemented:
-1. RAG API Integration Testing (HTTP 500 errors should be resolved)
-2. RAG Response Quality (citations, confidence scores, source verification)  
-3. Error Handling (async/await issues resolved)
-4. Integration Points (RAG engine with existing bot endpoints)
+NexteraEstate Backend API Testing Suite - WALLET & PRICE MONITORING SYSTEM
+Testing the new wallet and price monitoring system implementation:
+1. Monitoring Status Endpoints
+2. Wallet Balance Checking (mock mode without real wallet)
+3. MATIC Price Fetching from CoinGecko API
+4. Monitoring Cycle Execution
+5. Alert Thresholds and Configuration
+6. WalletPriceMonitor Class Functionality
 
-Context: Previous HTTP 500 errors due to incorrect RateLimit model attributes have been fixed.
+Context: Testing the newly implemented wallet and price monitoring system for gasless blockchain service cost management.
 """
 
 import requests
@@ -18,12 +20,12 @@ import io
 from datetime import datetime
 
 # Get backend URL from environment or use default
-BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'http://localhost:8001')
+BACKEND_URL = os.environ.get('NEXT_PUBLIC_BACKEND_BASE_URL', 'https://api.nexteraestate.com')
 if not BACKEND_URL.startswith('http'):
     BACKEND_URL = f'http://{BACKEND_URL}'
 
-print(f"🧠 RAG SYSTEM FIXES VERIFICATION - NexteraEstate Legal AI")
-print(f"Testing RAG system fixes for HTTP 500 errors and integration issues")
+print(f"💰 WALLET & PRICE MONITORING SYSTEM TESTING - NexteraEstate")
+print(f"Testing wallet balance monitoring, MATIC price tracking, and alert system")
 print(f"Backend URL: {BACKEND_URL}")
 print("=" * 80)
 

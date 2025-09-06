@@ -80,6 +80,44 @@ export default function DebugPage() {
         })
       }
 
+      // Test the critical list endpoints that were added to fix 502 errors
+      const testUserEmail = 'test@example.com'
+      const listEndpointsToTest = [
+        '/list',
+        '/v1/list', 
+        '/api/list',
+        '/api/v1/list'
+      ]
+
+      const listResults: {[key: string]: ListResponse | null} = {}
+      
+      for (const endpoint of listEndpointsToTest) {
+        try {
+          const listResponse = await fetch(`${apiUrl}${endpoint}?user_email=${encodeURIComponent(testUserEmail)}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          
+          if (listResponse.ok) {
+            const listData = await listResponse.json()
+            listResults[endpoint] = listData
+          } else {
+            listResults[endpoint] = {
+              documents: [],
+              error: `HTTP ${listResponse.status}: ${listResponse.statusText}`
+            }
+          }
+        } catch (error) {
+          listResults[endpoint] = {
+            documents: [],
+            error: error instanceof Error ? error.message : 'Network error'
+          }
+        }
+      }
+      
+      setListEndpoints(listResults)
       setLoading(false)
     }
 

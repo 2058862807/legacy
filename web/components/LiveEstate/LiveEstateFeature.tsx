@@ -54,49 +54,69 @@ export default function LiveEstateFeature() {
         </div>
 
         {/* How It Works */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 mb-16">
+        <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 sm:p-8 mb-16">
           <h3 className="text-2xl font-bold text-white text-center mb-8">How It Works</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-400/30">
-                <span className="text-2xl">👤</span>
-              </div>
-              <h4 className="font-semibold text-white mb-2">Create your profile</h4>
-              <p className="text-sm text-blue-200">
-                Answer a few questions about you and your family.
-              </p>
-            </div>
+          {/* Process Animation */}
+          <div className="relative mb-8">
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 transform -translate-y-1/2"></div>
             
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-400/30">
-                <span className="text-2xl">📋</span>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+                <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-400/30 relative z-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+                  <span className="text-2xl animate-bounce">👤</span>
+                </div>
+                <h4 className="font-semibold text-white mb-2">Create your profile</h4>
+                <p className="text-sm text-blue-200">
+                  Answer a few questions about you and your family.
+                </p>
+                <div className="mt-2 text-xs text-blue-300">~3 minutes</div>
               </div>
-              <h4 className="font-semibold text-white mb-2">Build your plan</h4>
-              <p className="text-sm text-blue-200">
-                We assemble the right documents for your state.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-400/30">
-                <span className="text-2xl">⚡</span>
+              
+              <div className="text-center animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+                <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-400/30 relative z-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+                  <span className="text-2xl animate-pulse">📋</span>
+                </div>
+                <h4 className="font-semibold text-white mb-2">AI builds your plan</h4>
+                <p className="text-sm text-blue-200">
+                  We assemble the right documents for your state with AI guidance.
+                </p>
+                <div className="mt-2 text-xs text-blue-300">~5 minutes</div>
               </div>
-              <h4 className="font-semibold text-white mb-2">Review and approve</h4>
-              <p className="text-sm text-blue-200">
-                You control every clause before you sign.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-400/30">
-                <span className="text-2xl">📄</span>
+              
+              <div className="text-center animate-fade-in-up" style={{animationDelay: '0.5s'}}>
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-400/30 relative z-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+                  <span className="text-2xl animate-spin-slow">⚡</span>
+                </div>
+                <h4 className="font-semibold text-white mb-2">Review and approve</h4>
+                <p className="text-sm text-blue-200">
+                  You control every clause before you sign.
+                </p>
+                <div className="mt-2 text-xs text-blue-300">~4 minutes</div>
               </div>
-              <h4 className="font-semibold text-white mb-2">Download and share</h4>
-              <p className="text-sm text-blue-200">
-                Get a PDF package and a secure online copy.
-              </p>
+              
+              <div className="text-center animate-fade-in-up" style={{animationDelay: '0.7s'}}>
+                <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-400/30 relative z-10 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+                  <span className="text-2xl animate-bounce">📄</span>
+                </div>
+                <h4 className="font-semibold text-white mb-2">Live monitoring begins</h4>
+                <p className="text-sm text-blue-200">
+                  Get notified when laws change that affect your plan.
+                </p>
+                <div className="mt-2 text-xs text-blue-300">Forever</div>
+              </div>
             </div>
+          </div>
+          
+          {/* Live Demo Callout */}
+          <div className="text-center bg-white/10 rounded-xl p-4 mb-6">
+            <p className="text-blue-100 text-sm mb-3">
+              <span className="inline-block w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></span>
+              See it in action: Watch how Texas law change SB-401 would trigger automatic updates
+            </p>
+            <button className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm transition-colors border border-white/30">
+              🎬 View 60-second demo
+            </button>
           </div>
         </div>
 

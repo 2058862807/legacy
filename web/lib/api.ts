@@ -9,6 +9,9 @@ export type ApiResponse<T> = {
   error?: string
 }
 
+const BASE = process.env.NEXT_PUBLIC_API_URL
+export const api = (path: string) => `${BASE}/v1${path}`
+
 function getBase() {
   const base = process.env.NEXT_PUBLIC_API_URL || ""
   if (!base) throw new Error("NEXT_PUBLIC_API_URL is not set")

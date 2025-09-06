@@ -59,14 +59,14 @@ export type ChatMeta = {
 }
 
 export async function postChat(input: { message: string; threadId?: string; userId?: string }) {
-  return request<ChatMeta>("/api/ai/chat", {
+  return request<ChatMeta>("/v1/ai/chat", {
     method: "POST",
     body: JSON.stringify(input)
   })
 }
 
 export async function getChatHistory(params: { threadId: string }) {
-  const url = `/api/ai/history?threadId=${encodeURIComponent(params.threadId)}`
+  const url = `/v1/ai/history?threadId=${encodeURIComponent(params.threadId)}`
   return request<ChatMessage[]>(url)
 }
 

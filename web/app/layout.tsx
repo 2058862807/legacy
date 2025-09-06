@@ -19,7 +19,7 @@ export const metadata = {
   },
   openGraph: {
     title: 'NexteraEstate - Estate Planning Made Simple',
-    description: 'Create your plan, notarize on Polygon, meet your state rules. Professional estate planning with AI guidance and blockchain security.',
+    description: 'Create your plan, notarize on Blockchain, meet your state rules. Professional estate planning with AI guidance and blockchain security.',
     url: 'https://nexteraestate.com',
     siteName: 'NexteraEstate',
     locale: 'en_US',

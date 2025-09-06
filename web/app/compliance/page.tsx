@@ -52,7 +52,7 @@ export default function CompliancePage() {
               </span>
             </div>
             
-            <p className="text-gray-600 mb-4">{item.description}</p>
+            <p className="text-gray-600 mb-4">{item.details}</p>
             
             {item.requirements && (
               <div>

@@ -41,7 +41,7 @@ export default function CompliancePage() {
         {items.map((item, idx) => (
           <div key={idx} className="border rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">{item.title || `Compliance Item ${idx + 1}`}</h2>
+              <h2 className="text-xl font-semibold">{item.label || `Compliance Item ${idx + 1}`}</h2>
               <span className={`px-3 py-1 rounded-full text-sm ${
                 item.status === 'compliant' ? 'bg-green-100 text-green-800' :
                 item.status === 'warning' ? 'bg-yellow-100 text-yellow-800' :

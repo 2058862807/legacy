@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'Blockchain Notarization - NexteraEstate',
-  description: 'Secure document timestamps on Polygon blockchain for immutable proof of authenticity and legal validity with MetaMask integration.',
+  description: 'Secure document timestamps on Blockchain for immutable proof of authenticity and legal validity with MetaMask integration.',
 }
 
 export default function BlockchainNotarizationPage() {

@@ -1412,6 +1412,7 @@ async def upload_document(file: UploadFile = File(...), user_email: str = Query(
             id=file_id,
             user_id=user.id,
             filename=file.filename,
+            original_filename=file.filename,  # Add missing field
             file_path=file_path,
             file_type=file.content_type,
             file_size=len(content)

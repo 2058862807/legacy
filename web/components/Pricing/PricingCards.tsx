@@ -158,7 +158,7 @@ export default function PricingCards() {
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-6 gap-6 mb-16">
           {PRICING_PLANS.map((plan) => {
             const savings = getSavings(plan)
             const isFoundingVisible = plan.founding // Show founding member plan
@@ -168,13 +168,13 @@ export default function PricingCards() {
             return (
               <div
                 key={plan.id}
-                className={`relative bg-white rounded-2xl border-2 p-6 ${
+                className={`relative bg-white rounded-2xl border-2 p-4 sm:p-6 ${
                   plan.popular
-                    ? 'border-blue-500 shadow-xl scale-105'
+                    ? 'border-blue-500 shadow-xl lg:scale-105'
                     : plan.founding
                     ? 'border-purple-500 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50'
                     : 'border-gray-200 shadow-lg hover:shadow-xl transition-shadow'
-                }`}
+                } ${plan.id === 'free' ? 'lg:col-span-2' : plan.id === 'essential' ? 'lg:col-span-2' : 'lg:col-span-2'}`}
               >
                 {/* Popular Badge */}
                 {plan.popular && (

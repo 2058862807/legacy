@@ -99,7 +99,7 @@ export async function DELETE(
   const path = params.path.join('/')
   const url = new URL(request.url)
   const queryString = url.searchParams.toString()
-  const backendUrl = `${BACKEND_URL}/api/${path}${queryString ? `?${queryString}` : ''}`
+  const backendUrl = `${BACKEND_URL}/v1/${path}${queryString ? `?${queryString}` : ''}`
 
   try {
     const response = await fetch(backendUrl, {

@@ -32,7 +32,7 @@ export default function RootLayout({
           {children}
           <Bot />
           <AIManagerAccess />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   )

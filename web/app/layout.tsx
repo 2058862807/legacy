@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Providers } from '@/components/Providers'
+import { SessionProvider } from 'next-auth/react'
 import Bot from '@/components/Bot'
 import AIManagerAccess from '@/components/AIManagerAccess'
 
@@ -28,11 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
+        <SessionProvider>
           {children}
           <Bot />
           <AIManagerAccess />
-        </Providers>
+        </SessionProvider>
       </body>
     </html>
   )

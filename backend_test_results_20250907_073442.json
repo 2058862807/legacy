@@ -1,0 +1,332 @@
+{
+  "summary": {
+    "total_tests": 18,
+    "passed": 18,
+    "failed": 0,
+    "success_rate": "100.0%",
+    "duration": "0.04s",
+    "timestamp": "2025-09-07T07:34:42.504939"
+  },
+  "results": [
+    {
+      "test_name": "GET /health",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.466738",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok"
+        },
+        "expected": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "test_name": "GET /v1/health",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.469654",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok",
+          "version": "v1"
+        },
+        "expected_keys": [
+          "status",
+          "version"
+        ]
+      }
+    },
+    {
+      "test_name": "GET /v1/diagnostics",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.472257",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "ok": true,
+          "version": "v1",
+          "routes": [
+            "/openapi.json",
+            "/docs",
+            "/docs/oauth2-redirect",
+            "/redoc",
+            "/api/compliance/rules",
+            "/health",
+            "/v1/health",
+            "/v1/diagnostics",
+            "/v1/documents/list",
+            "/v1/user/dashboard-stats",
+            "/v1/live/status",
+            "/api/documents/list",
+            "/api/user/dashboard-stats",
+            "/api/live/status",
+            "/api/compliance",
+            "/api/test",
+            "/api/debug/cors",
+            "/v1/debug/cors",
+            "/v1/users",
+            "/v1/wills",
+            "/v1/compliance",
+            "/v1/list",
+            "/v1/test",
+            "/v1/documents",
+            "/v1/ai/esquire"
+          ]
+        },
+        "routes_count": 25
+      }
+    },
+    {
+      "test_name": "GET /v1/documents/list",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.474875",
+      "details": {
+        "status_code": 200,
+        "response_data": [
+          {
+            "id": "doc1",
+            "filename": "sample_will.pdf",
+            "type": "will",
+            "status": "notarized",
+            "created_at": "2024-09-01T00:00:00Z",
+            "user_email": "test@nexteraestate.com"
+          }
+        ],
+        "documents_count": 1
+      }
+    },
+    {
+      "test_name": "GET /v1/user/dashboard-stats",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.477214",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "documents": 2,
+          "wills": 1,
+          "notarized": 1,
+          "compliance_score": 95,
+          "user_email": "test@nexteraestate.com",
+          "last_updated": "2025-09-07T07:34:42.476366"
+        },
+        "expected_keys": [
+          "documents",
+          "wills",
+          "notarized",
+          "compliance_score",
+          "user_email",
+          "last_updated"
+        ]
+      }
+    },
+    {
+      "test_name": "GET /v1/live/status",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.479728",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "active",
+          "last_update": "2025-09-07T07:34:42.478696",
+          "events": [],
+          "user_email": "test@nexteraestate.com"
+        },
+        "expected_keys": [
+          "status",
+          "last_update",
+          "events",
+          "user_email"
+        ]
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (AI_ENABLED=false)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.481876",
+      "details": {
+        "status_code": 503,
+        "response_data": {
+          "detail": "AI features are currently disabled"
+        },
+        "expected": "503 when AI_ENABLED=false"
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (missing prompt)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.484080",
+      "details": {
+        "status_code": 503,
+        "response_data": {
+          "detail": "AI features are currently disabled"
+        },
+        "expected": "Error for missing prompt"
+      }
+    },
+    {
+      "test_name": "GET /api/documents/list (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.486162",
+      "details": {
+        "status_code": 200,
+        "response_data": [
+          {
+            "id": "doc1",
+            "filename": "sample_will.pdf",
+            "type": "will",
+            "status": "notarized",
+            "created_at": "2024-09-01T00:00:00Z",
+            "user_email": "test@nexteraestate.com"
+          }
+        ],
+        "note": "Successfully redirected to /v1/documents/list"
+      }
+    },
+    {
+      "test_name": "GET /api/user/dashboard-stats (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.488438",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "documents": 2,
+          "wills": 1,
+          "notarized": 1,
+          "compliance_score": 95,
+          "user_email": "test@nexteraestate.com",
+          "last_updated": "2025-09-07T07:34:42.487638"
+        },
+        "note": "Successfully redirected to /v1/user/dashboard-stats"
+      }
+    },
+    {
+      "test_name": "GET /api/live/status (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.490437",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "active",
+          "last_update": "2025-09-07T07:34:42.489681",
+          "events": [],
+          "user_email": "test@nexteraestate.com"
+        },
+        "note": "Successfully redirected to /v1/live/status"
+      }
+    },
+    {
+      "test_name": "GET /api/test (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.492382",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok",
+          "message": "API routing is working",
+          "timestamp": "2025-09-07T07:34:42.491662"
+        },
+        "note": "Successfully redirected to /v1/test"
+      }
+    },
+    {
+      "test_name": "GET /v1/compliance",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.494259",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "rules": [],
+          "states_supported": 50,
+          "enabled": true
+        },
+        "compliance_enabled": true
+      }
+    },
+    {
+      "test_name": "GET /v1/users",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.496277",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "user": null,
+          "message": "User not found",
+          "email": "test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "GET /v1/wills",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.498492",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "wills": [],
+          "user_email": "test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "GET /api/compliance/rules (existing)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.500539",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "state": "CA",
+          "doc_type": "will",
+          "notarization_required": false,
+          "witnesses_required": 2,
+          "ron_allowed": true,
+          "esign_allowed": false,
+          "recording_supported": false,
+          "pet_trust_allowed": true,
+          "citations": [
+            "Probate Code 6110",
+            "Probate Code 6111"
+          ],
+          "updated_at": "2025-08-30T00:00:00"
+        },
+        "note": "Existing endpoint not redirected"
+      }
+    },
+    {
+      "test_name": "GET /v1/documents/list (missing user_email)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.502701",
+      "details": {
+        "status_code": 422,
+        "response_data": {
+          "detail": [
+            {
+              "type": "missing",
+              "loc": [
+                "query",
+                "user_email"
+              ],
+              "msg": "Field required",
+              "input": null,
+              "url": "https://errors.pydantic.dev/2.9/v/missing"
+            }
+          ]
+        },
+        "expected": "422 for missing required parameter"
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (invalid JSON)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T07:34:42.504662",
+      "details": {
+        "status_code": 503,
+        "response_data": {
+          "detail": "AI features are currently disabled"
+        },
+        "expected": "Error for invalid JSON"
+      }
+    }
+  ]
+}

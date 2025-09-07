@@ -1,0 +1,359 @@
+{
+  "summary": {
+    "total_tests": 18,
+    "passed": 11,
+    "failed": 7,
+    "success_rate": "61.1%",
+    "duration": "0.22s",
+    "timestamp": "2025-09-07T08:10:21.402323"
+  },
+  "results": [
+    {
+      "test_name": "GET /health",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.189396",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok",
+          "timestamp": "2025-09-07T08:10:21.188225+00:00"
+        },
+        "expected": {
+          "status": "ok"
+        }
+      }
+    },
+    {
+      "test_name": "GET /v1/health",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.192090",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok",
+          "version": "3.0.0",
+          "features": {
+            "ai_enabled": true,
+            "blockchain_enabled": true,
+            "compliance_enabled": true,
+            "real_ai_integration": true,
+            "emergent_llm_connected": true
+          },
+          "timestamp": "2025-09-07T08:10:21.191040+00:00"
+        },
+        "expected_keys": [
+          "status",
+          "version"
+        ]
+      }
+    },
+    {
+      "test_name": "GET /v1/diagnostics",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.194616",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "ok": true,
+          "version": "3.0.0",
+          "routes": [
+            "/openapi.json",
+            "/docs",
+            "/docs/oauth2-redirect",
+            "/redoc",
+            "/health",
+            "/v1/health",
+            "/v1/diagnostics",
+            "/v1/ai/esquire",
+            "/v1/ai/grief",
+            "/v1/ai/senior-manager",
+            "/v1/payments/create-checkout",
+            "/v1/documents/upload",
+            "/v1/documents/list",
+            "/v1/wills",
+            "/v1/wills",
+            "/v1/notary/create",
+            "/v1/compliance/rules",
+            "/v1/compliance/summary",
+            "/v1/live/event",
+            "/v1/live/status",
+            "/v1/user/dashboard-stats",
+            "/api/compliance/rules",
+            "/list",
+            "/api/list",
+            "/v1/list",
+            "/api/v1/list",
+            "/api/test"
+          ],
+          "feature_flags": {
+            "ai_enabled": true,
+            "blockchain_enabled": true,
+            "compliance_enabled": true,
+            "polygon_network": "mainnet",
+            "real_ai_integration": true
+          },
+          "statistics": {
+            "registered_users": 0,
+            "documents": 0,
+            "wills": 0,
+            "blockchain_transactions": 0,
+            "compliance_states": 51
+          }
+        },
+        "routes_count": 27
+      }
+    },
+    {
+      "test_name": "GET /v1/documents/list",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.197121",
+      "details": {
+        "status_code": 200,
+        "error": "Expected list response",
+        "response_data": {
+          "documents": [],
+          "count": 0,
+          "user_email": "test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "GET /v1/user/dashboard-stats",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.199644",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "user_email": "test@nexteraestate.com",
+          "documents": 0,
+          "wills": 0,
+          "notarized": 0,
+          "live_events": 0,
+          "compliance_score": 95,
+          "last_updated": "2025-09-07T08:10:21.198565+00:00",
+          "plan_status": "active",
+          "blockchain_transactions": 0,
+          "ai_consultations_remaining": 50,
+          "storage_used": "0.0MB"
+        },
+        "expected_keys": [
+          "documents",
+          "wills",
+          "notarized",
+          "compliance_score",
+          "user_email",
+          "last_updated"
+        ]
+      }
+    },
+    {
+      "test_name": "GET /v1/live/status",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.201781",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "not_started",
+          "user_email": "test@nexteraestate.com",
+          "total_events": 0,
+          "pending_events": 0,
+          "last_update": "2025-09-07T08:10:21.201023+00:00",
+          "events": [],
+          "live_monitoring": true
+        },
+        "expected_keys": [
+          "status",
+          "last_update",
+          "events",
+          "user_email"
+        ]
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (AI_ENABLED=true)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.378071",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "answer": "Regarding your question about 'What is estate planning?', I recommend consulting your state's specific probate laws. Generally, wills require proper execution with witnesses, clear testamentary intent, and compliance with state formalities. Consider blockchain verification for additional security. This is general guidance - please consult a licensed attorney for specific legal advice.",
+          "citations": [
+            "Estate Planning Guide 2025",
+            "Uniform Probate Code",
+            "State-Specific Probate Laws",
+            "Blockchain Verification Standards"
+          ],
+          "status": "success",
+          "confidence": 0.85,
+          "user_email": "anonymous@nexteraestate.com",
+          "timestamp": "2025-09-07T08:10:21.376874+00:00",
+          "note": "Fallback response - AI integration in progress"
+        },
+        "note": "AI appears to be enabled"
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (missing prompt)",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.380780",
+      "details": {
+        "status_code": 200,
+        "error": "Expected error status, got 200",
+        "response_text": "{\"error\":\"Prompt required\",\"status\":\"error\"}"
+      }
+    },
+    {
+      "test_name": "GET /api/documents/list (shim)",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.383150",
+      "details": {
+        "status_code": 200,
+        "error": "Expected list response",
+        "response_data": {
+          "documents": [],
+          "count": 0,
+          "user_email": "test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "GET /api/user/dashboard-stats (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.385712",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "user_email": "test@nexteraestate.com",
+          "documents": 0,
+          "wills": 0,
+          "notarized": 0,
+          "live_events": 0,
+          "compliance_score": 95,
+          "last_updated": "2025-09-07T08:10:21.384631+00:00",
+          "plan_status": "active",
+          "blockchain_transactions": 0,
+          "ai_consultations_remaining": 50,
+          "storage_used": "0.0MB"
+        },
+        "note": "Successfully redirected to /v1/user/dashboard-stats"
+      }
+    },
+    {
+      "test_name": "GET /api/live/status (shim)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.387968",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "not_started",
+          "user_email": "test@nexteraestate.com",
+          "total_events": 0,
+          "pending_events": 0,
+          "last_update": "2025-09-07T08:10:21.387133+00:00",
+          "events": [],
+          "live_monitoring": true
+        },
+        "note": "Successfully redirected to /v1/live/status"
+      }
+    },
+    {
+      "test_name": "GET /api/test (shim)",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.389922",
+      "details": {
+        "status_code": 404,
+        "error": "Expected 200, got 404",
+        "response_text": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    {
+      "test_name": "GET /v1/compliance",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.391735",
+      "details": {
+        "status_code": 404,
+        "error": "Expected 200, got 404",
+        "response_text": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    {
+      "test_name": "GET /v1/users",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.393685",
+      "details": {
+        "status_code": 404,
+        "error": "Expected 200, got 404",
+        "response_text": "{\"detail\":\"Not Found\"}"
+      }
+    },
+    {
+      "test_name": "GET /v1/wills",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.395640",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "wills": [],
+          "count": 0,
+          "user_email": "test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "GET /api/compliance/rules (existing)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.397833",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "witnesses_required": 2,
+          "notarization_required": false,
+          "self_proving": true,
+          "holographic_allowed": true,
+          "state": "CA",
+          "doc_type": "will",
+          "updated_at": "2025-09-07T08:10:21.396937+00:00",
+          "citations": [
+            "CA Probate Code \u00a7 6110",
+            "CA Statutes on Wills and Estates",
+            "Uniform Probate Code provisions for CA"
+          ]
+        },
+        "note": "Existing endpoint not redirected"
+      }
+    },
+    {
+      "test_name": "GET /v1/documents/list (missing user_email)",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:10:21.399815",
+      "details": {
+        "status_code": 422,
+        "response_data": {
+          "detail": [
+            {
+              "type": "missing",
+              "loc": [
+                "query",
+                "user_email"
+              ],
+              "msg": "Field required",
+              "input": null,
+              "url": "https://errors.pydantic.dev/2.9/v/missing"
+            }
+          ]
+        },
+        "expected": "422 for missing required parameter"
+      }
+    },
+    {
+      "test_name": "POST /v1/ai/esquire (invalid JSON)",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:10:21.402051",
+      "details": {
+        "status_code": 200,
+        "error": "Expected error status, got 200",
+        "response_text": "{\"error\":\"Expecting value: line 1 column 1 (char 0)\",\"status\":\"error\"}"
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { AuthProvider } from '@/components/AuthProvider'
+import { Providers } from '@/components/Providers'
 import Bot from '@/components/Bot'
 import AIManagerAccess from '@/components/AIManagerAccess'
 

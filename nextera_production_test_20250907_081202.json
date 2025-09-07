@@ -1,0 +1,355 @@
+{
+  "summary": {
+    "total_tests": 23,
+    "passed": 22,
+    "failed": 1,
+    "success_rate": "95.7%",
+    "duration": "0.32s",
+    "timestamp": "2025-09-07T08:12:02.130683",
+    "test_user": "production.test@nexteraestate.com"
+  },
+  "systems_tested": [
+    "AI BOTS",
+    "STRIPE PAYMENTS",
+    "FILE UPLOAD",
+    "50-STATE COMPLIANCE",
+    "BLOCKCHAIN NOTARIZATION",
+    "WILL BUILDER",
+    "LIVE ESTATE PLAN",
+    "API ENDPOINTS"
+  ],
+  "results": [
+    {
+      "test_name": "Esquire AI Bot",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:01.982752",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "answer_length": 370,
+          "status": "success"
+        },
+        "ai_working": true
+      }
+    },
+    {
+      "test_name": "Senior AI Manager",
+      "status": "FAIL",
+      "timestamp": "2025-09-07T08:12:02.077300",
+      "details": {
+        "status_code": 200,
+        "error": "Missing expected response fields",
+        "response_data": {
+          "error": "Senior AI Manager temporarily unavailable: Failed to generate chat completion: litellm.AuthenticationError: AuthenticationError: OpenAIException - Incorrect API key provided: emergenc******************************************************************89fD. You can find your API key at https://platform.openai.com/account/api-keys.",
+          "status": "error",
+          "system_status": {
+            "users": 0,
+            "documents": 0,
+            "wills": 0,
+            "blockchain_transactions": 0,
+            "compliance_states": 51,
+            "ai_enabled": true,
+            "blockchain_enabled": true,
+            "compliance_enabled": true
+          },
+          "user_email": "production.test@nexteraestate.com",
+          "timestamp": "2025-09-07T08:12:02.075821+00:00"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - FREE Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.080195",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "free",
+          "amount": null,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - CORE Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.082740",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "core",
+          "amount": 19900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - PLUS Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.085225",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "plus",
+          "amount": 34900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - PROFESSIONAL Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.087651",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "professional",
+          "amount": 79900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - ENTERPRISE Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.090254",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "enterprise",
+          "amount": 239900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - FOUNDING Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.092867",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "founding",
+          "amount": 12900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - FAMILY Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.097640",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "family",
+          "amount": 49900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "Stripe Payment - PREMIUM Plan",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.099907",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "plan": "premium",
+          "amount": 149900,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "test_name": "File Upload with Blockchain Hash",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.103226",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "success",
+          "document_id": "85429951-6ee8-4467-979c-20b12538f64a",
+          "hash": "5287c847c31cc1dcb6423e5aaaf33bfd6ec3c0495af6b18037db75565fbce2c0",
+          "blockchain_tx": "0x08427147648df3f77e791010eb373502c01f986a"
+        }
+      }
+    },
+    {
+      "test_name": "50-State Compliance - TX",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.105406",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "state": "TX",
+          "witnesses_required": 2,
+          "notarization_required": false,
+          "citations_count": 3
+        }
+      }
+    },
+    {
+      "test_name": "50-State Compliance - CA",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.107531",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "state": "CA",
+          "witnesses_required": 2,
+          "notarization_required": false,
+          "citations_count": 3
+        }
+      }
+    },
+    {
+      "test_name": "50-State Compliance - NY",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.109635",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "state": "NY",
+          "witnesses_required": 2,
+          "notarization_required": false,
+          "citations_count": 3
+        }
+      }
+    },
+    {
+      "test_name": "50-State Compliance Summary",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.111880",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "states_supported": 51,
+          "total_rules": 204,
+          "coverage": "Complete 50-state + DC coverage"
+        }
+      }
+    },
+    {
+      "test_name": "Blockchain Notarization - Polygon",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.114349",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "success",
+          "transaction_id": "0x8ddae25922c6010df7a469511488218cc1849f7a",
+          "network": "mainnet",
+          "chain_id": "0x89",
+          "polygonscan_url": "https://polygonscan.com/tx/0x8ddae25922c6010df7a469511488218cc1849f7a"
+        }
+      }
+    },
+    {
+      "test_name": "Will Builder - Creation",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.116589",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "success",
+          "will_id": "5f8c3771-6467-442c-bd21-6f2fa1410c4b",
+          "completion_percentage": 100,
+          "user_email": "production.test@nexteraestate.com"
+        }
+      }
+    },
+    {
+      "test_name": "Will Builder - Listing",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.119261",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "wills_count": 1,
+          "user_email": "production.test@nexteraestate.com",
+          "wills_found": 1
+        }
+      }
+    },
+    {
+      "test_name": "Live Estate Plan - Event Recording",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.121435",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "success",
+          "event_id": "e4734539-4754-41fd-ade1-b19247e4671e",
+          "event_type": "marriage",
+          "impact_level": "high"
+        }
+      }
+    },
+    {
+      "test_name": "Live Estate Plan - Status Tracking",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.123623",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "action_needed",
+          "total_events": 1,
+          "pending_events": 1,
+          "live_monitoring": true
+        }
+      }
+    },
+    {
+      "test_name": "Health Endpoint",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.125840",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "ok",
+          "timestamp": "2025-09-07T08:12:02.125086+00:00"
+        }
+      }
+    },
+    {
+      "test_name": "Diagnostics Endpoint",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.128128",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "routes_count": 27,
+          "feature_flags": {
+            "ai_enabled": true,
+            "blockchain_enabled": true,
+            "compliance_enabled": true,
+            "polygon_network": "mainnet",
+            "real_ai_integration": true
+          },
+          "statistics": {
+            "registered_users": 0,
+            "documents": 1,
+            "wills": 1,
+            "blockchain_transactions": 2,
+            "compliance_states": 51
+          }
+        }
+      }
+    },
+    {
+      "test_name": "Dashboard Stats Endpoint",
+      "status": "PASS",
+      "timestamp": "2025-09-07T08:12:02.130336",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "documents": 1,
+          "wills": 1,
+          "compliance_score": 95,
+          "plan_status": "active"
+        }
+      }
+    }
+  ]
+}
